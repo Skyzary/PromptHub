@@ -1,14 +1,25 @@
 import React, { useState } from "react";
 import css from "./SearchField.module.scss"
 
+/**
+ * A search field component that allows users to search for prompts.
+ * @param onSearch - A callback function that is called when the user types in the search field.
+ * @returns A search field component.
+ * @example
+ * ```tsx
+ * <SearchField onSearch={(query) => console.log(query)} />
+ * ```
+ */
+
 interface SearchFieldProps{
   onSearch: (query: string) => void,
 }
 export default function SearchField({ onSearch }: SearchFieldProps) {
   const [query, setQuery] = useState('');
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>){
-    setQuery(e.target.value);
-    onSearch(query)
+    const newQuery = e.target.value;
+    setQuery(newQuery);
+    onSearch(newQuery)
   }
   
   return (

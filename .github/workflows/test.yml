@@ -30,14 +30,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: prettify
-        run: pnpm run prettier -- --write
 
-      - name: commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "chore: prettify"
-          file_pattern: 'src/**/*.{ts,tsx,js,jsx,json,scss,css}'
 
       - name: Run Linter
         run: pnpm run lint

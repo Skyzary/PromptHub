@@ -5,13 +5,15 @@ import SearchField from "~src/components/SearchField/SearchField"
 
 import "./popup.scss"
 
+import sayHello from "~src/hello_world"
+
 export default function Popup() {
   return (
     <div className={"popup"}>
       <Header />
       <SearchField onSearch={(query) => console.log(query)} />
       <ListSection />
-      <AddNewBtn />
+      <AddNewBtn onClick={() => sayHello()} />
     </div>
   )
 }

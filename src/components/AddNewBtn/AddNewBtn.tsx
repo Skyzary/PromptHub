@@ -2,11 +2,15 @@ import Btn from "~src/components/ui/Btn/Btn"
 
 import css from "./AddNewBtn.module.scss"
 
-export default function AddNewBtn() {
+interface AddNewBtnProps {
+  onClick?: () => void
+}
+
+export default function AddNewBtn({ onClick }: AddNewBtnProps) {
   return (
     <Btn
       styleType={"primary"}
-      onClick={() => {}}
+      onClick={onClick}
       className={css.addNewBtn}>
       Create new prompt
     </Btn>

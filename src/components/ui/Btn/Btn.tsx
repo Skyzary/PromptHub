@@ -7,7 +7,6 @@ interface BtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
   styleType: "primary" | "secondary"
   onClick: () => void
-  props?: React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 /**
@@ -22,7 +21,7 @@ export default function Btn({
   children,
   styleType,
   className,
-  ...props
+  ...rest
 }: BtnProps) {
   const btnClass = clsx(
     styleType === "primary" ? css.primary : css.secondary,
@@ -31,7 +30,7 @@ export default function Btn({
   return (
     <button
       className={btnClass}
-      {...props}>
+      {...rest}>
       {children}
     </button>
   )

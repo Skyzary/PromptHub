@@ -11,7 +11,7 @@
     "test": "vitest run",
     "coverage": "vitest run --coverage",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "prettify": "prettier --write src/**/*.{ts,tsx,js,jsx,json,scss,css}"
+    "prettify": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,scss,css}\" --no-error-on-unmatched-pattern"
   },
   "dependencies": {
     "clsx": "^2.1.1",

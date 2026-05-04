@@ -1,8 +1,10 @@
 .listSection{
   padding-left: 12px;
   padding-right: 12px;
-  max-height: 367px;
-  overflow-y: scroll ;
+  max-height: 300px;
+  overflow-y: scroll;
+  width: 100%;
+  margin-bottom: 12px;
 }
 .listHeading{
   color: #64748B;
@@ -16,4 +18,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+
 }

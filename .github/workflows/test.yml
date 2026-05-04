@@ -46,10 +46,3 @@ jobs:
       - name: Run Tests with Coverage
         run: pnpm run test -- --coverage
 
-      - name: Test Report
-        uses: dorny/test-reporter@v3
-        if: success() || failure()
-        with:
-          name: Vitest Tests
-          path: test-results.json
-          reporter: vitestson

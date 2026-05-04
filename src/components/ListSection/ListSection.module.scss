@@ -1,0 +1,19 @@
+.listSection{
+  padding-left: 12px;
+  padding-right: 12px;
+  max-height: 367px;
+  overflow-y: scroll ;
+}
+.listHeading{
+  color: #64748B;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+}
+.listContainer{
+  list-style: none;
+  padding-left: 0 ;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

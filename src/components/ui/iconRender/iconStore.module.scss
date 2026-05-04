@@ -1,0 +1,50 @@
+.iconWrapper{
+  padding: 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon{
+  display: block;
+}
+
+.developmentIcon{
+  color: #2563EB;
+}
+
+.developmentIconWrapper{
+  background-color: #DBEAFE;
+}
+
+.dailyIcon{
+  color: #A90ECC;
+}
+
+.dailyIconWrapper{
+  background-color: #F3E8FF;
+}
+
+.educationIcon{
+  color: #16A34A;
+}
+
+.educationIconWrapper{
+  background-color: #DCFCE7;
+}
+
+.entertainmentIcon{
+  color: #DB2777;
+}
+
+.entertainmentIconWrapper{
+  background-color: #FCE7F3;
+}
+
+.defaultIcon{
+  color: #4B5563;
+}
+
+.defaultIconWrapper{
+  background-color: #F3F4F6;
+}

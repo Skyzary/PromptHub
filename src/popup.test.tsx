@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest'
 import Popup from './popup'
 
 describe('Popup component', () => {
-  it('renders correctly with all inner components', () => {
+  it('renders correctly with Auth page by default', () => {
     // Arrange
     render(<Popup />)
     
@@ -11,13 +11,16 @@ describe('Popup component', () => {
     // Check if Header is rendered
     expect(screen.getByText('PromptHub')).toBeInTheDocument()
     
-    // Check if SearchField is rendered
-    expect(screen.getByPlaceholderText('Search prompts')).toBeInTheDocument()
+    // Check if Auth title is rendered
+    expect(screen.getByRole('heading', { name: /Auth/i })).toBeInTheDocument()
     
-    // Check if ListSection is rendered
-    expect(screen.getByText('Recent & Favorites')).toBeInTheDocument()
+    // Check if Email input is rendered
+    expect(screen.getByPlaceholderText('Enter your email')).toBeInTheDocument()
     
-    // Check if AddNewBtn is rendered
-    expect(screen.getByRole('button', { name: /Create new prompt/i })).toBeInTheDocument()
+    // Check if Password input is rendered
+    expect(screen.getByPlaceholderText('Enter your password')).toBeInTheDocument()
+    
+    // Check if Login button is rendered
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument()
   })
 })

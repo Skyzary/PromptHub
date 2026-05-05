@@ -2,7 +2,7 @@ name: test.yml
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
 
 jobs:
   quality-assurance:
@@ -16,22 +16,22 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 9
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 8
-
       - name: Install dependencies
         run: pnpm install
 
       - name: prettify
-        run: pnpm run prettier -- --write
+        run: pnpm run prettify
 
       - name: commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v7
@@ -46,10 +46,3 @@ jobs:
       - name: Run Tests with Coverage
         run: pnpm run test -- --coverage
 
-      - name: Test Report
-        uses: dorny/test-reporter@v3
-        if: success() || failure()
-        with:
-          name: Vitest Tests
-          path: test-results.json
-          reporter: vitestson

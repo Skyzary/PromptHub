@@ -1,0 +1,31 @@
+.auth {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.title{
+ text-align: center;
+}
+.form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+.form .register{
+  background-color: #8A2BE2FF;
+}
+.form .register:hover{
+  background-color: #760fcc;
+}
+

@@ -1,17 +1,14 @@
-import AddNewBtn from "~src/components/AddNewBtn/AddNewBtn"
-import Header from "~src/components/Header/Header"
-import ListSection from "~src/components/ListSection/ListSection"
-import SearchField from "~src/components/SearchField/SearchField"
-
+import "./globals.scss.css"
 import "./popup.scss"
+
+import Header from "~src/components/Header/Header"
+import Auth from "~src/pages/Auth/Auth"
 
 export default function Popup() {
   return (
     <div className={"popup"}>
       <Header />
-      <SearchField onSearch={(query) => console.log(query)} />
-      <ListSection />
-      <AddNewBtn />
+      <Auth />
     </div>
   )
 }

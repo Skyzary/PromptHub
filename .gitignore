@@ -32,3 +32,6 @@ dist/
 # typescript
 .tsbuildinfo
 .idea
+
+# testing
+TESTING_REPORT.md

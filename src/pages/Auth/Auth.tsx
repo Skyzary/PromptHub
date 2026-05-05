@@ -2,25 +2,31 @@ import { MdOutlineAlternateEmail, MdOutlineLock } from "react-icons/md"
 
 import Btn from "~src/components/ui/Btn/Btn"
 import InputEl from "~src/components/ui/InputEl/InputEl"
+import { userAuthSchema } from "~src/validation/userAuth"
 
 import css from "./Auth.module.scss"
 
 export default function Auth() {
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const data = {
-      email: formData.get("email"),
-      password: formData.get("password")
+    const data = Object.fromEntries(formData.entries())
+    try {
+      const result = userAuthSchema.parse(data)
+      console.log(result)
+    } catch (error) {
+      console.log(error.message)
     }
-    console.log(data)
   }
   return (
     <div className={css.auth}>
       <h1 className={css.title}>Auth</h1>
       <form
         className={css.form}
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+        noValidate>
         <div className={css.inputWrapper}>
           <label
             htmlFor="email"

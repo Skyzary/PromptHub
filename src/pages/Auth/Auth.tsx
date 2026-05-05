@@ -25,7 +25,8 @@ export default function Auth() {
       <h1 className={css.title}>Auth</h1>
       <form
         className={css.form}
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+        noValidate>
         <div className={css.inputWrapper}>
           <label
             htmlFor="email"

@@ -1,0 +1,89 @@
+name: check-n-deploy.yml
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  quality-assurance:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: prettify
+        run: pnpm run prettify
+
+      - name: commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "chore: prettify"
+          file_pattern: 'src/**/*.{ts,tsx,js,jsx,json,scss,css}'
+
+      - name: Run Linter
+        run: pnpm run lint
+
+
+      - name: Run Tests with Coverage
+        run: pnpm run test -- --coverage
+
+  relese:
+    needs: quality-assurance
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: '0'
+      - name: Set-up node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 9
+
+      - name: install dependencies
+        run: pnpm install
+
+      - name: Package
+        run: pnpm run package --browser=chrome
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v0.0.${{ github.run_number }}
+          name: Release v0.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+          files: build/chrome-mv3-prod.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+

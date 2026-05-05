@@ -6,8 +6,6 @@ import css from "./Btn.module.scss"
 interface BtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
   styleType: "primary" | "secondary"
-  onClick: () => void
-  props?: React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 /**

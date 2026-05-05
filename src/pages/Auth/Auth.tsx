@@ -13,12 +13,12 @@ export default function Auth() {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const data = Object.fromEntries(formData.entries())
-    const result = userAuthSchema.safeParse(data)
-    if (!result.success) {
-      alert(`${result.error.message}`)
-      return
+    try {
+      const result = userAuthSchema.parse(data)
+      console.log(result)
+    } catch (error) {
+      console.log(error.message)
     }
-    console.log(result.data)
   }
   return (
     <div className={css.auth}>

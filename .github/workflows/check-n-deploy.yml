@@ -12,39 +12,42 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 9
+        uses: pnpm/action-setup@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
-      - name: prettify
+      - name: Prettify code
         run: pnpm run prettify
 
-      - name: commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: prettify"
-          file_pattern: 'src/**/*.{ts,tsx,js,jsx,json,scss,css}'
+          file_pattern: '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}'
 
       - name: Run Linter
         run: pnpm run lint
 
+      - name: Run Shared Package Tests
+        run: pnpm --filter @prompthub/shared test
 
-      - name: Run Tests with Coverage
-        run: pnpm run test -- --coverage
+      - name: Run Backend Tests
+        run: pnpm --filter @prompthub/backend test -- --coverage
+
+      - name: Run Frontend Tests
+        run: pnpm --filter @prompthub/frontend test -- --coverage
 
   relese:
     needs: quality-assurance
@@ -53,29 +56,27 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: '0'
 
-      - name: install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 9
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-      - name: Set-up node
-        uses: actions/setup-node@v6
+      - name: Set-up Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
-      - name: install dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
       - name: Package
         run: pnpm run package --browser=chrome
 
       - name: Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v0.0.${{ github.run_number }}
           name: Release v0.0.${{ github.run_number }}
@@ -84,7 +85,3 @@ jobs:
           files: build/chrome-mv3-prod.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-

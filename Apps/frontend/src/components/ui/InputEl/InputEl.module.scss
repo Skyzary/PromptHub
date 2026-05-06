@@ -1,0 +1,36 @@
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.iconWrapper {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.Input {
+  padding: 11px 12px 12px 12px;
+  width: 100%;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+
+  &.hasIcon {
+    padding-left: 36px;
+  }
+
+  &:focus {
+    border: 1px solid var(--primary-color, #3b82f6);
+    outline: none;
+  }
+}

@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 398px;
+  height: 57px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.logoContainer {
+  display: flex;
+  flex-direction: row;
+  height: 20px;
+  align-items: center;
+  gap: 8px;
+}
+.logoWrapper {
+  width: 32px;
+  height: 32px;
+  background-color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+.settingsBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 17px;
+  height: 17px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

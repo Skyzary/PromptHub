@@ -1,0 +1,6 @@
+
+
+> @prompthub/backend@ lint /Users/levkovskyivolodymyr/Developement/Web/PromptHub/Apps/backend
+> pnpm exec eslint src/**/*.ts --no-error-on-unmatched-pattern
+
+Warning: React version was set to "detect" in eslint-plugin-react settings, but the "react" package is not installed. Assuming latest React version for linting.

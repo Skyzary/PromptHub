@@ -1,0 +1,5 @@
+
+
+> @prompthub/frontend@0.0.1 lint /Users/levkovskyivolodymyr/Developement/Web/PromptHub/Apps/frontend
+> pnpm exec eslint src/**/*.{ts,tsx} --no-error-on-unmatched-pattern
+

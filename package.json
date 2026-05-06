@@ -1,52 +1,31 @@
 {
-  "name": "prompthub",
-  "displayName": "PromptHub",
-  "version": "0.0.1",
-  "description": "an extension to manage gemini prompts templates",
-  "author": "skyzary & iamredl",
+  "name": "prompthub-monorepo",
+  "packageManager": "pnpm@10.33.2",
+  "private": true,
+  "workspaces": [
+    "Apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "lint": "eslint src",
-    "prettify": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,scss,css}\" --no-error-on-unmatched-pattern",
-    "dev": "plasmo dev",
-    "build": "plasmo build",
-    "package": "plasmo package",
-    "test": "vitest run",
-    "test:watch": "vitest watch"
-  },
-  "dependencies": {
-    "clsx": "^2.1.1",
-    "react": "19.2.5",
-    "react-dom": "19.2.5",
-    "react-icons": "^5.6.0",
-    "zod": "^4.4.3"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "prettify": "turbo prettify -- --write '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}'"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/chrome": "0.0.258",
-    "@types/node": "20.11.5",
-    "@types/react": "18.2.48",
-    "@types/react-dom": "18.2.18",
-    "@vitejs/plugin-react": "^6.0.1",
-    "@vitest/coverage-v8": "^4.1.5",
-    "eslint": "^10.2.0",
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
     "eslint-plugin-react": "^7.37.5",
-    "globals": "^17.4.0",
-    "jiti": "^2.6.1",
-    "jsdom": "^29.1.1",
-    "plasmo": "^0.90.5",
+    "globals": "^17.6.0",
+    "jiti": "^2.7.0",
     "prettier": "3.2.4",
-    "sass": "^1.70.0",
+    "turbo": "latest",
     "typescript": "5.3.3",
-    "typescript-eslint": "^8.58.0",
-    "vitest": "^4.1.5"
+    "typescript-eslint": "^8.59.2"
   },
-  "manifest": {
-    "host_permissions": [
-      "https://*/*"
-    ]
+  "dependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "vitest": "^4.1.5"
   }
 }

@@ -1,0 +1,33 @@
+
+
+> @prompthub/frontend@0.0.1 prettify /Users/levkovskyivolodymyr/Developement/Web/PromptHub/Apps/frontend
+> prettier --write 'src/**/*.{ts,tsx,js,jsx,json,scss,css}' --write '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}'
+
+src/components/Header/Header.module.scss(node:12075) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2K[1Gsrc/components/Header/Header.module.scss 17ms
+src/components/Header/Header.test.tsx[2K[1Gsrc/components/Header/Header.test.tsx 32ms
+src/components/Header/Header.tsx[2K[1Gsrc/components/Header/Header.tsx 8ms
+src/components/ListSection/ListSection.module.scss[2K[1Gsrc/components/ListSection/ListSection.module.scss 1ms
+src/components/ListSection/ListSection.test.tsx[2K[1Gsrc/components/ListSection/ListSection.test.tsx 5ms
+src/components/ListSection/ListSection.tsx[2K[1Gsrc/components/ListSection/ListSection.tsx 4ms
+src/components/PromptCard/PromptCard.module.scss[2K[1Gsrc/components/PromptCard/PromptCard.module.scss 2ms
+src/components/PromptCard/PromptCard.tsx[2K[1Gsrc/components/PromptCard/PromptCard.tsx 6ms
+src/components/PromptIcon/PromptIcon.tsx[2K[1Gsrc/components/PromptIcon/PromptIcon.tsx 2ms
+src/components/SearchField/SearchField.module.scss[2K[1G[90msrc/components/SearchField/SearchField.module.scss[39m 1ms (unchanged)
+src/components/SearchField/SearchField.test.tsx[2K[1Gsrc/components/SearchField/SearchField.test.tsx 5ms
+src/components/SearchField/SearchField.tsx[2K[1G[90msrc/components/SearchField/SearchField.tsx[39m 5ms (unchanged)
+src/components/ui/Btn/Btn.module.scss[2K[1Gsrc/components/ui/Btn/Btn.module.scss 2ms
+src/components/ui/Btn/Btn.tsx[2K[1G[90msrc/components/ui/Btn/Btn.tsx[39m 5ms (unchanged)
+src/components/ui/iconRender/iconStore.module.scss[2K[1Gsrc/components/ui/iconRender/iconStore.module.scss 1ms
+src/components/ui/iconRender/iconStore.tsx[2K[1Gsrc/components/ui/iconRender/iconStore.tsx 6ms
+src/components/ui/InputEl/InputEl.module.scss[2K[1Gsrc/components/ui/InputEl/InputEl.module.scss 4ms
+src/components/ui/InputEl/InputEl.tsx[2K[1Gsrc/components/ui/InputEl/InputEl.tsx 4ms
+src/globals.scss.css[2K[1Gsrc/globals.scss.css 1ms
+src/pages/Auth/Auth.module.scss[2K[1Gsrc/pages/Auth/Auth.module.scss 1ms
+src/pages/Auth/Auth.test.tsx[2K[1G[90msrc/pages/Auth/Auth.test.tsx[39m 9ms (unchanged)
+src/pages/Auth/Auth.tsx[2K[1Gsrc/pages/Auth/Auth.tsx 5ms
+src/pages/Home/Home.tsx[2K[1Gsrc/pages/Home/Home.tsx 2ms
+src/popup.scss[2K[1Gsrc/popup.scss 1ms
+src/popup.test.tsx[2K[1Gsrc/popup.test.tsx 3ms
+src/popup.tsx[2K[1G[90msrc/popup.tsx[39m 2ms (unchanged)

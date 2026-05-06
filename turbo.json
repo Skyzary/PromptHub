@@ -11,6 +11,9 @@
     "test": {
       "outputs": []
     },
+    "prettify": {
+      "cache": true
+    },
     "dev": {
       "cache": false,
       "persistent": true

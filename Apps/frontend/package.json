@@ -7,7 +7,7 @@
     "build": "plasmo build",
     "package": "plasmo package",
     "test": "vitest run",
-    "prettify": "prettier --write src/**/*.ts"
+    "prettify": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,scss,css}'"
   },
   "dependencies": {
     "@prompthub/shared": "workspace:*",

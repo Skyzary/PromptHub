@@ -4,46 +4,44 @@
   width: 100%;
   align-items: center;
   gap: 12px;
-  background-color: #F8FAFC;
+  background-color: #f8fafc;
   padding: 12px;
   border-radius: 12px;
   transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
 }
-.promptCard:hover{
+.promptCard:hover {
   background-color: #bdbdc5;
-
 }
 .promptCardContent {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 2px;
-
 }
 
-.promptCardTitle, .promptCardDescription{
+.promptCardTitle,
+.promptCardDescription {
   margin-block-start: 0;
   margin-block-end: 0;
 }
 
-.promptCardTitle{
+.promptCardTitle {
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
 }
-.promptCardDescription{
+.promptCardDescription {
   line-height: 16px;
   font-size: 12px;
 }
-.promptCardTitleWrapper{
+.promptCardTitleWrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
-.copyBtn{
-  color: #94A3B8;
+.copyBtn {
+  color: #94a3b8;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -52,9 +50,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
-
-
 }
-.copyBtnIcon:hover{
+.copyBtnIcon:hover {
   color: #298aea;
 }

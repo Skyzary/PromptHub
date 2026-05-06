@@ -1,0 +1,13 @@
+
+
+> @prompthub/backend@ prettify /Users/levkovskyivolodymyr/Developement/Web/PromptHub/Apps/backend
+> prettier --write 'src/**/*.{ts,tsx,js,jsx,json,scss,css}' --write '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}'
+
+src/models/userModule.test.ts(node:12064) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2K[1Gsrc/models/userModule.test.ts 37ms
+src/models/userModule.ts[2K[1Gsrc/models/userModule.ts 4ms
+src/server.ts[2K[1Gsrc/server.ts 4ms
+src/utils/dbConnect.test.ts[2K[1Gsrc/utils/dbConnect.test.ts 13ms
+src/utils/dbConnect.ts[2K[1Gsrc/utils/dbConnect.ts 4ms
+src/utils/logger.ts[2K[1Gsrc/utils/logger.ts 1ms

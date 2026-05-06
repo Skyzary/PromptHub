@@ -10,7 +10,7 @@ interface InputElProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export default function InputEl({ className, icon, ...rest }: InputElProps) {
   const inputClasses = clsx(className, css.Input, { [css.hasIcon]: !!icon })
-  
+
   return (
     <div className={css.inputContainer}>
       {icon && <div className={css.iconWrapper}>{icon}</div>}

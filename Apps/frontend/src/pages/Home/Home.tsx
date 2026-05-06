@@ -10,10 +10,9 @@ export default function Home() {
       <Btn
         styleType={"primary"}
         onClick={() => {}}
-        type="button"
-      >
+        type="button">
         Create new prompt
       </Btn>
-</>
+    </>
   )
 }

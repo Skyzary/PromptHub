@@ -1,8 +1,8 @@
+import { userAuthSchema } from "@prompthub/shared"
 import { MdOutlineAlternateEmail, MdOutlineLock } from "react-icons/md"
 
 import Btn from "~src/components/ui/Btn/Btn"
 import InputEl from "~src/components/ui/InputEl/InputEl"
-import { userAuthSchema } from "@prompthub/shared"
 
 import css from "./Auth.module.scss"
 

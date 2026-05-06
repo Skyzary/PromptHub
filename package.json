@@ -14,8 +14,8 @@
     "prettify": "turbo prettify -- --write '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}'"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.3.0",
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^17.6.0",
     "jiti": "^2.7.0",

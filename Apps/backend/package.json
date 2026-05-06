@@ -5,7 +5,8 @@
     "dev": "node -r dotenv/config src/server.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prettify": "prettier --write src/**/*.ts"
   },
   "type": "module",
   "dependencies": {

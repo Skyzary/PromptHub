@@ -10,7 +10,8 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "test": "turbo test"
+    "test": "turbo test",
+    "prettify": "turbo prettify --pattern '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}  '"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -28,10 +28,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: prettify
+      - name: Prettify code
         run: pnpm run prettify
 
-      - name: commit and push changes
+      - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: prettify"
@@ -40,8 +40,14 @@ jobs:
       - name: Run Linter
         run: pnpm run lint
 
-      - name: Run Tests with Coverage
-        run: pnpm run test -- --coverage
+      - name: Run Shared Package Tests
+        run: pnpm --filter @prompthub/shared test
+
+      - name: Run Backend Tests
+        run: pnpm --filter @prompthub/backend test -- --coverage
+
+      - name: Run Frontend Tests
+        run: pnpm --filter @prompthub/frontend test -- --coverage
 
   relese:
     needs: quality-assurance
@@ -54,16 +60,16 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: install pnpm
+      - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Set-up node
+      - name: Set-up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
-      - name: install dependencies
+      - name: Install dependencies
         run: pnpm install
 
       - name: Package

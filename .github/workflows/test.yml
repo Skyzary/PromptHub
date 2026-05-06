@@ -28,11 +28,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: prettify
+      - name: Prettify code
         run: pnpm run prettify
 
-      - name: commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: prettify"
           file_pattern: '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}'
@@ -40,5 +40,11 @@ jobs:
       - name: Run Linter
         run: pnpm run lint
 
-      - name: Run Tests with Coverage
-        run: pnpm run test -- --coverage
+      - name: Run Shared Package Tests
+        run: pnpm --filter @prompthub/shared test
+
+      - name: Run Backend Tests
+        run: pnpm --filter @prompthub/backend test -- --coverage
+
+      - name: Run Frontend Tests
+        run: pnpm --filter @prompthub/frontend test -- --coverage

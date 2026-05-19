@@ -43,8 +43,12 @@ jobs:
       - name: Run Shared Package Tests
         run: pnpm --filter @prompthub/shared test
 
+      - name: Run types check
+        run: pnpm run tsc -- --noEmit
+
       - name: Run Backend Tests
         run: pnpm --filter @prompthub/backend test -- --coverage
 
       - name: Run Frontend Tests
         run: pnpm --filter @prompthub/frontend test -- --coverage
+

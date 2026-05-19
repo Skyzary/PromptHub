@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import User from "./userModule"
+import User from "./userModel.ts"
 
 describe("User Model", () => {
   it("should have the correct schema", () => {

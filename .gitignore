@@ -36,3 +36,4 @@ yarn-error.log*
 # testing
 TESTING_REPORT.md
 **/.env
+/.turbo/

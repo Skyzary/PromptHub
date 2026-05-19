@@ -44,7 +44,7 @@ jobs:
         run: pnpm --filter @prompthub/shared test
 
       - name: Run types check
-        run: npx tsc -- --noEmit
+        run: npx tsc --noEmit
 
       - name: Run Backend Tests
         run: pnpm --filter @prompthub/backend test -- --coverage

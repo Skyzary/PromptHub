@@ -26,7 +26,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Prettify code
         run: pnpm run prettify
@@ -40,16 +40,10 @@ jobs:
       - name: Run Linter
         run: pnpm run lint
 
-      - name: Run Shared Package Tests
-        run: pnpm --filter @prompthub/shared test
+      - name: Run Tests
+        run: pnpm run test
 
-      - name: Run Backend Tests
-        run: pnpm --filter @prompthub/backend test -- --coverage
-
-      - name: Run Frontend Tests
-        run: pnpm --filter @prompthub/frontend test -- --coverage
-
-  relese:
+  release:
     needs: quality-assurance
     runs-on: ubuntu-latest
     permissions:
@@ -70,10 +64,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Package
-        run: pnpm run package --browser=chrome
+        run: pnpm run package -- --browser=chrome
 
       - name: Release
         uses: softprops/action-gh-release@v2

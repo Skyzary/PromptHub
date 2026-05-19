@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
+    "type-check": "tsc --noEmit",
     "package": "plasmo package",
     "test": "vitest run",
     "lint": "pnpm exec eslint src/**/*.{ts,tsx} --no-error-on-unmatched-pattern",

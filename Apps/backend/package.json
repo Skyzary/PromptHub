@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
+    "type-check": "tsc --noEmit",
     "lint": "pnpm exec eslint src/**/*.ts --no-error-on-unmatched-pattern",
     "test": "vitest run",
     "prettify": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,scss,css}'"

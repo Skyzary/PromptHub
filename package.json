@@ -10,7 +10,9 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "type-check": "turbo type-check",
     "test": "turbo test",
+    "package": "turbo package",
     "prettify": "turbo prettify -- --write '**/src/**/*.{ts,tsx,js,jsx,json,scss,css}'"
   },
   "devDependencies": {

@@ -8,8 +8,16 @@
     "lint": {
       "outputs": []
     },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "test": {
       "outputs": []
+    },
+    "package": {
+      "dependsOn": ["build"],
+      "outputs": ["build/**"]
     },
     "prettify": {
       "cache": true

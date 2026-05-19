@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
+    "type-check": "tsc --noEmit",
     "package": "plasmo package",
     "test": "vitest run",
     "lint": "pnpm exec eslint src/**/*.{ts,tsx} --no-error-on-unmatched-pattern",
@@ -12,7 +13,6 @@
   },
   "dependencies": {
     "@prompthub/shared": "workspace:*",
-    "@vitejs/plugin-react": "^6.0.1",
     "clsx": "^2.1.1",
     "react": "19.2.5",
     "react-dom": "19.2.5",
@@ -26,6 +26,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/chrome": "0.0.258",
     "@types/jest": "^30.0.0",
+    "@types/node": "^25.9.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitest/coverage-v8": "^4.1.5",

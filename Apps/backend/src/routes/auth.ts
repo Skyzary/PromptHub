@@ -21,7 +21,7 @@ router.post("/api/auth/register", async (req, res): Promise<void> => {
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = new User({ email, password: hashedPassword })
     await user.save()
-    const token = generateToken({ id: user._id })
+    const token = generateToken({ id: (user._id as any).toString() })
     const userObj = user.toObject()
     const { password: _, ...secureUser } = userObj
 
@@ -32,3 +32,5 @@ router.post("/api/auth/register", async (req, res): Promise<void> => {
     res.status(500).json({ message: "Internal server error", cause: error })
   }
 })
+
+export default router

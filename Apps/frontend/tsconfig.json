@@ -1,11 +1,14 @@
 {
   "extends": "plasmo/templates/tsconfig.base",
   "exclude": ["node_modules"],
-  "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
+  "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx", "vitest.config.ts", "vitest.setup.ts"],
   "compilerOptions": {
     "paths": {
       "~*": ["./*"]
     },
-    "baseUrl": "."
+    "baseUrl": ".",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   }
 }

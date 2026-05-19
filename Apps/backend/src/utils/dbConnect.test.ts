@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { dbConnect } from "./dbConnect"
-import { logger } from "./logger"
+import { dbConnect } from "./dbConnect.ts"
+import { logger } from "./logger.ts"
 
 vi.mock("mongoose", () => ({
   default: {

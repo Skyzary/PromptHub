@@ -19,6 +19,7 @@ export default function Popup() {
     Boolean(getAccessToken() || getRefreshToken())
   )
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     return subscribeAuthChange((authenticated) => {
@@ -31,8 +32,8 @@ export default function Popup() {
       <Header />
       {isAuthenticated ? (
         <>
-          <SearchField onSearch={(query) => console.log(query)} />
-          <ListSection />
+          <SearchField onSearch={(query) => setSearchQuery(query)} />
+          <ListSection searchQuery={searchQuery} />
           <AddNewBtn onClick={() => setIsCreateModalOpen(true)} />
           <CreatePromptModal
             isOpen={isCreateModalOpen}

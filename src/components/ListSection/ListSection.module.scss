@@ -1,23 +1,66 @@
-.listSection{
-  padding-left: 12px;
-  padding-right: 12px;
-  max-height: 300px;
-  overflow-y: scroll;
+.listSection {
+  padding: 4px 16px 12px 16px;
   width: 100%;
-  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.listHeading{
-  color: #64748B;
-  font-weight: 300;
-  font-size: 12px;
+
+.listHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.listHeading {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 11.5px;
   line-height: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.listContainer{
+
+.listCount {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  background-color: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.listContainer {
   list-style: none;
-  padding-left: 0 ;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 310px;
+  overflow-y: auto;
+  padding-right: 2px;
 
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
 
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 999px;
+  }
+}
+
+.emptyState {
+  padding: 28px 16px;
+  text-align: center;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 18px;
 }

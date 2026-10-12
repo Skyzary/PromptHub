@@ -1,3 +1,5 @@
-.addNewBtn{
-  margin: 0  auto;
+.addNewBtn {
+  width: calc(100% - 32px);
+  margin: 4px 16px 0 16px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
 }

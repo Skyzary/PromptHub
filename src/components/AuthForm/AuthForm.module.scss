@@ -1,107 +1,109 @@
+@use "../../vars.scss" as *;
+
 .authContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 16px 16px 4px 16px;
-  gap: 16px;
+  padding: $space-4xl $space-4xl $space-sm $space-4xl;
+  gap: $space-4xl;
 }
 
 .tabs {
   display: flex;
-  background-color: #f1f5f9;
-  border-radius: 12px;
-  padding: 4px;
-  gap: 4px;
+  background-color: $bg-secondary;
+  border-radius: $radius-2xl;
+  padding: $space-sm;
+  gap: $space-sm;
 }
 
 .tabBtn {
   flex: 1;
-  height: 36px;
+  height: $btn-height-tab;
   border: none;
-  border-radius: 8px;
+  border-radius: $radius-md;
   background-color: transparent;
-  color: #64748b;
-  font-size: 13.5px;
-  font-weight: 600;
+  color: $text-muted;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color $transition-medium,
+    color $transition-medium,
+    box-shadow $transition-medium;
 }
 
 .tabBtnActive {
-  background-color: #ffffff;
-  color: #0f172a;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+  background-color: $bg-primary;
+  color: $text-primary;
+  box-shadow: $shadow-sm;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: $space-3xl;
 }
 
 .fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: $space-base;
 }
 
 .label {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #334155;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $text-secondary;
 }
 
 .input {
-  padding: 10px 12px;
+  padding: $space-xl $space-2xl;
   width: 100%;
-  height: 42px;
-  background-color: #f1f5f9;
-  color: #0f172a;
-  border-radius: 10px;
-  font-size: 14px;
-  border: 1px solid transparent;
+  height: $btn-height-auth-input;
+  background-color: $bg-secondary;
+  color: $text-primary;
+  border-radius: $radius-xl;
+  font-size: $font-size-xl;
+  border: $border-width solid $border-color;
   transition:
-    border-color 0.15s ease,
-    background-color 0.15s ease,
-    box-shadow 0.15s ease;
+    border-color $transition-fast,
+    background-color $transition-fast,
+    box-shadow $transition-fast;
 
   &::placeholder {
-    color: #94a3b8;
+    color: $text-muted;
   }
 
   &:focus {
-    border-color: #2563eb;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    border-color: $color-primary-600;
+    background-color: $bg-primary;
+    box-shadow: $shadow-focus-ring;
     outline: none;
   }
 }
 
 .hint {
-  font-size: 11.5px;
-  line-height: 16px;
-  color: #64748b;
+  font-size: $font-size-xs;
+  line-height: $line-height-xs;
+  color: $text-muted;
 }
 
 .errorBox {
-  padding: 10px 12px;
-  border-radius: 10px;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  font-size: 12px;
-  line-height: 16px;
+  padding: $space-xl $space-2xl;
+  border-radius: $radius-xl;
+  background-color: $color-red-50;
+  border: $border-width solid $color-red-200;
+  color: $color-red-600;
+  font-size: $font-size-sm;
+  line-height: $line-height-xs;
 }
 
 .submitBtn {
-  margin-top: 2px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+  margin-top: $space-2xs;
+  box-shadow: $shadow-primary-btn;
 
   &:disabled {
-    opacity: 0.65;
+    opacity: $opacity-disabled;
     cursor: not-allowed;
   }
 }

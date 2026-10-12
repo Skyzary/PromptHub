@@ -1,5 +1,7 @@
+@use "../../vars.scss" as *;
+
 .addNewBtn {
-  width: calc(100% - 32px);
-  margin: 4px 16px 0 16px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+  width: calc(100% - #{$space-4xl * 2});
+  margin: $space-sm $space-4xl $space-0 $space-4xl;
+  box-shadow: $shadow-primary-btn;
 }

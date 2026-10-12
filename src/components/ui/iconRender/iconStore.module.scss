@@ -1,8 +1,10 @@
+@use "../../../vars.scss" as *;
+
 .iconWrapper {
-  width: 40px;
-  height: 40px;
+  width: $size-icon-box;
+  height: $size-icon-box;
   flex-shrink: 0;
-  border-radius: 10px;
+  border-radius: $radius-xl;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,41 +15,41 @@
 }
 
 .developmentIcon {
-  color: #2563eb;
+  color: $color-primary-600;
 }
 
 .developmentIconWrapper {
-  background-color: #dbeafe;
+  background-color: $color-primary-100;
 }
 
 .dailyIcon {
-  color: #9333ea;
+  color: $color-purple-600;
 }
 
 .dailyIconWrapper {
-  background-color: #f3e8ff;
+  background-color: $color-purple-50;
 }
 
 .educationIcon {
-  color: #16a34a;
+  color: $color-green-600;
 }
 
 .educationIconWrapper {
-  background-color: #dcfce7;
+  background-color: $color-green-100;
 }
 
 .entertainmentIcon {
-  color: #db2777;
+  color: $color-pink-600;
 }
 
 .entertainmentIconWrapper {
-  background-color: #fce7f3;
+  background-color: $color-pink-100;
 }
 
 .defaultIcon {
-  color: #475569;
+  color: $color-slate-600;
 }
 
 .defaultIconWrapper {
-  background-color: #f1f5f9;
+  background-color: $color-slate-100;
 }

@@ -1,9 +1,11 @@
+@use "../../vars.scss" as *;
+
 .listSection {
-  padding: 4px 16px 12px 16px;
+  padding: $space-sm $space-4xl $space-2xl $space-4xl;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: $space-xl;
 }
 
 .listHeaderRow {
@@ -13,35 +15,35 @@
 }
 
 .listHeading {
-  color: #64748b;
-  font-weight: 600;
-  font-size: 11.5px;
-  line-height: 16px;
+  color: $text-muted;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-xs;
+  line-height: $line-height-xs;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: $letter-spacing-wide;
 }
 
 .listCount {
-  font-size: 11px;
-  font-weight: 600;
-  color: #475569;
-  background-color: #f1f5f9;
-  padding: 2px 8px;
-  border-radius: 999px;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  color: $text-secondary;
+  background-color: $bg-secondary;
+  padding: $space-2xs $space-lg;
+  border-radius: $radius-pill;
 }
 
 .listContainer {
   list-style: none;
-  padding-left: 0;
+  padding-left: $space-0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 310px;
+  gap: $space-lg;
+  max-height: $list-max-height;
   overflow-y: auto;
-  padding-right: 2px;
+  padding-right: $space-2xs;
 
   &::-webkit-scrollbar {
-    width: 5px;
+    width: $scrollbar-width;
   }
 
   &::-webkit-scrollbar-track {
@@ -49,18 +51,18 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 999px;
+    background-color: $border-color;
+    border-radius: $radius-pill;
   }
 }
 
 .emptyState {
-  padding: 28px 16px;
+  padding: $space-6xl $space-4xl;
   text-align: center;
-  background-color: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  border-radius: 12px;
-  color: #64748b;
-  font-size: 13px;
-  line-height: 18px;
+  background-color: $bg-card;
+  border: $border-width dashed $border-color;
+  border-radius: $radius-2xl;
+  color: $text-muted;
+  font-size: $font-size-base;
+  line-height: $line-height-md;
 }

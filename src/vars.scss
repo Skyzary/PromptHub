@@ -1,0 +1,229 @@
+// ==========================================
+// 1. Color Palette & Theme Tokens
+// ==========================================
+
+// Light theme base palette
+$color-white: #ffffff;
+$color-slate-50: #f8fafc;
+$color-slate-100: #f1f5f9;
+$color-slate-200: #e2e8f0;
+$color-slate-300: #cbd5e1;
+$color-slate-400: #94a3b8;
+$color-slate-500: #64748b;
+$color-slate-600: #475569;
+$color-slate-700: #334155;
+$color-slate-800: #1e293b;
+$color-slate-900: #0f172a;
+
+// Primary / Brand Blue
+$color-primary-50: #eff6ff;
+$color-primary-100: #dbeafe;
+$color-primary-200: #bfdbfe;
+$color-primary-500: #3b82f6;
+$color-primary-600: #2563eb;
+$color-primary-700: #1d4ed8;
+$color-primary-800: #103b9a;
+$color-primary-900: #1e3a8a;
+
+// Indigo (Edit Title & accents)
+$color-indigo-50: #eef2ff;
+$color-indigo-100: #e0e7ff;
+$color-indigo-200: #c7d2fe;
+$color-indigo-300: #a5b4fc;
+$color-indigo-700: #4338ca;
+$color-indigo-800: #3730a3;
+
+// Purple / Violet (Daily & Edit Tags)
+$color-purple-50: #f3e8ff;
+$color-purple-100: #e9d5ff;
+$color-purple-200: #d8b4fe;
+$color-purple-300: #c084fc;
+$color-purple-600: #9333ea;
+$color-purple-700: #7e22ce;
+$color-purple-800: #6b21a8;
+
+// Emerald / Green (Education, Copy, Save)
+$color-green-50: #ecfdf5;
+$color-green-100: #dcfce7;
+$color-green-200: #d1fae5;
+$color-green-300: #a7f3d0;
+$color-green-400: #6ee7b7;
+$color-green-600: #16a34a;
+$color-green-700: #15803d;
+$color-green-800: #047857;
+$color-green-900: #065f46;
+
+// Amber / Orange (Edit Prompt)
+$color-amber-50: #fffbeb;
+$color-amber-100: #fef3c7;
+$color-amber-200: #fde68a;
+$color-amber-300: #fcd34d;
+$color-amber-700: #b45309;
+$color-amber-800: #92400e;
+
+// Pink (Entertainment)
+$color-pink-100: #fce7f3;
+$color-pink-600: #db2777;
+
+// Red / Rose (Danger, Delete, Errors)
+$color-red-50: #fef2f2;
+$color-red-100: #ffe4e6;
+$color-red-200: #fecaca;
+$color-red-300: #fecdd3;
+$color-red-600: #dc2626;
+$color-red-700: #e11d48;
+$color-red-800: #991b1b;
+
+// Semantic CSS Custom Property References
+$bg-primary: var(--bg-primary, #{$color-white});
+$bg-secondary: var(--bg-secondary, #{$color-slate-100});
+$bg-card: var(--bg-card, #{$color-slate-50});
+$bg-hover: var(--bg-hover, #{$color-slate-200});
+$text-primary: var(--text-primary, #{$color-slate-900});
+$text-secondary: var(--text-secondary, #{$color-slate-700});
+$text-muted: var(--text-muted, #{$color-slate-500});
+$border-color: var(--border-color, #{$color-slate-200});
+$accent-color: var(--accent-color, #{$color-primary-600});
+$accent-soft: var(--accent-soft, #{$color-primary-100});
+
+// Overlays & Gradients
+$overlay-bg: rgba(15, 23, 42, 0.55);
+$gradient-logo: linear-gradient(
+  135deg,
+  $color-primary-500 0%,
+  $color-primary-600 100%
+);
+
+// ==========================================
+// 2. Typography
+// ==========================================
+
+$font-family-base:
+  "Inter",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  Helvetica,
+  Arial,
+  sans-serif;
+
+// Font Sizes
+$font-size-2xs: 11px;
+$font-size-xs: 11.5px;
+$font-size-sm: 12px;
+$font-size-md: 12.5px;
+$font-size-base: 13px;
+$font-size-lg: 13.5px;
+$font-size-xl: 14px;
+$font-size-2xl: 16px;
+$font-size-3xl: 17px;
+$font-size-icon: 20px;
+
+// Font Weights
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Line Heights
+$line-height-none: 1;
+$line-height-xs: 16px;
+$line-height-sm: 17px;
+$line-height-md: 18px;
+$line-height-lg: 19px;
+$line-height-xl: 20px;
+$line-height-2xl: 22px;
+
+// Letter Spacing
+$letter-spacing-tight: -0.02em;
+$letter-spacing-wide: 0.04em;
+
+// ==========================================
+// 3. Spacing, Padding & Gaps
+// ==========================================
+
+$space-0: 0;
+$space-2xs: 2px;
+$space-xs: 3px;
+$space-sm: 4px;
+$space-md: 5px;
+$space-base: 6px;
+$space-lg: 8px;
+$space-xl: 10px;
+$space-2xl: 12px;
+$space-3xl: 14px;
+$space-4xl: 16px;
+$space-5xl: 20px;
+$space-6xl: 28px;
+$space-search-left: 36px;
+
+// ==========================================
+// 4. Border Radius & Borders
+// ==========================================
+
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 9px;
+$radius-xl: 10px;
+$radius-2xl: 12px;
+$radius-3xl: 16px;
+$radius-pill: 999px;
+$radius-circle: 50%;
+
+$border-width: 1px;
+
+// ==========================================
+// 5. Shadows, Blur & Transitions
+// ==========================================
+
+$shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.15);
+$shadow-thumb: 0 1px 3px rgba(15, 23, 42, 0.25);
+$shadow-card-hover: 0 2px 8px rgba(15, 23, 42, 0.08);
+$shadow-logo: 0 2px 6px rgba(37, 99, 235, 0.28);
+$shadow-primary-btn: 0 4px 12px rgba(37, 99, 235, 0.22);
+$shadow-modal: 0 12px 28px rgba(15, 23, 42, 0.25);
+$shadow-focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.16);
+
+$blur-overlay: blur(2px);
+
+$transition-fast: 0.15s ease;
+$transition-normal: 0.18s ease;
+$transition-medium: 0.2s ease;
+$transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ==========================================
+// 6. Component Dimensions & Z-Index
+// ==========================================
+
+$popup-width: 400px;
+$popup-min-height: 500px;
+$header-height: 56px;
+$modal-max-width: 376px;
+$modal-max-height: calc(100vh - 24px);
+$list-max-height: 310px;
+$body-box-max-height: 170px;
+$textarea-min-height-sm: 96px;
+$textarea-min-height-lg: 110px;
+
+$size-logo: 32px;
+$size-icon-box: 40px;
+$size-theme-icon-box: 36px;
+$size-close-btn: 30px;
+
+$btn-height-xs: 28px;
+$btn-height-sm: 29px;
+$btn-height-md: 34px;
+$btn-height-tab: 36px;
+$btn-height-lg: 38px;
+$btn-height-input: 40px;
+$btn-height-auth-input: 42px;
+$btn-height-xl: 44px;
+
+$switch-width: 46px;
+$switch-height: 26px;
+$switch-thumb-size: 20px;
+$scrollbar-width: 5px;
+
+$z-modal: 100;
+$opacity-disabled: 0.65;

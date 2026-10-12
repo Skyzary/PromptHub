@@ -1,5 +1,7 @@
+@use "../../vars.scss" as *;
+
 .searchFieldContainer {
-  padding: 12px 16px;
+  padding: $space-2xl $space-4xl;
   display: flex;
   width: 100%;
 }
@@ -13,32 +15,32 @@
 
 .searchIcon {
   position: absolute;
-  left: 12px;
+  left: $space-2xl;
   pointer-events: none;
 }
 
 .searchField {
-  padding: 10px 12px 10px 36px;
+  padding: $space-xl $space-2xl $space-xl $space-search-left;
   width: 100%;
-  height: 40px;
-  background-color: #f1f5f9;
-  color: #0f172a;
-  border-radius: 10px;
-  font-size: 13.5px;
-  border: 1px solid transparent;
+  height: $btn-height-input;
+  background-color: $bg-secondary;
+  color: $text-primary;
+  border-radius: $radius-xl;
+  font-size: $font-size-lg;
+  border: $border-width solid $border-color;
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
 
   &::placeholder {
-    color: #94a3b8;
+    color: $text-muted;
   }
 
   &:focus {
-    background-color: #ffffff;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    background-color: $bg-primary;
+    border-color: $color-primary-600;
+    box-shadow: $shadow-focus-ring;
     outline: none;
   }
 }

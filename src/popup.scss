@@ -1,26 +1,50 @@
+@use "./vars.scss" as *;
+
+:root,
+:root[data-theme="light"] {
+  --bg-primary: #{$color-white};
+  --bg-secondary: #{$color-slate-100};
+  --bg-card: #{$color-slate-50};
+  --bg-hover: #{$color-slate-200};
+  --text-primary: #{$color-slate-900};
+  --text-secondary: #{$color-slate-700};
+  --text-muted: #{$color-slate-500};
+  --border-color: #{$color-slate-200};
+  --accent-color: #{$color-primary-600};
+  --accent-soft: #{$color-primary-100};
+}
+
+:root[data-theme="dark"] {
+  --bg-primary: #{$color-slate-900};
+  --bg-secondary: #{$color-slate-800};
+  --bg-card: #{$color-slate-800};
+  --bg-hover: #{$color-slate-700};
+  --text-primary: #{$color-slate-50};
+  --text-secondary: #{$color-slate-300};
+  --text-muted: #{$color-slate-400};
+  --border-color: #{$color-slate-700};
+  --accent-color: #{$color-primary-500};
+  --accent-soft: #{$color-primary-900};
+}
+
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  margin: $space-0;
+  padding: $space-0;
 }
 
 body {
-  width: 400px;
-  min-height: 500px;
-  font-family:
-    "Inter",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
-  color: #0f172a;
-  background-color: #ffffff;
+  width: $popup-width;
+  min-height: $popup-min-height;
+  font-family: $font-family-base;
+  color: $text-primary;
+  background-color: $bg-primary;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition:
+    background-color $transition-medium,
+    color $transition-medium;
 }
 
 button,
@@ -30,9 +54,14 @@ textarea {
 }
 
 .popup {
-  width: 400px;
+  width: $popup-width;
+  min-height: $popup-min-height;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  padding-bottom: 16px;
+  background-color: $bg-primary;
+  color: $text-primary;
+  padding-bottom: $space-4xl;
+  transition:
+    background-color $transition-medium,
+    color $transition-medium;
 }

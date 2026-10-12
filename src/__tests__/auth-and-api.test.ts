@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   createPrompt,
+  deleteAllPrompts,
   deletePrompt,
   fetchPrompts,
   getCachedPrompts,
@@ -337,6 +338,16 @@ describe("PromptsApi & UserApi", () => {
       })
     ).toEqual({ message: "Deleted" })
 
+    // deleteAllPrompts
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ message: "All prompts deleted" })
+    })
+    expect(await deleteAllPrompts()).toEqual({
+      message: "All prompts deleted"
+    })
+
     unsub()
   })
 
@@ -373,6 +384,8 @@ describe("PromptsApi & UserApi", () => {
         status: 200,
         json: async () => ({})
       })
-    expect(await deleteUser()).toEqual({ message: "User deleted" })
+    expect(await deleteUser({ password: "Password1!" })).toEqual({
+      message: "User deleted"
+    })
   })
 })

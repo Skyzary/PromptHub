@@ -8,6 +8,7 @@ import PromptDetailsModal from "~src/components/PromptDetailsModal/PromptDetails
 import Popup from "~src/popup"
 import * as promptsApiModule from "~src/prompts-api"
 import type { IPrompt } from "~src/types"
+import * as userApiModule from "~src/user-api"
 import * as authModule from "~src/utils/auth"
 
 const SAMPLE_PROMPT: IPrompt = {
@@ -418,7 +419,86 @@ describe("ListSection & Popup Integration", () => {
     expect(themeSwitch).toHaveAttribute("aria-checked", "false")
     expect(document.documentElement.getAttribute("data-theme")).toBe("light")
 
-    // Sign out from SettingsPage
+    // Open Delete all prompts confirmation modal, cancel, then re-open, handle error, and confirm
+    await user.click(
+      screen.getByRole("button", { name: /delete all prompts/i })
+    )
+    expect(
+      screen.getByRole("dialog", { name: /delete all prompts\?/i })
+    ).toBeInTheDocument()
+
+    // Cancel modal
+    await user.click(screen.getByRole("button", { name: /cancel/i }))
+    expect(
+      screen.queryByRole("dialog", { name: /delete all prompts\?/i })
+    ).not.toBeInTheDocument()
+
+    // Re-open modal and test error handling then success
+    await user.click(
+      screen.getByRole("button", { name: /delete all prompts/i })
+    )
+    const deleteAllSpy = vi.spyOn(promptsApiModule, "deleteAllPrompts")
+    deleteAllSpy.mockRejectedValueOnce(new Error("Delete all failed"))
+
+    await user.click(
+      screen.getByRole("button", { name: /confirm delete all/i })
+    )
+    expect(await screen.findByText("Delete all failed")).toBeInTheDocument()
+
+    deleteAllSpy.mockResolvedValueOnce({ message: "All prompts deleted" })
+    await user.click(
+      screen.getByRole("button", { name: /confirm delete all/i })
+    )
+    expect(
+      await screen.findByText("All prompts have been deleted.")
+    ).toBeInTheDocument()
+    expect(deleteAllSpy).toHaveBeenCalledTimes(2)
+
+    // Open Delete account modal, cancel, then re-open, test validation error, API error, and success
+    await user.click(screen.getByRole("button", { name: /delete account/i }))
+    expect(
+      screen.getByRole("dialog", { name: /delete account\?/i })
+    ).toBeInTheDocument()
+
+    // Cancel Delete account modal
+    await user.click(screen.getByRole("button", { name: /cancel/i }))
+    expect(
+      screen.queryByRole("dialog", { name: /delete account\?/i })
+    ).not.toBeInTheDocument()
+
+    // Re-open Delete account modal
+    await user.click(screen.getByRole("button", { name: /delete account/i }))
+
+    // Submit with invalid password -> triggers ZodError via deleteUser
+    await user.type(screen.getByLabelText(/password/i), "short")
+    await user.click(
+      screen.getByRole("button", { name: /confirm delete account/i })
+    )
+    expect(
+      await screen.findByText(/password must be at least 8 characters/i)
+    ).toBeInTheDocument()
+
+    // Enter valid password, test API error, then success
+    const deleteUserSpy = vi.spyOn(userApiModule, "deleteUser")
+    deleteUserSpy.mockRejectedValueOnce(new Error("Incorrect password"))
+
+    const passwordInput = screen.getByLabelText(/password/i)
+    await user.clear(passwordInput)
+    await user.type(passwordInput, "ValidPass1!")
+    await user.click(
+      screen.getByRole("button", { name: /confirm delete account/i })
+    )
+    expect(await screen.findByText("Incorrect password")).toBeInTheDocument()
+
+    // Succeed deleting account -> closes SettingsPage
+    deleteUserSpy.mockResolvedValueOnce({ message: "Account deleted" })
+    await user.click(
+      screen.getByRole("button", { name: /confirm delete account/i })
+    )
+    expect(deleteUserSpy).toHaveBeenLastCalledWith({ password: "ValidPass1!" })
+
+    // Re-open SettingsPage and sign out
+    await user.click(screen.getByRole("button", { name: /settings/i }))
     vi.spyOn(authModule, "logout").mockImplementation(async () => {
       authModule.clearAccessToken()
       authModule.clearRefreshToken()

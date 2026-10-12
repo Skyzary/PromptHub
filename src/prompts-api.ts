@@ -185,6 +185,20 @@ export class PromptsApi {
     invalidatePromptsCache()
     return response
   }
+
+  async deleteAllPrompts(
+    accessToken?: string
+  ): Promise<ApiMessageResponse> {
+    const response = await apiRequest<ApiMessageResponse>(
+      `${this.baseUrl}/prompts/delete/all`,
+      {
+        method: "DELETE"
+      },
+      accessToken
+    )
+    invalidatePromptsCache()
+    return response
+  }
 }
 
 export const promptsApi = new PromptsApi()
@@ -229,4 +243,10 @@ export async function deletePrompt(
   accessToken?: string
 ): Promise<ApiMessageResponse> {
   return promptsApi.deletePrompt(data, accessToken)
+}
+
+export async function deleteAllPrompts(
+  accessToken?: string
+): Promise<ApiMessageResponse> {
+  return promptsApi.deleteAllPrompts(accessToken)
 }

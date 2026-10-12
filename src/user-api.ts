@@ -1,11 +1,13 @@
 import type {
   ApiMessageResponse,
+  DeleteUserBody,
   UpdateEmailBody,
   UpdatePasswordBody
 } from "./types"
 import { apiRequest, DEFAULT_API_BASE_URL } from "./utils/api-request"
 import { invalidateRefreshToken } from "./utils/auth"
 import {
+  deleteUserSchema,
   updateEmailSchema,
   updatePasswordSchema
 } from "./validation/user-validation"
@@ -17,13 +19,23 @@ export class UserApi {
     this.baseUrl = baseUrl
   }
 
-  async deleteUser(accessToken?: string): Promise<ApiMessageResponse> {
+  async deleteUser(
+    data?: DeleteUserBody | string,
+    accessToken?: string
+  ): Promise<ApiMessageResponse> {
+    const isTokenFirstArg = typeof data === "string"
+    const resolvedAccessToken = isTokenFirstArg ? data : accessToken
+    const validated =
+      !isTokenFirstArg && data !== undefined
+        ? deleteUserSchema.parse(data)
+        : undefined
     const response = await apiRequest<ApiMessageResponse>(
       `${this.baseUrl}/users`,
       {
-        method: "DELETE"
+        method: "DELETE",
+        ...(validated ? { body: JSON.stringify(validated) } : {})
       },
-      accessToken
+      resolvedAccessToken
     )
     await invalidateRefreshToken(this.baseUrl)
     return response
@@ -62,8 +74,10 @@ export class UserApi {
 
 export const userApi = new UserApi()
 
-export const deleteUser = (accessToken?: string): Promise<ApiMessageResponse> =>
-  userApi.deleteUser(accessToken)
+export const deleteUser = (
+  data?: DeleteUserBody | string,
+  accessToken?: string
+): Promise<ApiMessageResponse> => userApi.deleteUser(data, accessToken)
 
 export const updateEmail = (
   data: UpdateEmailBody,

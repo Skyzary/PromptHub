@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react"
 import {
   MdArrowBack,
+  MdClose,
   MdDarkMode,
+  MdDeleteForever,
   MdLightMode,
-  MdLogout
+  MdLogout,
+  MdPersonRemove,
+  MdWarningAmber
 } from "react-icons/md"
+import * as z from "zod"
 
+import Btn from "~src/components/ui/Btn/Btn"
+import { deleteAllPrompts, invalidatePromptsCache } from "~src/prompts-api"
+import { deleteUser } from "~src/user-api"
 import { logout } from "~src/utils/auth"
 import {
   getTheme,
@@ -27,6 +35,15 @@ export default function SettingsPage({
 }: SettingsPageProps) {
   const [theme, setThemeState] = useState<ThemeMode>(() => getTheme())
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
+  const [isDeletingAll, setIsDeletingAll] = useState(false)
+  const [deleteAllError, setDeleteAllError] = useState<string | null>(null)
+  const [deleteAllSuccess, setDeleteAllSuccess] = useState<string | null>(null)
+
+  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false)
+  const [deleteUserPassword, setDeleteUserPassword] = useState("")
+  const [isDeletingUser, setIsDeletingUser] = useState(false)
+  const [deleteUserError, setDeleteUserError] = useState<string | null>(null)
 
   useEffect(() => {
     return subscribeThemeChange((nextTheme) => {
@@ -35,6 +52,7 @@ export default function SettingsPage({
   }, [])
 
   const isDark = theme === "dark"
+  const isBusy = isLoggingOut || isDeletingAll || isDeletingUser
 
   const handleToggleTheme = () => {
     const next = toggleTheme()
@@ -42,13 +60,78 @@ export default function SettingsPage({
   }
 
   const handleLogout = async () => {
-    if (isLoggingOut) return
+    if (isBusy) return
     setIsLoggingOut(true)
     try {
       await logout()
       onBack()
     } finally {
       setIsLoggingOut(false)
+    }
+  }
+
+  const openConfirmDeleteAllModal = () => {
+    setDeleteAllError(null)
+    setDeleteAllSuccess(null)
+    setIsConfirmModalOpen(true)
+  }
+
+  const closeConfirmDeleteAllModal = () => {
+    if (isDeletingAll) return
+    setDeleteAllError(null)
+    setIsConfirmModalOpen(false)
+  }
+
+  const handleConfirmDeleteAll = async () => {
+    if (isDeletingAll) return
+    setDeleteAllError(null)
+    setIsDeletingAll(true)
+    try {
+      await deleteAllPrompts()
+      setIsConfirmModalOpen(false)
+      setDeleteAllSuccess("All prompts have been deleted.")
+    } catch (err) {
+      setDeleteAllError(
+        err instanceof Error ? err.message : "Failed to delete all prompts"
+      )
+    } finally {
+      setIsDeletingAll(false)
+    }
+  }
+
+  const openConfirmDeleteUserModal = () => {
+    setDeleteUserPassword("")
+    setDeleteUserError(null)
+    setIsDeleteUserModalOpen(true)
+  }
+
+  const closeConfirmDeleteUserModal = () => {
+    if (isDeletingUser) return
+    setDeleteUserPassword("")
+    setDeleteUserError(null)
+    setIsDeleteUserModalOpen(false)
+  }
+
+  const handleConfirmDeleteUser = async (e?: React.FormEvent) => {
+    e?.preventDefault()
+    if (isDeletingUser) return
+    setDeleteUserError(null)
+    setIsDeletingUser(true)
+    try {
+      await deleteUser({ password: deleteUserPassword })
+      invalidatePromptsCache()
+      setIsDeleteUserModalOpen(false)
+      onBack()
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setDeleteUserError(err.issues[0]?.message || "Invalid password")
+      } else {
+        setDeleteUserError(
+          err instanceof Error ? err.message : "Failed to delete account"
+        )
+      }
+    } finally {
+      setIsDeletingUser(false)
     }
   }
 
@@ -95,16 +178,190 @@ export default function SettingsPage({
       </div>
 
       {isAuthenticated && (
-        <div className={css.card}>
-          <span className={css.sectionLabel}>Account</span>
-          <button
-            type="button"
-            className={css.logoutBtn}
-            onClick={() => void handleLogout()}
-            disabled={isLoggingOut}>
-            <MdLogout size={16} />
-            <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
-          </button>
+        <>
+          <div className={css.card}>
+            <span className={css.sectionLabel}>Danger Zone</span>
+            {deleteAllSuccess && (
+              <div className={css.successBox}>{deleteAllSuccess}</div>
+            )}
+            <button
+              type="button"
+              className={css.deleteAllBtn}
+              onClick={openConfirmDeleteAllModal}
+              disabled={isBusy}>
+              <MdDeleteForever size={17} />
+              <span>Delete all prompts</span>
+            </button>
+            <button
+              type="button"
+              className={css.deleteAllBtn}
+              onClick={openConfirmDeleteUserModal}
+              disabled={isBusy}>
+              <MdPersonRemove size={17} />
+              <span>Delete account</span>
+            </button>
+          </div>
+
+          <div className={css.card}>
+            <span className={css.sectionLabel}>Account</span>
+            <button
+              type="button"
+              className={css.logoutBtn}
+              onClick={() => void handleLogout()}
+              disabled={isBusy}>
+              <MdLogout size={16} />
+              <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
+            </button>
+          </div>
+        </>
+      )}
+
+      {isConfirmModalOpen && (
+        <div
+          className={css.modalOverlay}
+          onClick={closeConfirmDeleteAllModal}>
+          <div
+            className={css.confirmModal}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-all-modal-title">
+            <div className={css.confirmModalHeader}>
+              <div className={css.confirmTitleGroup}>
+                <div className={css.warningIconWrapper}>
+                  <MdWarningAmber size={20} />
+                </div>
+                <h3
+                  id="delete-all-modal-title"
+                  className={css.confirmModalTitle}>
+                  Delete all prompts?
+                </h3>
+              </div>
+              <button
+                type="button"
+                className={css.closeModalBtn}
+                onClick={closeConfirmDeleteAllModal}
+                disabled={isDeletingAll}
+                aria-label="Close confirmation modal">
+                <MdClose size={16} />
+              </button>
+            </div>
+
+            <p className={css.confirmModalText}>
+              Are you sure you want to delete all your prompts? This action is
+              permanent and cannot be undone.
+            </p>
+
+            {deleteAllError && (
+              <div className={css.errorBox}>{deleteAllError}</div>
+            )}
+
+            <div className={css.confirmModalActions}>
+              <Btn
+                type="button"
+                styleType="secondary"
+                className={css.modalActionBtn}
+                onClick={closeConfirmDeleteAllModal}
+                disabled={isDeletingAll}>
+                <MdClose size={15} />
+                <span>Cancel</span>
+              </Btn>
+              <button
+                type="button"
+                className={css.confirmDeleteBtn}
+                onClick={() => void handleConfirmDeleteAll()}
+                disabled={isDeletingAll}>
+                <MdDeleteForever size={17} />
+                <span>
+                  {isDeletingAll ? "Deleting..." : "Confirm delete all"}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDeleteUserModalOpen && (
+        <div
+          className={css.modalOverlay}
+          onClick={closeConfirmDeleteUserModal}>
+          <form
+            className={css.confirmModal}
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={(e) => void handleConfirmDeleteUser(e)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-user-modal-title"
+            noValidate>
+            <div className={css.confirmModalHeader}>
+              <div className={css.confirmTitleGroup}>
+                <div className={css.warningIconWrapper}>
+                  <MdPersonRemove size={20} />
+                </div>
+                <h3
+                  id="delete-user-modal-title"
+                  className={css.confirmModalTitle}>
+                  Delete account?
+                </h3>
+              </div>
+              <button
+                type="button"
+                className={css.closeModalBtn}
+                onClick={closeConfirmDeleteUserModal}
+                disabled={isDeletingUser}
+                aria-label="Close delete account modal">
+                <MdClose size={16} />
+              </button>
+            </div>
+
+            <p className={css.confirmModalText}>
+              Enter your password to permanently delete your account and all
+              associated prompts. This action cannot be undone.
+            </p>
+
+            <div className={css.fieldGroup}>
+              <label
+                htmlFor="delete-user-password"
+                className={css.fieldLabel}>
+                Password
+              </label>
+              <input
+                id="delete-user-password"
+                type="password"
+                className={css.passwordInput}
+                value={deleteUserPassword}
+                onChange={(e) => setDeleteUserPassword(e.target.value)}
+                placeholder="Enter your password"
+                disabled={isDeletingUser}
+                autoFocus
+              />
+            </div>
+
+            {deleteUserError && (
+              <div className={css.errorBox}>{deleteUserError}</div>
+            )}
+
+            <div className={css.confirmModalActions}>
+              <Btn
+                type="button"
+                styleType="secondary"
+                className={css.modalActionBtn}
+                onClick={closeConfirmDeleteUserModal}
+                disabled={isDeletingUser}>
+                <MdClose size={15} />
+                <span>Cancel</span>
+              </Btn>
+              <button
+                type="submit"
+                className={css.confirmDeleteBtn}
+                disabled={isDeletingUser}>
+                <MdPersonRemove size={17} />
+                <span>
+                  {isDeletingUser ? "Deleting..." : "Confirm delete account"}
+                </span>
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </section>

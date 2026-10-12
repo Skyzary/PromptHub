@@ -1,55 +1,38 @@
-name: test.yml
+name: CI
 
 on:
+  push:
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main, develop]
 
 jobs:
   quality-assurance:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 20
-          cache: 'pnpm'
+        uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
-
-      - name: prettify
-        run: pnpm run prettier -- --write
-
-      - name: commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "chore: prettify"
-          file_pattern: 'src/**/*.{ts,tsx,js,jsx,json,scss,css}'
+        run: pnpm install --frozen-lockfile
 
       - name: Run Linter
         run: pnpm run lint
 
+      - name: Run Typecheck
+        run: pnpm run typecheck
 
       - name: Run Tests with Coverage
-        run: pnpm run test -- --coverage
-
-      - name: Test Report
-        uses: dorny/test-reporter@v3
-        if: success() || failure()
-        with:
-          name: Vitest Tests
-          path: test-results.json
-          reporter: vitestson
+        run: pnpm run test:coverage

@@ -1,42 +1,57 @@
-.header{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 398px;
-    height: 57px;
-    padding-left: 16px;
-    padding-right: 16px;
-    border-bottom: 1px solid #E2E8F0;
-
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
 }
-.logoContainer{
-    display: flex;
-    flex-direction: row;
-    height: 20px;
-    align-items: center;
-    gap: 8px;
-}
-.logoWrapper{
-    width: 32px;
-    height: 32px;
-    background-color: #2563EB;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
 
+.logoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
-.settingsBtn{
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    width: 17px;
-    height: 17px;
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
+.logoWrapper {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 22px;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  margin: 0;
+}
+
+.settingsBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
 }

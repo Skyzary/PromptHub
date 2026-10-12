@@ -1,0 +1,165 @@
+@use "../../vars.scss" as *;
+
+.settingsPage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: $space-3xl $space-4xl $space-sm $space-4xl;
+  gap: $space-3xl;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-xl;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-base;
+  background-color: $bg-secondary;
+  border: $border-width solid $border-color;
+  color: $text-secondary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  padding: $space-base $space-2xl;
+  border-radius: $radius-lg;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $text-primary;
+  }
+}
+
+.pageTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin: $space-0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2xl;
+  background-color: $bg-card;
+  border: $border-width solid $border-color;
+  border-radius: $radius-2xl;
+  padding: $space-3xl;
+}
+
+.sectionLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wide;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2xl;
+}
+
+.settingInfo {
+  display: flex;
+  align-items: center;
+  gap: $space-xl;
+}
+
+.themeIconWrapper {
+  width: $size-theme-icon-box;
+  height: $size-theme-icon-box;
+  border-radius: $radius-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $accent-soft;
+  color: $accent-color;
+  flex-shrink: 0;
+}
+
+.settingTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2xs;
+}
+
+.settingTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.settingSubtitle {
+  font-size: $font-size-sm;
+  color: $text-muted;
+}
+
+.switchBtn {
+  position: relative;
+  width: $switch-width;
+  height: $switch-height;
+  border-radius: $radius-pill;
+  background-color: $color-slate-300;
+  border: none;
+  padding: $space-xs;
+  cursor: pointer;
+  transition: background-color $transition-medium;
+  flex-shrink: 0;
+}
+
+.switchBtnActive {
+  background-color: $color-primary-600;
+}
+
+.switchThumb {
+  display: block;
+  width: $switch-thumb-size;
+  height: $switch-thumb-size;
+  border-radius: $radius-circle;
+  background-color: $color-white;
+  box-shadow: $shadow-thumb;
+  transition: transform $transition-medium;
+}
+
+.switchBtnActive .switchThumb {
+  transform: translateX($space-5xl);
+}
+
+.logoutBtn {
+  width: 100%;
+  height: $btn-height-lg;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-base;
+  background-color: $color-red-100;
+  color: $color-red-700;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-xl;
+  border: $border-width solid $color-red-300;
+  cursor: pointer;
+  transition:
+    background-color $transition-normal,
+    color $transition-normal;
+
+  &:hover:not(:disabled) {
+    background-color: $color-red-700;
+    color: $color-white;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}

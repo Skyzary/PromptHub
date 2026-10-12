@@ -396,5 +396,37 @@ describe("ListSection & Popup Integration", () => {
     expect(
       screen.queryByRole("heading", { name: "New Prompt" })
     ).not.toBeInTheDocument()
+
+    // Open SettingsPage via Header settings button, toggle dark theme, and navigate back
+    await user.click(screen.getByRole("button", { name: /settings/i }))
+    expect(
+      screen.getByRole("heading", { name: "Settings" })
+    ).toBeInTheDocument()
+    expect(screen.getByText("Light mode is enabled")).toBeInTheDocument()
+
+    const themeSwitch = screen.getByRole("switch", { name: /dark theme/i })
+    expect(themeSwitch).toHaveAttribute("aria-checked", "false")
+
+    await user.click(themeSwitch)
+    expect(themeSwitch).toHaveAttribute("aria-checked", "true")
+    expect(screen.getByText("Dark mode is enabled")).toBeInTheDocument()
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
+    expect(window.localStorage.getItem("prompthub_theme")).toBe("dark")
+
+    // Toggle back to light mode
+    await user.click(themeSwitch)
+    expect(themeSwitch).toHaveAttribute("aria-checked", "false")
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light")
+
+    // Sign out from SettingsPage
+    vi.spyOn(authModule, "logout").mockImplementation(async () => {
+      authModule.clearAccessToken()
+      authModule.clearRefreshToken()
+      return { message: "Logged out" }
+    })
+    await user.click(screen.getByRole("button", { name: /sign out/i }))
+    expect(
+      await screen.findByRole("button", { name: /create account/i })
+    ).toBeInTheDocument()
   })
 })

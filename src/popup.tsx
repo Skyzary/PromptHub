@@ -6,11 +6,13 @@ import CreatePromptModal from "~src/components/CreatePromptModal/CreatePromptMod
 import Header from "~src/components/Header/Header"
 import ListSection from "~src/components/ListSection/ListSection"
 import SearchField from "~src/components/SearchField/SearchField"
+import SettingsPage from "~src/components/SettingsPage/SettingsPage"
 import {
   getAccessToken,
   getRefreshToken,
   subscribeAuthChange
 } from "~src/utils/auth"
+import { getTheme } from "~src/utils/theme"
 
 import "./popup.scss"
 
@@ -19,9 +21,11 @@ export default function Popup() {
     Boolean(getAccessToken() || getRefreshToken())
   )
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
+    getTheme()
     return subscribeAuthChange((authenticated) => {
       setIsAuthenticated(authenticated)
     })
@@ -29,8 +33,16 @@ export default function Popup() {
 
   return (
     <div className={"popup"}>
-      <Header />
-      {isAuthenticated ? (
+      <Header
+        isSettingsOpen={isSettingsOpen}
+        onSettingsClick={() => setIsSettingsOpen((prev) => !prev)}
+      />
+      {isSettingsOpen ? (
+        <SettingsPage
+          isAuthenticated={isAuthenticated}
+          onBack={() => setIsSettingsOpen(false)}
+        />
+      ) : isAuthenticated ? (
         <>
           <SearchField onSearch={(query) => setSearchQuery(query)} />
           <ListSection searchQuery={searchQuery} />

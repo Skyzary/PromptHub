@@ -109,33 +109,6 @@
   line-height: $line-height-lg;
 }
 
-.presetTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-base;
-}
-
-.tagChip {
-  padding: $space-sm $space-xl;
-  border-radius: $radius-pill;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  border: $border-width solid $border-color;
-  background-color: $bg-card;
-  color: $text-secondary;
-  cursor: pointer;
-  transition:
-    background-color $transition-fast,
-    border-color $transition-fast,
-    color $transition-fast;
-}
-
-.tagChipActive {
-  background-color: $color-primary-100;
-  border-color: $color-primary-600;
-  color: $color-primary-700;
-}
-
 .errorBox {
   padding: $space-xl $space-2xl;
   border-radius: $radius-xl;

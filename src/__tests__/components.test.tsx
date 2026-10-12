@@ -55,7 +55,7 @@ describe("UI & Presentational Components", () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
-  it("renders SearchField and emits query changes", async () => {
+  it("renders SearchField, emits query changes, and clears via button or Escape", async () => {
     const user = userEvent.setup()
     const onSearch = vi.fn()
     render(<SearchField onSearch={onSearch} />)
@@ -63,6 +63,16 @@ describe("UI & Presentational Components", () => {
     const input = screen.getByRole("textbox", { name: /search prompts/i })
     await user.type(input, "react")
     expect(onSearch).toHaveBeenLastCalledWith("react")
+
+    // Clear button resets query
+    await user.click(screen.getByRole("button", { name: /clear search/i }))
+    expect(onSearch).toHaveBeenLastCalledWith("")
+    expect(input).toHaveValue("")
+
+    // Escape key resets query
+    await user.type(input, "typescript{Escape}")
+    expect(onSearch).toHaveBeenLastCalledWith("")
+    expect(input).toHaveValue("")
   })
 
   it("renders PromptIcon for all preset types and unknown fallback", () => {

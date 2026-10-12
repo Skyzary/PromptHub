@@ -1,26 +1,41 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { MdClose } from "react-icons/md"
 
 import css from "./SearchField.module.scss"
 
-/**
- * A search field component that allows users to search for prompts.
- * @param onSearch - A callback function that is called when the user types in the search field.
- * @returns A search field component.
- * @example
- * ```tsx
- * <SearchField onSearch={(query) => console.log(query)} />
- * ```
- */
-
 interface SearchFieldProps {
+  value?: string
   onSearch: (query: string) => void
 }
-export default function SearchField({ onSearch }: SearchFieldProps) {
-  const [query, setQuery] = useState("")
+
+export default function SearchField({
+  value,
+  onSearch
+}: SearchFieldProps) {
+  const [query, setQuery] = useState(value ?? "")
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setQuery(value)
+    }
+  }, [value])
+
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const newQuery = e.target.value
     setQuery(newQuery)
     onSearch(newQuery)
+  }
+
+  function handleClear() {
+    setQuery("")
+    onSearch("")
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape" && query) {
+      e.preventDefault()
+      handleClear()
+    }
   }
 
   return (
@@ -42,10 +57,20 @@ export default function SearchField({ onSearch }: SearchFieldProps) {
           type="text"
           value={query}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           className={css.searchField}
           aria-label="Search prompts"
-          placeholder={"Search prompts"}
+          placeholder="Search by title, text, or #tag..."
         />
+        {query && (
+          <button
+            type="button"
+            className={css.clearBtn}
+            onClick={handleClear}
+            aria-label="Clear search">
+            <MdClose size={15} />
+          </button>
+        )}
       </div>
     </div>
   )

@@ -20,7 +20,7 @@
 }
 
 .searchField {
-  padding: $space-xl $space-2xl $space-xl $space-search-left;
+  padding: $space-xl $space-search-left $space-xl $space-search-left;
   width: 100%;
   height: $btn-height-input;
   background-color: $bg-secondary;
@@ -42,5 +42,28 @@
     border-color: $color-primary-600;
     box-shadow: $shadow-focus-ring;
     outline: none;
+  }
+}
+
+.clearBtn {
+  position: absolute;
+  right: $space-lg;
+  width: $btn-height-xs;
+  height: $btn-height-xs;
+  border: none;
+  background: transparent;
+  color: $text-muted;
+  border-radius: $radius-circle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $text-primary;
   }
 }

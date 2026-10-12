@@ -301,34 +301,6 @@
   color: $text-muted;
 }
 
-.presetTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-base;
-}
-
-.tagChip {
-  min-height: $btn-height-xs;
-  padding: $space-sm $space-xl;
-  border-radius: $radius-pill;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  border: $border-width solid $border-color;
-  background-color: $bg-card;
-  color: $text-secondary;
-  cursor: pointer;
-  transition:
-    background-color $transition-fast,
-    border-color $transition-fast,
-    color $transition-fast;
-}
-
-.tagChipActive {
-  background-color: $color-primary-100;
-  border-color: $color-primary-600;
-  color: $color-primary-700;
-}
-
 .metaInfo {
   display: flex;
   flex-wrap: wrap;

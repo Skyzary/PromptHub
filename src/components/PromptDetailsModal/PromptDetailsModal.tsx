@@ -22,14 +22,6 @@ import type { IPrompt } from "~src/types"
 
 import css from "./PromptDetailsModal.module.scss"
 
-const PRESET_TAGS = [
-  "development",
-  "daily",
-  "education",
-  "entertainment",
-  "other"
-] as const
-
 interface PromptDetailsModalProps {
   prompt: IPrompt | null
   isOpen: boolean
@@ -43,19 +35,6 @@ function getPromptId(prompt: IPrompt): string {
   return prompt._id ?? withFallbackId.id ?? withFallbackId.promptId ?? ""
 }
 
-function splitTags(tags: string[] = []): {
-  preset: string[]
-  customInput: string
-} {
-  const presetSet = new Set<string>(PRESET_TAGS)
-  const preset = tags.filter((tag) => presetSet.has(tag))
-  const custom = tags.filter((tag) => !presetSet.has(tag))
-  return {
-    preset,
-    customInput: custom.join(", ")
-  }
-}
-
 export default function PromptDetailsModal({
   prompt,
   isOpen,
@@ -66,7 +45,6 @@ export default function PromptDetailsModal({
   const [currentPrompt, setCurrentPrompt] = useState<IPrompt | null>(prompt)
   const [title, setTitle] = useState("")
   const [body, setBody] = useState("")
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [customTagsInput, setCustomTagsInput] = useState("")
 
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -87,9 +65,7 @@ export default function PromptDetailsModal({
     if (prompt) {
       setTitle(prompt.title)
       setBody(prompt.body)
-      const { preset, customInput } = splitTags(prompt.tags)
-      setSelectedTags(preset)
-      setCustomTagsInput(customInput)
+      setCustomTagsInput((prompt.tags ?? []).join(", "))
     }
     setIsEditingTitle(false)
     setIsEditingBody(false)
@@ -121,13 +97,7 @@ export default function PromptDetailsModal({
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean)
-    return Array.from(new Set([...selectedTags, ...customTags]))
-  }
-
-  const togglePresetTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    )
+    return Array.from(new Set(customTags))
   }
 
   const handleCopyPrompt = async () => {
@@ -199,9 +169,7 @@ export default function PromptDetailsModal({
         updatedAt: new Date()
       }
       setCurrentPrompt(updated)
-      const { preset, customInput } = splitTags(nextTags)
-      setSelectedTags(preset)
-      setCustomTagsInput(customInput)
+      setCustomTagsInput(nextTags.join(", "))
       setIsEditingTags(false)
       onUpdated?.(updated)
     } catch (err) {
@@ -232,9 +200,7 @@ export default function PromptDetailsModal({
         const nextTags = buildCombinedTags()
         await updatePromptTags({ promptId, tags: nextTags })
         updated = { ...updated, tags: nextTags, updatedAt: new Date() }
-        const { preset, customInput } = splitTags(nextTags)
-        setSelectedTags(preset)
-        setCustomTagsInput(customInput)
+        setCustomTagsInput(nextTags.join(", "))
         setIsEditingTags(false)
         setIsSavingTags(false)
       }
@@ -287,9 +253,7 @@ export default function PromptDetailsModal({
   }
 
   const cancelTagsEdit = () => {
-    const { preset, customInput } = splitTags(currentPrompt.tags)
-    setSelectedTags(preset)
-    setCustomTagsInput(customInput)
+    setCustomTagsInput((currentPrompt.tags ?? []).join(", "))
     setIsEditingTags(false)
     setError(null)
   }
@@ -392,25 +356,11 @@ export default function PromptDetailsModal({
 
           {isEditingTags ? (
             <>
-              <div className={css.presetTags}>
-                {PRESET_TAGS.map((tag) => {
-                  const isActive = selectedTags.includes(tag)
-                  return (
-                    <button
-                      key={tag}
-                      type="button"
-                      className={`${css.tagChip} ${isActive ? css.tagChipActive : ""}`}
-                      onClick={() => togglePresetTag(tag)}>
-                      {tag}
-                    </button>
-                  )
-                })}
-              </div>
               <input
                 type="text"
                 value={customTagsInput}
                 onChange={(e) => setCustomTagsInput(e.target.value)}
-                placeholder="Additional tags (comma separated)"
+                placeholder="Tags (comma separated)"
                 className={css.input}
               />
               <div className={css.editButtonsRow}>

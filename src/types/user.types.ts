@@ -20,6 +20,10 @@ export interface UpdatePasswordBody {
   newPassword: string
 }
 
+export interface DeleteUserBody {
+  password: string
+}
+
 export interface UserParams {
   email: string
 }

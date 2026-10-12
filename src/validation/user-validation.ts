@@ -21,3 +21,7 @@ export const updateEmailSchema = z.object({
 export const updatePasswordSchema = z.object({
   newPassword: passwordSchema
 })
+
+export const deleteUserSchema = z.object({
+  password: passwordSchema
+})

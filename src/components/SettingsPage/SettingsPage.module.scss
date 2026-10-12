@@ -142,6 +142,34 @@
   align-items: center;
   justify-content: center;
   gap: $space-base;
+  background-color: $bg-secondary;
+  color: $text-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-xl;
+  border: $border-width solid $border-color;
+  cursor: pointer;
+  transition:
+    background-color $transition-normal,
+    color $transition-normal;
+
+  &:hover:not(:disabled) {
+    background-color: $bg-hover;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.deleteAllBtn {
+  width: 100%;
+  height: $btn-height-lg;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-base;
   background-color: $color-red-100;
   color: $color-red-700;
   font-size: $font-size-base;
@@ -156,6 +184,210 @@
   &:hover:not(:disabled) {
     background-color: $color-red-700;
     color: $color-white;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.successBox {
+  padding: $space-xl $space-2xl;
+  border-radius: $radius-xl;
+  background-color: $color-green-50;
+  border: $border-width solid $color-green-300;
+  color: $color-green-800;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-xs;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: $space-0;
+  background-color: $overlay-bg;
+  backdrop-filter: $blur-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2xl;
+  z-index: $z-modal;
+}
+
+.confirmModal {
+  width: 100%;
+  max-width: $modal-max-width;
+  background-color: $bg-primary;
+  color: $text-primary;
+  border: $border-width solid $border-color;
+  border-radius: $radius-3xl;
+  padding: $space-4xl;
+  box-shadow: $shadow-modal;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3xl;
+}
+
+.confirmModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-xl;
+  padding-bottom: $space-2xl;
+  border-bottom: $border-width solid $border-color;
+}
+
+.confirmTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: $space-xl;
+}
+
+.warningIconWrapper {
+  width: $size-theme-icon-box;
+  height: $size-theme-icon-box;
+  border-radius: $radius-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-red-100;
+  color: $color-red-700;
+  flex-shrink: 0;
+}
+
+.confirmModalTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin: $space-0;
+}
+
+.closeModalBtn {
+  background: $bg-secondary;
+  border: $border-width solid $border-color;
+  color: $text-secondary;
+  font-size: $font-size-2xl;
+  line-height: $line-height-none;
+  cursor: pointer;
+  width: $size-close-btn;
+  height: $size-close-btn;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: $bg-hover;
+    color: $text-primary;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.confirmModalText {
+  font-size: $font-size-base;
+  line-height: $line-height-lg;
+  color: $text-secondary;
+  margin: $space-0;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-base;
+}
+
+.fieldLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $text-secondary;
+}
+
+.passwordInput {
+  width: 100%;
+  height: $btn-height-input;
+  padding: $space-0 $space-2xl;
+  border-radius: $radius-xl;
+  border: $border-width solid $border-color;
+  background-color: $bg-card;
+  color: $text-primary;
+  font-size: $font-size-base;
+  outline: none;
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    border-color: $color-primary-600;
+    box-shadow: $shadow-focus-ring;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.errorBox {
+  padding: $space-xl $space-2xl;
+  border-radius: $radius-xl;
+  background-color: $color-red-50;
+  border: $border-width solid $color-red-200;
+  color: $color-red-600;
+  font-size: $font-size-md;
+  line-height: $line-height-xs;
+}
+
+.confirmModalActions {
+  display: flex;
+  gap: $space-lg;
+}
+
+.modalActionBtn {
+  height: $btn-height-lg;
+  padding-top: $space-0;
+  padding-bottom: $space-0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-xl;
+}
+
+.confirmDeleteBtn {
+  width: 100%;
+  height: $btn-height-lg;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-md;
+  background-color: $color-red-600;
+  color: $color-white;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-xl;
+  border: $border-width solid $color-red-700;
+  cursor: pointer;
+  transition:
+    background-color $transition-normal,
+    color $transition-normal;
+
+  &:hover:not(:disabled) {
+    background-color: $color-red-700;
   }
 
   &:disabled {

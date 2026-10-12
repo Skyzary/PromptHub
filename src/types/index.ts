@@ -18,6 +18,7 @@ export type {
   AuthLoginResponse,
   AuthRefreshResponse,
   CreateUserBody,
+  DeleteUserBody,
   IUser,
   Payload,
   UpdateEmailBody,

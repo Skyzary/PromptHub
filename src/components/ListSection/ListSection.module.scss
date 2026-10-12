@@ -65,4 +65,27 @@
   color: $text-muted;
   font-size: $font-size-base;
   line-height: $line-height-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-xl;
+}
+
+.resetFilterBtn {
+  padding: $space-sm $space-2xl;
+  border-radius: $radius-md;
+  border: $border-width solid $border-color;
+  background-color: $bg-secondary;
+  color: $text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $text-primary;
+  }
 }

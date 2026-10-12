@@ -31,6 +31,10 @@ export default function Popup() {
     })
   }, [])
 
+  const handleClearFilters = () => {
+    setSearchQuery("")
+  }
+
   return (
     <div className={"popup"}>
       <Header
@@ -44,8 +48,14 @@ export default function Popup() {
         />
       ) : isAuthenticated ? (
         <>
-          <SearchField onSearch={(query) => setSearchQuery(query)} />
-          <ListSection searchQuery={searchQuery} />
+          <SearchField
+            value={searchQuery}
+            onSearch={(query) => setSearchQuery(query)}
+          />
+          <ListSection
+            searchQuery={searchQuery}
+            onClearFilters={handleClearFilters}
+          />
           <AddNewBtn onClick={() => setIsCreateModalOpen(true)} />
           <CreatePromptModal
             isOpen={isCreateModalOpen}

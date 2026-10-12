@@ -49,11 +49,6 @@ describe("CreatePromptModal", () => {
     fireEvent.submit(form)
     expect(await screen.findByText("Title is required")).toBeInTheDocument()
 
-    // Toggle off default tag and toggle back on, plus add another preset tag
-    await user.click(screen.getByRole("button", { name: "development" }))
-    await user.click(screen.getByRole("button", { name: "development" }))
-    await user.click(screen.getByRole("button", { name: "daily" }))
-
     // Fill title, body, add custom tags
     await user.type(screen.getByLabelText("Title"), "My Prompt")
     await user.type(
@@ -61,7 +56,7 @@ describe("CreatePromptModal", () => {
       "Prompt template content"
     )
     await user.type(
-      screen.getByPlaceholderText(/additional tags/i),
+      screen.getByPlaceholderText(/tags \(comma separated\)/i),
       "custom1, custom2"
     )
 
@@ -84,13 +79,17 @@ describe("CreatePromptModal", () => {
       screen.getByLabelText("Prompt text"),
       "Prompt template content"
     )
+    await user.type(
+      screen.getByPlaceholderText(/tags \(comma separated\)/i),
+      "typescript, frontend"
+    )
     createPromptSpy.mockResolvedValueOnce({ message: "Created" })
     await user.click(screen.getByRole("button", { name: "Create" }))
 
     expect(createPromptSpy).toHaveBeenLastCalledWith({
       title: "My Prompt",
       body: "Prompt template content",
-      tags: ["development"]
+      tags: ["typescript", "frontend"]
     })
     expect(onCreated).toHaveBeenCalledTimes(1)
   })
@@ -156,18 +155,18 @@ describe("PromptDetailsModal", () => {
     })
     expect(await screen.findByText("Updated TS Prompt")).toBeInTheDocument()
 
-    // Edit tags (toggle off development, toggle on education)
+    // Edit tags via custom tags input
     await user.click(screen.getByRole("button", { name: /edit tags/i }))
-    await user.click(screen.getByRole("button", { name: "development" }))
-    await user.click(screen.getByRole("button", { name: "education" }))
-    const customTagsInput = screen.getByPlaceholderText(/additional tags/i)
+    const customTagsInput = screen.getByPlaceholderText(
+      /tags \(comma separated\)/i
+    )
     await user.clear(customTagsInput)
-    await user.type(customTagsInput, "clean-code")
+    await user.type(customTagsInput, "architecture, clean-code")
     await user.click(screen.getByRole("button", { name: /save tags/i }))
 
     expect(updateTagsSpy).toHaveBeenCalledWith({
       promptId: SAMPLE_PROMPT._id,
-      tags: ["education", "clean-code"]
+      tags: ["architecture", "clean-code"]
     })
     expect(await screen.findByText("clean-code")).toBeInTheDocument()
 
@@ -300,11 +299,11 @@ describe("ListSection & Popup Integration", () => {
     expect(screen.getByText("TypeScript Refactoring")).toBeInTheDocument()
     expect(screen.getByText("Daily Planner")).toBeInTheDocument()
 
-    // Filter by search query
+    // Filter by search query (including #tag syntax)
     rerender(
       <ListSection
         prompts={prompts}
-        searchQuery="daily"
+        searchQuery="#daily planner"
       />
     )
     expect(screen.queryByText("TypeScript Refactoring")).not.toBeInTheDocument()
@@ -383,10 +382,16 @@ describe("ListSection & Popup Integration", () => {
       promptsApiModule.invalidatePromptsCache()
     })
 
-    // Search prompts from Popup SearchField
+    // Search prompts from Popup SearchField and reset via Reset search button
     const searchInput = screen.getByRole("textbox", { name: /search prompts/i })
-    await user.type(searchInput, "TypeScript")
+    await user.type(searchInput, "NoMatchingPrompt")
+    expect(
+      screen.getByText("No prompts match your search.")
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole("button", { name: /reset search/i }))
     expect(screen.getByText("TypeScript Refactoring")).toBeInTheDocument()
+    expect(searchInput).toHaveValue("")
 
     // Open and close CreatePromptModal from AddNewBtn
     await user.click(screen.getByRole("button", { name: /create new prompt/i }))

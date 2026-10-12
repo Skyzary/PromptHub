@@ -14,11 +14,13 @@ import css from "./ListSection.module.scss"
 interface ListSectionProps {
   prompts?: IPrompt[]
   searchQuery?: string
+  onClearFilters?: () => void
 }
 
 export default function ListSection({
   prompts: externalPrompts,
-  searchQuery = ""
+  searchQuery = "",
+  onClearFilters
 }: ListSectionProps) {
   const [prompts, setPrompts] = useState<IPrompt[]>(
     () => externalPrompts ?? getCachedPrompts() ?? []
@@ -60,21 +62,37 @@ export default function ListSection({
   }
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
-  const filteredPrompts = normalizedQuery
-    ? prompts.filter(
-        (prompt) =>
-          prompt.title.toLowerCase().includes(normalizedQuery) ||
-          prompt.body.toLowerCase().includes(normalizedQuery) ||
-          prompt.tags?.some((tag) =>
-            tag.toLowerCase().includes(normalizedQuery)
+  const queryTokens = normalizedQuery
+    ? normalizedQuery.split(/\s+/).filter(Boolean)
+    : []
+  const isFiltering = queryTokens.length > 0
+
+  const filteredPrompts = isFiltering
+    ? prompts.filter((prompt) => {
+        const titleLower = prompt.title.toLowerCase()
+        const bodyLower = prompt.body.toLowerCase()
+        const tagsLower = (prompt.tags ?? []).map((t) => t.toLowerCase())
+
+        return queryTokens.every((token) => {
+          if (token.startsWith("#") && token.length > 1) {
+            const tagToken = token.slice(1)
+            return tagsLower.some((tag) => tag.includes(tagToken))
+          }
+          return (
+            titleLower.includes(token) ||
+            bodyLower.includes(token) ||
+            tagsLower.some((tag) => tag.includes(token))
           )
-      )
+        })
+      })
     : prompts
 
   return (
     <section className={css.listSection}>
       <div className={css.listHeaderRow}>
-        <h2 className={css.listHeading}>Recent & Favorites</h2>
+        <h2 className={css.listHeading}>
+          {isFiltering ? "Search Results" : "Recent & Favorites"}
+        </h2>
         <span className={css.listCount}>{filteredPrompts.length}</span>
       </div>
       {filteredPrompts.length > 0 ? (
@@ -91,9 +109,19 @@ export default function ListSection({
         </ul>
       ) : (
         <div className={css.emptyState}>
-          {normalizedQuery
-            ? "No prompts match your search."
-            : "No prompts yet. Create your first prompt below!"}
+          <span>
+            {isFiltering
+              ? "No prompts match your search."
+              : "No prompts yet. Create your first prompt below!"}
+          </span>
+          {isFiltering && onClearFilters && (
+            <button
+              type="button"
+              className={css.resetFilterBtn}
+              onClick={onClearFilters}>
+              Reset search
+            </button>
+          )}
         </div>
       )}
       <PromptDetailsModal

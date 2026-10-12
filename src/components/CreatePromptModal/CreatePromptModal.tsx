@@ -6,14 +6,6 @@ import { createPrompt, invalidatePromptsCache } from "~src/prompts-api"
 
 import css from "./CreatePromptModal.module.scss"
 
-const PRESET_TAGS = [
-  "development",
-  "daily",
-  "education",
-  "entertainment",
-  "other"
-] as const
-
 interface CreatePromptModalProps {
   isOpen: boolean
   onClose: () => void
@@ -27,7 +19,6 @@ export default function CreatePromptModal({
 }: CreatePromptModalProps) {
   const [title, setTitle] = useState("")
   const [body, setBody] = useState("")
-  const [selectedTags, setSelectedTags] = useState<string[]>(["development"])
   const [customTagsInput, setCustomTagsInput] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -36,16 +27,9 @@ export default function CreatePromptModal({
     return null
   }
 
-  const togglePresetTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    )
-  }
-
   const resetForm = () => {
     setTitle("")
     setBody("")
-    setSelectedTags(["development"])
     setCustomTagsInput("")
     setError(null)
   }
@@ -62,12 +46,14 @@ export default function CreatePromptModal({
     setError(null)
     setIsSubmitting(true)
 
-    const customTags = customTagsInput
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean)
-
-    const tags = Array.from(new Set([...selectedTags, ...customTags]))
+    const tags = Array.from(
+      new Set(
+        customTagsInput
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
+      )
+    )
 
     try {
       await createPrompt({ title, body, tags })
@@ -158,27 +144,17 @@ export default function CreatePromptModal({
           </div>
 
           <div className={css.fieldGroup}>
-            <span className={css.label}>Category & Tags</span>
-            <div className={css.presetTags}>
-              {PRESET_TAGS.map((tag) => {
-                const isActive = selectedTags.includes(tag)
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    className={`${css.tagChip} ${isActive ? css.tagChipActive : ""}`}
-                    onClick={() => togglePresetTag(tag)}>
-                    {tag}
-                  </button>
-                )
-              })}
-            </div>
+            <label
+              htmlFor="prompt-custom-tags"
+              className={css.label}>
+              Tags
+            </label>
             <input
               id="prompt-custom-tags"
               type="text"
               value={customTagsInput}
               onChange={(e) => setCustomTagsInput(e.target.value)}
-              placeholder="Additional tags (comma separated)"
+              placeholder="Tags (comma separated)"
               className={css.input}
             />
           </div>

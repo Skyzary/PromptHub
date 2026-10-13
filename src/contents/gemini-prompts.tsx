@@ -15,6 +15,7 @@ import {
   detectGeminiPageTheme,
   findGeminiInput,
   findGeminiInputContainer,
+  GEMINI_INPUT_SELECTOR,
   getOrCreateGeminiRootContainer,
   handleGeminiSendTrigger,
   handleGeminiTemplateKeyDown,
@@ -224,6 +225,9 @@ export const GeminiPromptsOverlay = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [theme, setTheme] = useState<ThemeMode>(() => detectPageTheme())
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
+  const selectedIndexRef = useRef<number>(selectedIndex)
+  selectedIndexRef.current = selectedIndex
+  const listRef = useRef<HTMLUListElement | null>(null)
 
   const [position, setPosition] = useState<GeminiPopoverPosition>({
     top: 24,
@@ -330,48 +334,79 @@ export const GeminiPromptsOverlay = () => {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (handleGeminiTemplateKeyDown(event)) {
+      // 1. If drawer is closed, delegate to template variable keyboard handling
+      if (!isOpen) {
+        handleGeminiTemplateKeyDown(event)
         return
       }
 
+      // 2. Drawer is open:
       if (event.key === "Escape") {
+        event.preventDefault()
+        event.stopPropagation()
         setIsOpen(false)
         return
       }
 
-      if (!isOpen) {
-        return
-      }
-
       const target = event.target as Node | null
-      const isInsidePopover = popoverRef.current?.contains(target)
+      const isInsidePopover = Boolean(popoverRef.current?.contains(target))
+      const isGeminiInputTarget =
+        target === activeInputRef.current ||
+        (target instanceof HTMLElement && Boolean(findGeminiInput(target)))
 
-      if (isInsidePopover) {
+      // Allow navigation when interacting with popover, Gemini input, or document body
+      if (
+        isInsidePopover ||
+        isGeminiInputTarget ||
+        !target ||
+        target === document.body
+      ) {
         if (event.key === "ArrowDown") {
           event.preventDefault()
-          setSelectedIndex(
-            (prev) => (prev + 1) % (filteredPromptsRef.current.length || 1)
-          )
+          event.stopPropagation()
+          setSelectedIndex((prev) => {
+            const count = Math.max(1, filteredPromptsRef.current.length)
+            const next = (prev + 1) % count
+            selectedIndexRef.current = next
+            return next
+          })
           return
         }
 
         if (event.key === "ArrowUp") {
           event.preventDefault()
+          event.stopPropagation()
           setSelectedIndex((prev) => {
-            const count = filteredPromptsRef.current.length || 1
-            return (prev - 1 + count) % count
+            const count = Math.max(1, filteredPromptsRef.current.length)
+            const next = (prev - 1 + count) % count
+            selectedIndexRef.current = next
+            return next
           })
           return
         }
 
-        if (event.key === "Enter" && !event.shiftKey) {
+        if (
+          (event.key === "Enter" &&
+            !event.shiftKey &&
+            !event.ctrlKey &&
+            !event.metaKey &&
+            !event.altKey) ||
+          event.key === "Tab"
+        ) {
           const list = filteredPromptsRef.current
-          if (selectedIndex >= 0 && selectedIndex < list.length) {
+          const currentIdx = selectedIndexRef.current
+          if (list.length > 0 && currentIdx >= 0 && currentIdx < list.length) {
             event.preventDefault()
-            handleSelectPrompt(list[selectedIndex])
+            event.stopPropagation()
+            handleSelectPrompt(list[currentIdx])
             return
           }
         }
+      }
+
+      // If key was not handled by drawer, let template handler process it
+      if (handleGeminiTemplateKeyDown(event)) {
+        return
       }
     }
 
@@ -396,7 +431,7 @@ export const GeminiPromptsOverlay = () => {
       document.removeEventListener("submit", handleSubmit, true)
       document.removeEventListener("keydown", handleKeyDown, true)
     }
-  }, [isOpen, selectedIndex])
+  }, [isOpen])
 
   // Keep drawer aligned on window resize or scroll
   useEffect(() => {
@@ -459,11 +494,31 @@ export const GeminiPromptsOverlay = () => {
 
   useEffect(() => {
     setSelectedIndex(0)
+    selectedIndexRef.current = 0
   }, [searchQuery])
 
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedIndex(0)
+      selectedIndexRef.current = 0
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen || !listRef.current) return
+    const buttons = listRef.current.querySelectorAll("button")
+    const activeBtn = buttons[selectedIndex]
+    activeBtn?.scrollIntoView?.({ block: "nearest" })
+  }, [selectedIndex, isOpen])
+
   const handleSelectPrompt = (prompt: IPrompt) => {
-    if (activeInputRef.current) {
-      insertTextIntoGeminiInput(activeInputRef.current, prompt.body)
+    const input =
+      activeInputRef.current ??
+      findGeminiInput(document.activeElement) ??
+      document.querySelector<HTMLElement>(GEMINI_INPUT_SELECTOR)
+    if (input) {
+      activeInputRef.current = input
+      insertTextIntoGeminiInput(input, prompt.body)
     }
     setIsOpen(false)
   }
@@ -546,7 +601,9 @@ export const GeminiPromptsOverlay = () => {
             : "No prompts match your search."}
         </div>
       ) : (
-        <ul className={css.list}>
+        <ul
+          ref={listRef}
+          className={css.list}>
           {filteredPrompts.map((prompt, index) => (
             <li key={prompt._id}>
               <button

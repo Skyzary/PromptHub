@@ -6,6 +6,7 @@ import {
   PROMPTHUB_GET_PROMPTS_MESSAGE,
   registerBackgroundMessageListener
 } from "../background"
+import { POPOVER_OFFSET_PX } from "../contents/gemini-dom"
 import GeminiPromptsOverlay, {
   computePopoverPosition,
   detectPageTheme,
@@ -248,7 +249,7 @@ describe("Background script & Gemini content script", () => {
         y: 50,
         toJSON: () => ({})
       })
-      expect(belowPos.top).toBe(112)
+      expect(belowPos.top).toBe(100 + POPOVER_OFFSET_PX)
       expect(belowPos.left).toBe(12)
     })
 
@@ -757,6 +758,86 @@ describe("Background script & Gemini content script", () => {
       fireEvent(window, new Event("resize"))
       fireEvent(window, new Event("scroll"))
       expect(dialog).toBeInTheDocument()
+    })
+
+    it("supports keyboard navigation from the Gemini input element", async () => {
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: mockPrompts,
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.focusIn(textarea)
+
+      const dialog = await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      expect(dialog).toBeInTheDocument()
+
+      await waitFor(() => {
+        expect(screen.getByText("Code Review Assistant")).toBeInTheDocument()
+      })
+
+      // ArrowDown navigates to second item
+      fireEvent.keyDown(textarea, { key: "ArrowDown" })
+      // ArrowUp navigates back to first item
+      fireEvent.keyDown(textarea, { key: "ArrowUp" })
+      // ArrowDown again
+      fireEvent.keyDown(textarea, { key: "ArrowDown" })
+
+      // Press Enter to select the prompt (second item: mockPrompts[1])
+      fireEvent.keyDown(textarea, { key: "Enter" })
+
+      // Dialog should close and prompt body should be inserted
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      expect(textarea.value).toBe(mockPrompts[1].body)
+    })
+
+    it("supports selecting prompt with Tab key and closing with Escape from Gemini input", async () => {
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: mockPrompts,
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(textarea)
+
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText("Code Review Assistant")).toBeInTheDocument()
+      })
+
+      // Press Tab to select currently active item (mockPrompts[0])
+      fireEvent.keyDown(textarea, { key: "Tab" })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      expect(textarea.value).toBe(mockPrompts[0].body)
+
+      // Re-open and close with Escape
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.keyDown(textarea, { key: "Escape" })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
     })
   })
 })

@@ -1,8 +1,10 @@
 import React, { useState } from "react"
 import * as z from "zod"
 
+import TemplateHighlight from "~src/components/TemplateHighlight/TemplateHighlight"
 import Btn from "~src/components/ui/Btn/Btn"
 import { createPrompt, invalidatePromptsCache } from "~src/prompts-api"
+import { hasTemplateVariables } from "~src/utils/template"
 
 import css from "./CreatePromptModal.module.scss"
 
@@ -136,11 +138,21 @@ export default function CreatePromptModal({
               id="prompt-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="Write your prompt template here..."
+              placeholder="Write your prompt template here (use {{variable}} for templates)..."
               className={css.textarea}
               maxLength={10000}
               required
             />
+            {hasTemplateVariables(body) && (
+              <div
+                className={css.templatePreviewBox}
+                data-testid="template-preview-box">
+                <span className={css.templatePreviewLabel}>
+                  Template preview:
+                </span>
+                <TemplateHighlight text={body} />
+              </div>
+            )}
           </div>
 
           <div className={css.fieldGroup}>

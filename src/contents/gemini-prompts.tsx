@@ -11,11 +11,17 @@ import { THEME_STORAGE_KEY, type ThemeMode } from "../utils/theme"
 import css from "./gemini-prompts.module.scss"
 
 import {
+  cleanTemplateBracketsInInput,
   computeGeminiPopoverPosition,
   detectGeminiPageTheme,
   findGeminiInput,
   getOrCreateGeminiRootContainer,
-  insertTextIntoGeminiInput
+  handleGeminiSendTrigger,
+  handleGeminiTemplateKeyDown,
+  handleGeminiTemplatePaste,
+  handleTemplateVariableTyping,
+  insertTextIntoGeminiInput,
+  jumpToNextTemplateVariable
 } from "./gemini-dom"
 
 export const config: PlasmoCSConfig = {
@@ -28,6 +34,14 @@ export const findGeminiInputTarget = findGeminiInput
 export const computePopoverPosition = computeGeminiPopoverPosition
 export const insertPromptIntoElement = insertTextIntoGeminiInput
 export const detectPageTheme = detectGeminiPageTheme
+export {
+  cleanTemplateBracketsInInput,
+  handleGeminiSendTrigger,
+  handleGeminiTemplateKeyDown,
+  handleGeminiTemplatePaste,
+  handleTemplateVariableTyping,
+  jumpToNextTemplateVariable
+}
 
 async function loadPromptsForContentScript(
   forceRefresh: boolean
@@ -88,6 +102,7 @@ export const GeminiPromptsOverlay = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [theme, setTheme] = useState<ThemeMode>(() => detectPageTheme())
+
   const [position, setPosition] = useState<{ top: number; left: number }>({
     top: 24,
     left: 24
@@ -157,11 +172,17 @@ export const GeminiPromptsOverlay = () => {
       openForTarget(event.target)
     }
 
+    const handlePointerDown = (event: PointerEvent) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
+    }
+
     const handleClick = (event: MouseEvent) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
       openForTarget(event.target)
     }
 
     const handleMouseDownOutside = (event: MouseEvent) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
       const target = event.target
       if (!(target instanceof Node)) {
         return
@@ -175,21 +196,39 @@ export const GeminiPromptsOverlay = () => {
       setIsOpen(false)
     }
 
+    const handleSubmit = (event: Event) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (handleGeminiTemplateKeyDown(event)) {
+        return
+      }
+
       if (event.key === "Escape") {
         setIsOpen(false)
       }
     }
 
+    const handlePaste = (event: ClipboardEvent) => {
+      handleGeminiTemplatePaste(event)
+    }
+
     document.addEventListener("focusin", handleFocusIn, true)
-    document.addEventListener("click", handleClick, true)
+    document.addEventListener("pointerdown", handlePointerDown, true)
     document.addEventListener("mousedown", handleMouseDownOutside, true)
+    document.addEventListener("click", handleClick, true)
+    document.addEventListener("paste", handlePaste, true)
+    document.addEventListener("submit", handleSubmit, true)
     document.addEventListener("keydown", handleKeyDown, true)
 
     return () => {
       document.removeEventListener("focusin", handleFocusIn, true)
-      document.removeEventListener("click", handleClick, true)
+      document.removeEventListener("pointerdown", handlePointerDown, true)
       document.removeEventListener("mousedown", handleMouseDownOutside, true)
+      document.removeEventListener("click", handleClick, true)
+      document.removeEventListener("paste", handlePaste, true)
+      document.removeEventListener("submit", handleSubmit, true)
       document.removeEventListener("keydown", handleKeyDown, true)
     }
   }, [])

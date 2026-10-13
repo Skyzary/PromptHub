@@ -264,6 +264,24 @@
   line-height: $line-height-xl;
 }
 
+.templatePreviewBox {
+  padding: $space-xl $space-2xl;
+  border-radius: $radius-xl;
+  background-color: $bg-card;
+  border: $border-width solid $border-color;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+.templatePreviewLabel {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wide;
+}
+
 .bodyBox {
   background-color: $bg-card;
   border: $border-width solid $border-color;

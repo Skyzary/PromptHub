@@ -1,0 +1,18 @@
+@use "../../vars.scss" as *;
+
+.logoWrapper {
+  width: $size-logo;
+  height: $size-logo;
+  background: $gradient-logo;
+  box-shadow: $shadow-logo;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-lg;
+  flex-shrink: 0;
+}
+
+.logoIcon {
+  width: 12px;
+  height: 15px;
+}

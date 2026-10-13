@@ -1,7 +1,7 @@
 @use "../../vars.scss" as *;
 
 .searchFieldContainer {
-  padding: $space-2xl $space-4xl;
+  padding: $space-lg $space-4xl;
   display: flex;
   width: 100%;
 }
@@ -15,18 +15,18 @@
 
 .searchIcon {
   position: absolute;
-  left: $space-2xl;
+  left: $space-xl;
   pointer-events: none;
 }
 
 .searchField {
-  padding: $space-xl $space-search-left $space-xl $space-search-left;
+  padding: 0 $space-3xl 0 32px;
   width: 100%;
-  height: $btn-height-input;
+  height: $btn-height-tab;
   background-color: $bg-secondary;
   color: $text-primary;
-  border-radius: $radius-xl;
-  font-size: $font-size-lg;
+  border-radius: $radius-lg;
+  font-size: $font-size-md;
   border: $border-width solid $border-color;
   transition:
     background-color $transition-fast,
@@ -47,9 +47,9 @@
 
 .clearBtn {
   position: absolute;
-  right: $space-lg;
-  width: $btn-height-xs;
-  height: $btn-height-xs;
+  right: $space-md;
+  width: 24px;
+  height: 24px;
   border: none;
   background: transparent;
   color: $text-muted;

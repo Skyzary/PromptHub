@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import {
   fetchPrompts,
@@ -9,23 +9,32 @@ import type { IPrompt } from "~src/types"
 
 import PromptCard from "../PromptCard/PromptCard"
 import PromptDetailsModal from "../PromptDetailsModal/PromptDetailsModal"
+import TagFilter from "../TagFilter/TagFilter"
 import css from "./ListSection.module.scss"
 
 interface ListSectionProps {
   prompts?: IPrompt[]
   searchQuery?: string
+  selectedTag?: string | null
+  onSelectTag?: (tag: string | null) => void
   onClearFilters?: () => void
 }
 
 export default function ListSection({
   prompts: externalPrompts,
   searchQuery = "",
+  selectedTag,
+  onSelectTag,
   onClearFilters
 }: ListSectionProps) {
   const [prompts, setPrompts] = useState<IPrompt[]>(
     () => externalPrompts ?? getCachedPrompts() ?? []
   )
   const [selectedPrompt, setSelectedPrompt] = useState<IPrompt | null>(null)
+  const [internalTag, setInternalTag] = useState<string | null>(null)
+
+  const activeTag = selectedTag !== undefined ? selectedTag : internalTag
+  const setActiveTag = onSelectTag ?? setInternalTag
 
   useEffect(() => {
     if (externalPrompts) {
@@ -47,6 +56,19 @@ export default function ListSection({
     return unsubscribe
   }, [externalPrompts])
 
+  const availableTags = useMemo(() => {
+    const set = new Set<string>()
+    for (const p of prompts) {
+      if (Array.isArray(p.tags)) {
+        for (const t of p.tags) {
+          const trimmed = t.trim()
+          if (trimmed) set.add(trimmed)
+        }
+      }
+    }
+    return Array.from(set)
+  }, [prompts])
+
   const handlePromptUpdated = (updatedPrompt: IPrompt) => {
     setSelectedPrompt(updatedPrompt)
     setPrompts((prev) =>
@@ -65,10 +87,19 @@ export default function ListSection({
   const queryTokens = normalizedQuery
     ? normalizedQuery.split(/\s+/).filter(Boolean)
     : []
-  const isFiltering = queryTokens.length > 0
+  const isFiltering = queryTokens.length > 0 || Boolean(activeTag)
 
   const filteredPrompts = isFiltering
     ? prompts.filter((prompt) => {
+        if (activeTag) {
+          const hasTag = (prompt.tags ?? []).some(
+            (t) => t.toLowerCase() === activeTag.toLowerCase()
+          )
+          if (!hasTag) return false
+        }
+
+        if (queryTokens.length === 0) return true
+
         const titleLower = prompt.title.toLowerCase()
         const bodyLower = prompt.body.toLowerCase()
         const tagsLower = (prompt.tags ?? []).map((t) => t.toLowerCase())
@@ -87,6 +118,11 @@ export default function ListSection({
       })
     : prompts
 
+  const handleResetFilters = () => {
+    setActiveTag(null)
+    onClearFilters?.()
+  }
+
   return (
     <section className={css.listSection}>
       <div className={css.listHeaderRow}>
@@ -95,6 +131,13 @@ export default function ListSection({
         </h2>
         <span className={css.listCount}>{filteredPrompts.length}</span>
       </div>
+      {availableTags.length > 0 && (
+        <TagFilter
+          tags={availableTags}
+          selectedTag={activeTag}
+          onSelectTag={setActiveTag}
+        />
+      )}
       {filteredPrompts.length > 0 ? (
         <ul className={css.listContainer}>
           {filteredPrompts.map((prompt, index) => (
@@ -115,11 +158,11 @@ export default function ListSection({
               ? "No prompts match your search."
               : "No prompts yet. Create your first prompt below!"}
           </span>
-          {isFiltering && onClearFilters && (
+          {isFiltering && (
             <button
               type="button"
               className={css.resetFilterBtn}
-              onClick={onClearFilters}>
+              onClick={handleResetFilters}>
               Reset search
             </button>
           )}

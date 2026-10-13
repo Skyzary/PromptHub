@@ -6,7 +6,10 @@ import AddNewBtn from "~src/components/AddNewBtn/AddNewBtn"
 import AuthForm from "~src/components/AuthForm/AuthForm"
 import Header from "~src/components/Header/Header"
 import PromptCard from "~src/components/PromptCard/PromptCard"
-import PromptIcon from "~src/components/PromptIcon/PromptIcon"
+import PromptHubLogo from "~src/components/PromptHubLogo/PromptHubLogo"
+import PromptIcon, {
+  resolvePromptIconType
+} from "~src/components/PromptIcon/PromptIcon"
 import SearchField from "~src/components/SearchField/SearchField"
 import Btn from "~src/components/ui/Btn/Btn"
 import * as authModule from "~src/utils/auth"
@@ -75,7 +78,7 @@ describe("UI & Presentational Components", () => {
     expect(input).toHaveValue("")
   })
 
-  it("renders PromptIcon for all preset types and unknown fallback", () => {
+  it("renders PromptIcon for all preset types, aliases, tags and fallback", () => {
     const types = [
       "development",
       "daily",
@@ -89,9 +92,56 @@ describe("UI & Presentational Components", () => {
       expect(container.querySelector("svg")).toBeInTheDocument()
       unmount()
     }
+
+    // Resolves alias tags
+    expect(resolvePromptIconType(undefined, ["code"])).toBe("development")
+    expect(resolvePromptIconType(undefined, ["routine"])).toBe("daily")
+    expect(resolvePromptIconType(undefined, ["study"])).toBe("education")
+    expect(resolvePromptIconType(undefined, ["movie"])).toBe("entertainment")
+    expect(resolvePromptIconType(undefined, ["custom-random"])).toBe("other")
+    expect(resolvePromptIconType()).toBe("other")
+
+    // Renders with className
+    const { container: withClass } = render(
+      <PromptIcon
+        type="development"
+        className="custom-icon-class"
+      />
+    )
+    expect(withClass.querySelector(".custom-icon-class")).toBeInTheDocument()
+
+    // Renders with tags prop resolving alias
+    const { container: withTags } = render(
+      <PromptIcon tags={["random", "programming"]} />
+    )
+    expect(withTags.querySelector("svg")).toBeInTheDocument()
   })
 
-  it("renders PromptCard, handles card click, and copies description without bubbling", async () => {
+  it("renders PromptHubLogo with default, number and string sizes", () => {
+    const { rerender } = render(<PromptHubLogo />)
+    const logoEl = screen.getByTestId("prompthub-logo")
+    expect(logoEl).toBeInTheDocument()
+    expect(logoEl.querySelector("svg")).toBeInTheDocument()
+
+    rerender(
+      <PromptHubLogo
+        size={32}
+        className="test-logo"
+      />
+    )
+    expect(logoEl).toHaveClass("test-logo")
+    expect(logoEl).toHaveStyle({ width: "32px", height: "32px" })
+
+    rerender(
+      <PromptHubLogo
+        size="24px"
+        className="test-logo-str"
+      />
+    )
+    expect(logoEl).toHaveStyle({ width: "24px", height: "24px" })
+  })
+
+  it("renders PromptCard, handles card click, copies description without bubbling and resets copied state", async () => {
     const user = userEvent.setup()
     const onCardClick = vi.fn()
     const writeTextSpy = vi
@@ -122,6 +172,20 @@ describe("UI & Presentational Components", () => {
     // Click card -> triggers onCardClick
     await user.click(screen.getByText("TS Assistant"))
     expect(onCardClick).toHaveBeenCalledTimes(1)
+
+    // Advance timer to trigger setCopied(false)
+    vi.useFakeTimers()
+    const { container: timerContainer } = render(
+      <PromptCard
+        name="Timer Prompt"
+        description="Timer prompt desc"
+        type="development"
+      />
+    )
+    const btn = timerContainer.querySelector("button")!
+    btn.click()
+    vi.advanceTimersByTime(1600)
+    vi.useRealTimers()
   })
 })
 

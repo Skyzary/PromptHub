@@ -358,15 +358,48 @@ describe("ListSection & Popup Integration", () => {
     expect(screen.getByText("Daily Planner")).toBeInTheDocument()
 
     // Empty state when no match
+    const onClearFiltersMock = vi.fn()
     rerender(
       <ListSection
         prompts={prompts}
         searchQuery="non-existent-query"
+        onClearFilters={onClearFiltersMock}
       />
     )
     expect(
       screen.getByText("No prompts match your search.")
     ).toBeInTheDocument()
+    await user.click(screen.getByRole("button", { name: /reset search/i }))
+    expect(onClearFiltersMock).toHaveBeenCalled()
+
+    // Test prompt with no tags and no _id
+    const promptWithoutTags = {
+      title: "Untagged Prompt",
+      body: "Body without tags"
+    } as unknown as IPrompt
+    rerender(
+      <ListSection
+        prompts={[...prompts, promptWithoutTags]}
+        searchQuery=""
+      />
+    )
+    expect(screen.getByText("Untagged Prompt")).toBeInTheDocument()
+
+    // Filter by clicking tag chip
+    rerender(
+      <ListSection
+        prompts={prompts}
+        searchQuery=""
+      />
+    )
+    await user.click(screen.getByRole("button", { name: "#daily" }))
+    expect(screen.queryByText("TypeScript Refactoring")).not.toBeInTheDocument()
+    expect(screen.getByText("Daily Planner")).toBeInTheDocument()
+
+    // Reset via All button
+    await user.click(screen.getByRole("button", { name: "All" }))
+    expect(screen.getByText("TypeScript Refactoring")).toBeInTheDocument()
+    expect(screen.getByText("Daily Planner")).toBeInTheDocument()
 
     // Open details modal, update title, then delete
     rerender(

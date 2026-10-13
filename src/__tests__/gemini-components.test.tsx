@@ -10,6 +10,8 @@ import {
 import React from "react"
 import { describe, expect, it, vi } from "vitest"
 
+import PromptHubLogo from "../components/PromptHubLogo/PromptHubLogo"
+import TagFilter from "../components/TagFilter/TagFilter"
 import { GeminiHeader } from "../contents/components/GeminiHeader"
 import {
   CloseIcon,
@@ -94,6 +96,73 @@ describe("Gemini decomposed components & hooks", () => {
       expect(svgs[4].getAttribute("width")).toBe(
         String(GEMINI_ICON_SIZES.enter)
       )
+    })
+  })
+
+  describe("PromptHubLogo", () => {
+    it("renders with default and custom size", () => {
+      const { rerender } = render(<PromptHubLogo />)
+      const logo = screen.getByTestId("prompthub-logo")
+      expect(logo).toBeInTheDocument()
+
+      rerender(
+        <PromptHubLogo
+          size={24}
+          className="custom-logo"
+        />
+      )
+      expect(logo).toHaveStyle({ width: "24px", height: "24px" })
+    })
+  })
+
+  describe("TagFilter", () => {
+    it("renders null when tags array is empty", () => {
+      const { container } = render(
+        <TagFilter
+          tags={[]}
+          selectedTag={null}
+          onSelectTag={vi.fn()}
+        />
+      )
+      expect(container.firstChild).toBeNull()
+    })
+
+    it("renders All and tag chips, handles select and toggle deselect", () => {
+      const onSelect = vi.fn()
+      const { rerender } = render(
+        <TagFilter
+          tags={["coding", "review"]}
+          selectedTag={null}
+          onSelectTag={onSelect}
+        />
+      )
+
+      expect(screen.getByRole("button", { name: "All" })).toHaveAttribute(
+        "aria-pressed",
+        "true"
+      )
+      expect(screen.getByRole("button", { name: "#coding" })).toHaveAttribute(
+        "aria-pressed",
+        "false"
+      )
+
+      fireEvent.click(screen.getByRole("button", { name: "#coding" }))
+      expect(onSelect).toHaveBeenCalledWith("coding")
+
+      // Clicking active tag toggles to null
+      rerender(
+        <TagFilter
+          tags={["coding", "review"]}
+          selectedTag="coding"
+          onSelectTag={onSelect}
+        />
+      )
+      expect(screen.getByRole("button", { name: "#coding" })).toHaveAttribute(
+        "aria-pressed",
+        "true"
+      )
+      fireEvent.click(screen.getByRole("button", { name: "#coding" }))
+      expect(onSelect).toHaveBeenCalledWith(null)
     })
   })
 
@@ -186,7 +255,7 @@ describe("Gemini decomposed components & hooks", () => {
       const onHover = vi.fn()
       const listRef = { current: document.createElement("ul") }
 
-      render(
+      const { rerender } = render(
         <GeminiPromptList
           prompts={[mockItem]}
           selectedIndex={0}
@@ -199,6 +268,27 @@ describe("Gemini decomposed components & hooks", () => {
       expect(screen.getByText("Helper Prompt")).toBeInTheDocument()
       fireEvent.mouseEnter(screen.getByRole("button"))
       expect(onHover).toHaveBeenCalledWith(0)
+
+      // Rerender with selectedIndex out of bounds
+      rerender(
+        <GeminiPromptList
+          prompts={[mockItem]}
+          selectedIndex={-1}
+          onSelectPrompt={onSelect}
+          onHoverIndex={onHover}
+          listRef={listRef}
+        />
+      )
+
+      // Rerender without listRef
+      rerender(
+        <GeminiPromptList
+          prompts={[mockItem]}
+          selectedIndex={0}
+          onSelectPrompt={onSelect}
+          onHoverIndex={onHover}
+        />
+      )
     })
   })
 

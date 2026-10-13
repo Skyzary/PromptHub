@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import type { PlasmoCSConfig } from "plasmo"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 
+import TagFilter from "../components/TagFilter/TagFilter"
 import type { IPrompt } from "../types"
 import { GeminiHeader } from "./components/GeminiHeader"
 import { GeminiPromptList } from "./components/GeminiPromptList"
@@ -64,6 +65,7 @@ export const createDefaultQueryClient = () =>
 export const GeminiPromptsOverlayContent: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const selectedIndexRef = useRef<number>(selectedIndex)
   selectedIndexRef.current = selectedIndex
@@ -261,14 +263,34 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
     }
   }, [isOpen])
 
+  const availableTags = useMemo(() => {
+    const set = new Set<string>()
+    for (const p of prompts) {
+      if (Array.isArray(p.tags)) {
+        for (const t of p.tags) {
+          const trimmed = t.trim()
+          if (trimmed) set.add(trimmed)
+        }
+      }
+    }
+    return Array.from(set)
+  }, [prompts])
+
   const filteredPrompts = useMemo(() => {
     const tokens = searchQuery.trim().toLowerCase().split(/\s+/).filter(Boolean)
 
-    if (tokens.length === 0) {
-      return prompts
-    }
-
     return prompts.filter((prompt) => {
+      if (selectedTag) {
+        const hasTag = (prompt.tags ?? []).some(
+          (t) => t.toLowerCase() === selectedTag.toLowerCase()
+        )
+        if (!hasTag) return false
+      }
+
+      if (tokens.length === 0) {
+        return true
+      }
+
       const titleLower = prompt.title.toLowerCase()
       const bodyLower = prompt.body.toLowerCase()
       const tagsLower = (prompt.tags ?? []).map((t) => t.toLowerCase())
@@ -286,7 +308,7 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
         )
       })
     })
-  }, [prompts, searchQuery])
+  }, [prompts, searchQuery, selectedTag])
 
   const filteredPromptsRef = useRef(filteredPrompts)
   filteredPromptsRef.current = filteredPrompts
@@ -297,9 +319,15 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
   }, [searchQuery])
 
   useEffect(() => {
+    setSelectedIndex(0)
+    selectedIndexRef.current = 0
+  }, [selectedTag])
+
+  useEffect(() => {
     if (isOpen) {
       setSelectedIndex(0)
       selectedIndexRef.current = 0
+      setSelectedTag(null)
     }
   }, [isOpen])
 
@@ -349,6 +377,16 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
         onClose={() => setIsOpen(false)}
         isLoading={isLoading}
       />
+
+      {availableTags.length > 0 && (
+        <div className={css.geminiTagFilterWrapper}>
+          <TagFilter
+            tags={availableTags}
+            selectedTag={selectedTag}
+            onSelectTag={setSelectedTag}
+          />
+        </div>
+      )}
 
       {hasStateContent ? (
         <GeminiStateView

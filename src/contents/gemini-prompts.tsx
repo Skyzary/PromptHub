@@ -11,11 +11,6 @@ import { loadPromptsForContentScript } from "./gemini-api"
 import {
   cleanTemplateBracketsInInput,
   computeGeminiPopoverPosition,
-  detectGeminiPageTheme,
-  findGeminiInput,
-  findGeminiInputContainer,
-  GEMINI_INPUT_SELECTOR,
-  getOrCreateGeminiRootContainer,
   handleGeminiSendTrigger,
   handleGeminiTemplateKeyDown,
   handleGeminiTemplatePaste,
@@ -24,6 +19,13 @@ import {
   jumpToNextTemplateVariable,
   type GeminiPopoverPosition
 } from "./gemini-dom"
+import {
+  detectGeminiPageTheme,
+  findGeminiInput,
+  findGeminiInputContainer,
+  GEMINI_INPUT_SELECTOR,
+  getOrCreateGeminiRootContainer
+} from "./gemini-elements"
 import css from "./gemini-prompts.module.scss"
 import { useGeminiPromptsQuery } from "./hooks/useGeminiPromptsQuery"
 import { useThemeStorage } from "./hooks/useThemeStorage"

@@ -1,5 +1,6 @@
 import React from "react"
 
+import PromptIcon from "../../components/PromptIcon/PromptIcon"
 import TemplateHighlight from "../../components/TemplateHighlight/TemplateHighlight"
 import type { IPrompt } from "../../types"
 import css from "../gemini-prompts.module.scss"
@@ -24,8 +25,11 @@ export const GeminiPromptItem: React.FC<GeminiPromptItemProps> = ({
     onClick={() => onSelect(prompt)}
     onMouseEnter={onMouseEnter}>
     <div className={css.promptItemContent}>
-      <div className={css.itemSparkleBadge}>
-        <span className={css.promptBullet}>✦</span>
+      <div className={css.promptIconWrapper}>
+        <PromptIcon
+          type={prompt.tags?.[0] ?? "other"}
+          tags={prompt.tags}
+        />
       </div>
       <div className={css.itemDetails}>
         <div className={css.promptHeader}>

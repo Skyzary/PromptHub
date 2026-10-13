@@ -1,3 +1,4 @@
+import PromptHubLogo from "../PromptHubLogo/PromptHubLogo"
 import css from "./Header.module.scss"
 
 interface HeaderProps {
@@ -12,21 +13,7 @@ export default function Header({
   return (
     <header className={css.header}>
       <div className={css.logoContainer}>
-        <div className={css.logoWrapper}>
-          <svg
-            width="12"
-            height="15"
-            viewBox="0 0 12 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className={css.logoIcon}>
-            <path
-              d="M4.9125 12.15L8.79375 7.5H5.79375L6.3375 3.24375L2.86875 8.25H5.475L4.9125 12.15ZM3 15L3.75 9.75H0L6.75 0H8.25L7.5 6H12L4.5 15H3Z"
-              fill="white"
-            />
-          </svg>
-        </div>
-
+        <PromptHubLogo />
         <h1 className={css.logoText}>PromptHub</h1>
       </div>
       <button

@@ -1,7 +1,8 @@
 import React from "react"
 
+import PromptHubLogo from "../../components/PromptHubLogo/PromptHubLogo"
 import css from "../gemini-prompts.module.scss"
-import { CloseIcon, RefreshIcon, SearchIcon, SparkleIcon } from "./GeminiIcons"
+import { CloseIcon, RefreshIcon, SearchIcon } from "./GeminiIcons"
 
 export interface GeminiHeaderProps {
   searchQuery: string
@@ -20,7 +21,7 @@ export const GeminiHeader: React.FC<GeminiHeaderProps> = ({
 }) => (
   <div className={css.header}>
     <div className={css.brand}>
-      <SparkleIcon className={css.brandSparkle} />
+      <PromptHubLogo size={24} />
       <h3 className={css.title}>PromptHub</h3>
     </div>
     <div className={css.searchBar}>

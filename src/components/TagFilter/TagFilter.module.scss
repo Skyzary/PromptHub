@@ -1,0 +1,56 @@
+@use "../../vars.scss" as *;
+
+.tagFilter {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  overflow-x: auto;
+  padding: $space-xs $space-0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: $radius-pill;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border: 1px solid $border-color;
+  background-color: $bg-secondary;
+  color: $text-secondary;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $text-primary;
+    border-color: $color-primary-500;
+  }
+
+  &.tagChipActive {
+    background-color: $color-primary-600;
+    color: $color-white;
+    border-color: $color-primary-600;
+    box-shadow: 0 1px 4px rgba(37, 99, 235, 0.25);
+
+    :global([data-theme="dark"]) & {
+      background-color: $color-primary-500;
+      border-color: $color-primary-500;
+    }
+  }
+}

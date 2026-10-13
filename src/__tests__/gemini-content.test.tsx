@@ -322,6 +322,20 @@ describe("Background script & Gemini content script", () => {
       expect(screen.getByText("Code Review Assistant")).toBeInTheDocument()
       expect(screen.queryByText("Summarize Article")).not.toBeInTheDocument()
 
+      // Clear search query
+      fireEvent.change(searchInput, { target: { value: "" } })
+      expect(screen.getByText("Summarize Article")).toBeInTheDocument()
+
+      // Filter by clicking tag chip
+      const reviewTagBtn = screen.getByRole("button", { name: "#review" })
+      fireEvent.click(reviewTagBtn)
+      expect(screen.getByText("Code Review Assistant")).toBeInTheDocument()
+      expect(screen.queryByText("Summarize Article")).not.toBeInTheDocument()
+
+      // Deselect tag chip by clicking it again
+      fireEvent.click(reviewTagBtn)
+      expect(screen.getByText("Summarize Article")).toBeInTheDocument()
+
       // Filter by text with no match
       fireEvent.change(searchInput, { target: { value: "nonexistent" } })
       expect(

@@ -31,7 +31,10 @@ export default function PromptCard({
     <li
       className={css.promptCard}
       onClick={onClick}>
-      <PromptIcon type={type} />
+      <PromptIcon
+        type={type}
+        tags={tags}
+      />
       <div className={css.promptCardContent}>
         <div className={css.promptCardTitleWrapper}>
           <h3 className={css.promptCardTitle}>{name}</h3>

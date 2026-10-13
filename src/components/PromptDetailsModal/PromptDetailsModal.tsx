@@ -276,7 +276,10 @@ export default function PromptDetailsModal({
         {/* Header + Title Section */}
         <div className={css.modalHeader}>
           <div className={css.headerMain}>
-            <PromptIcon type={primaryType} />
+            <PromptIcon
+              type={primaryType}
+              tags={currentPrompt.tags}
+            />
             <div className={css.titleDisplayRow}>
               <h2
                 id="prompt-details-title"

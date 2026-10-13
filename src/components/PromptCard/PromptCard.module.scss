@@ -91,3 +91,21 @@
 .copyBtnCopied {
   color: $color-green-600;
 }
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  margin-top: $space-2xs;
+}
+
+.tagBadge {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-medium;
+  color: $accent-color;
+  background-color: $accent-soft;
+  border: $border-width solid $border-color;
+  padding: $space-2xs $space-base;
+  border-radius: $radius-pill;
+  line-height: $line-height-xs;
+}

@@ -12,7 +12,11 @@ import {
   getRefreshToken,
   subscribeAuthChange
 } from "~src/utils/auth"
-import { getTheme } from "~src/utils/theme"
+import {
+  getTheme,
+  subscribeThemeChange,
+  type ThemeMode
+} from "~src/utils/theme"
 
 import "./popup.scss"
 
@@ -20,15 +24,23 @@ export default function Popup() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
     Boolean(getAccessToken() || getRefreshToken())
   )
+  const [theme, setThemeState] = useState<ThemeMode>(() => getTheme())
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
-    getTheme()
-    return subscribeAuthChange((authenticated) => {
+    setThemeState(getTheme())
+    const unsubTheme = subscribeThemeChange((nextTheme) => {
+      setThemeState(nextTheme)
+    })
+    const unsubAuth = subscribeAuthChange((authenticated) => {
       setIsAuthenticated(authenticated)
     })
+    return () => {
+      unsubTheme()
+      unsubAuth()
+    }
   }, [])
 
   const handleClearFilters = () => {
@@ -36,7 +48,7 @@ export default function Popup() {
   }
 
   return (
-    <div className={"popup"}>
+    <div className={"popup"} data-theme={theme}>
       <Header
         isSettingsOpen={isSettingsOpen}
         onSettingsClick={() => setIsSettingsOpen((prev) => !prev)}

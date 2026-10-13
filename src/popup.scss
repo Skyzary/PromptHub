@@ -1,7 +1,9 @@
 @use "./vars.scss" as *;
 
 :root,
-:root[data-theme="light"] {
+:root[data-theme="light"],
+.popup,
+.popup[data-theme="light"] {
   --bg-primary: #{$color-white};
   --bg-secondary: #{$color-slate-100};
   --bg-card: #{$color-slate-50};
@@ -14,7 +16,8 @@
   --accent-soft: #{$color-primary-100};
 }
 
-:root[data-theme="dark"] {
+:root[data-theme="dark"],
+.popup[data-theme="dark"] {
   --bg-primary: #{$color-slate-900};
   --bg-secondary: #{$color-slate-800};
   --bg-card: #{$color-slate-800};
@@ -36,12 +39,15 @@
 body {
   width: $popup-width;
   min-height: $popup-min-height;
+  margin: $space-0;
   font-family: $font-family-base;
   color: $text-primary;
   background-color: $bg-primary;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
   transition:
     background-color $transition-medium,
     color $transition-medium;
@@ -54,8 +60,9 @@ textarea {
 }
 
 .popup {
-  width: $popup-width;
+  width: 100%;
   min-height: $popup-min-height;
+  flex: 1;
   display: flex;
   flex-direction: column;
   background-color: $bg-primary;

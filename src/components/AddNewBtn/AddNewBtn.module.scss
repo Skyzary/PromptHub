@@ -2,6 +2,6 @@
 
 .addNewBtn {
   width: calc(100% - #{$space-4xl * 2});
-  margin: $space-sm $space-4xl $space-0 $space-4xl;
+  margin: auto $space-4xl $space-0 $space-4xl;
   box-shadow: $shadow-primary-btn;
 }

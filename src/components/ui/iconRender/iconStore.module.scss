@@ -8,6 +8,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
 }
 
 .icon {
@@ -16,26 +19,50 @@
 
 .developmentIcon {
   color: $color-primary-600;
+
+  :global([data-theme="dark"]) & {
+    color: $color-primary-500;
+  }
 }
 
 .developmentIconWrapper {
   background-color: $color-primary-100;
+
+  :global([data-theme="dark"]) & {
+    background-color: $color-primary-900;
+  }
 }
 
 .dailyIcon {
   color: $color-purple-600;
+
+  :global([data-theme="dark"]) & {
+    color: $color-purple-300;
+  }
 }
 
 .dailyIconWrapper {
   background-color: $color-purple-50;
+
+  :global([data-theme="dark"]) & {
+    background-color: $color-purple-800;
+  }
 }
 
 .educationIcon {
   color: $color-green-600;
+
+  :global([data-theme="dark"]) & {
+    color: $color-green-400;
+  }
 }
 
 .educationIconWrapper {
   background-color: $color-green-100;
+
+  :global([data-theme="dark"]) & {
+    background-color: $color-green-900;
+  }
 }
 
 .entertainmentIcon {
@@ -44,12 +71,24 @@
 
 .entertainmentIconWrapper {
   background-color: $color-pink-100;
+
+  :global([data-theme="dark"]) & {
+    background-color: $color-slate-800;
+  }
 }
 
 .defaultIcon {
   color: $color-slate-600;
+
+  :global([data-theme="dark"]) & {
+    color: $color-slate-400;
+  }
 }
 
 .defaultIconWrapper {
   background-color: $color-slate-100;
+
+  :global([data-theme="dark"]) & {
+    background-color: $color-slate-800;
+  }
 }

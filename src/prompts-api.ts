@@ -16,7 +16,7 @@ import {
   updatePromptTitleSchema
 } from "./validation/prompt-validation"
 
-const PROMPTS_CACHE_STORAGE_KEY = "prompthub_prompts_cache"
+export const PROMPTS_CACHE_STORAGE_KEY = "prompthub_prompts_cache"
 
 let promptsCache: IPrompt[] | null = null
 const cacheInvalidationListeners = new Set<() => void>()
@@ -47,12 +47,18 @@ function setCachedPrompts(prompts: IPrompt[]): void {
       JSON.stringify(prompts)
     )
   }
+  if (typeof chrome !== "undefined" && chrome.storage?.local) {
+    void chrome.storage.local.set({ [PROMPTS_CACHE_STORAGE_KEY]: prompts })
+  }
 }
 
 export function invalidatePromptsCache(): void {
   promptsCache = null
   if (typeof window !== "undefined" && window.localStorage) {
     window.localStorage.removeItem(PROMPTS_CACHE_STORAGE_KEY)
+  }
+  if (typeof chrome !== "undefined" && chrome.storage?.local) {
+    void chrome.storage.local.remove(PROMPTS_CACHE_STORAGE_KEY)
   }
   cacheInvalidationListeners.forEach((listener) => listener())
 }

@@ -387,5 +387,49 @@ describe("PromptsApi & UserApi", () => {
     expect(await deleteUser({ password: "Password1!" })).toEqual({
       message: "User deleted"
     })
+
+    // deleteUser with token as first argument
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ message: "User deleted directly" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({})
+      })
+    expect(await deleteUser("direct-access-token")).toEqual({
+      message: "User deleted directly"
+    })
+  })
+
+  it("syncs prompts cache and theme to chrome.storage.local when available", async () => {
+    const chromeSet = vi.fn()
+    const chromeRemove = vi.fn()
+    vi.stubGlobal("chrome", {
+      storage: {
+        local: {
+          set: chromeSet,
+          remove: chromeRemove
+        }
+      }
+    })
+
+    invalidatePromptsCache()
+    expect(chromeRemove).toHaveBeenCalled()
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => [
+        { _id: "p1", title: "Test", body: "Body", tags: ["t1"] }
+      ]
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    await fetchPrompts(undefined, true)
+    expect(chromeSet).toHaveBeenCalled()
   })
 })

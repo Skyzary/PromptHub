@@ -125,10 +125,8 @@ export function stripTemplateBrackets(text: string): string {
     return ""
   }
   const regex = new RegExp(TEMPLATE_VARIABLE_REGEX.source, "g")
-  const stripped = text.replace(
-    regex,
-    (_match, group1: string) => group1.trim()
+  const stripped = text.replace(regex, (_match, group1: string) =>
+    group1.trim()
   )
   return stripped.replace(/\{\{|\}\}/g, "")
 }
-

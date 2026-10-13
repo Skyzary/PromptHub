@@ -176,4 +176,12 @@ describe("AuthForm Component", () => {
     })
     expect(onAuthSuccess).toHaveBeenCalledTimes(1)
   })
+
+  it("renders AddNewBtn without onClick prop and handles click", async () => {
+    const user = userEvent.setup()
+    render(<AddNewBtn />)
+    const btn = screen.getByRole("button", { name: "Create new prompt" })
+    expect(btn).toBeInTheDocument()
+    await user.click(btn)
+  })
 })

@@ -67,7 +67,9 @@ describe("CreatePromptModal", () => {
 
     createPromptSpy.mockRejectedValueOnce("raw failure")
     await user.click(screen.getByRole("button", { name: "Create" }))
-    expect(await screen.findByText("Failed to create prompt")).toBeInTheDocument()
+    expect(
+      await screen.findByText("Failed to create prompt")
+    ).toBeInTheDocument()
 
     // Click Cancel button -> calls handleClose
     await user.click(screen.getByRole("button", { name: "Cancel" }))
@@ -95,7 +97,12 @@ describe("CreatePromptModal", () => {
   })
 
   it("displays template preview box when body contains template variables", () => {
-    render(<CreatePromptModal isOpen={true} onClose={vi.fn()} />)
+    render(
+      <CreatePromptModal
+        isOpen={true}
+        onClose={vi.fn()}
+      />
+    )
 
     expect(screen.queryByTestId("template-preview-box")).not.toBeInTheDocument()
 

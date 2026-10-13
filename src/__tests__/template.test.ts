@@ -30,8 +30,13 @@ describe("template utility", () => {
     })
 
     it("extracts unique variables in order, trimming whitespace", () => {
-      const text = "Write a {{ tone }} essay about {{ topic }} in {{ language }}. Keep it {{ tone }}."
-      expect(extractTemplateVariables(text)).toEqual(["tone", "topic", "language"])
+      const text =
+        "Write a {{ tone }} essay about {{ topic }} in {{ language }}. Keep it {{ tone }}."
+      expect(extractTemplateVariables(text)).toEqual([
+        "tone",
+        "topic",
+        "language"
+      ])
     })
   })
 
@@ -46,9 +51,21 @@ describe("template utility", () => {
 
       expect(segments).toEqual([
         { type: "text", value: "Start ", raw: "Start ", index: 0 },
-        { type: "variable", value: "a", raw: "{{a}}", index: 1, variableIndex: 0 },
+        {
+          type: "variable",
+          value: "a",
+          raw: "{{a}}",
+          index: 1,
+          variableIndex: 0
+        },
         { type: "text", value: " mid ", raw: " mid ", index: 2 },
-        { type: "variable", value: "b", raw: "{{b}}", index: 3, variableIndex: 1 },
+        {
+          type: "variable",
+          value: "b",
+          raw: "{{b}}",
+          index: 3,
+          variableIndex: 1
+        },
         { type: "text", value: " end", raw: " end", index: 4 }
       ])
     })
@@ -58,8 +75,20 @@ describe("template utility", () => {
       const segments = parseTemplateSegments(text)
 
       expect(segments).toEqual([
-        { type: "variable", value: "var1", raw: "{{var1}}", index: 0, variableIndex: 0 },
-        { type: "variable", value: "var2", raw: "{{var2}}", index: 1, variableIndex: 1 }
+        {
+          type: "variable",
+          value: "var1",
+          raw: "{{var1}}",
+          index: 0,
+          variableIndex: 0
+        },
+        {
+          type: "variable",
+          value: "var2",
+          raw: "{{var2}}",
+          index: 1,
+          variableIndex: 1
+        }
       ])
     })
   })

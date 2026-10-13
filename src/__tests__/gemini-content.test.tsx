@@ -35,6 +35,12 @@ const mockPrompts: IPrompt[] = [
     title: "Summarize Article",
     body: "Summarize this article in 5 bullet points.",
     tags: ["summary"]
+  },
+  {
+    _id: "p3",
+    title: "Draft Email",
+    body: "Write a polite follow-up email.",
+    tags: undefined
   }
 ]
 
@@ -643,6 +649,114 @@ describe("Background script & Gemini content script", () => {
       })
 
       unmount()
+    })
+
+    it("supports keyboard navigation with ArrowDown, ArrowUp, and Enter", async () => {
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: mockPrompts,
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(textarea)
+
+      await screen.findByText("Code Review Assistant")
+      const searchInput = screen.getByLabelText("Search Gemini prompts")
+
+      // ArrowDown to move to second prompt
+      fireEvent.keyDown(searchInput, { key: "ArrowDown" })
+      // ArrowUp to move back up
+      fireEvent.keyDown(searchInput, { key: "ArrowUp" })
+      // ArrowDown again to move to second prompt ("Summarize Article")
+      fireEvent.keyDown(searchInput, { key: "ArrowDown" })
+      // Press Enter to insert selected prompt
+      fireEvent.keyDown(searchInput, { key: "Enter" })
+
+      expect(textarea.value).toBe("Summarize this article in 5 bullet points.")
+      expect(
+        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+      ).not.toBeInTheDocument()
+    })
+
+    it("displays generic error message when prompt fetching rejects with non-Error", async () => {
+      vi.spyOn(promptsApiModule, "fetchPrompts").mockRejectedValueOnce(
+        "String network rejection"
+      )
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(textarea)
+
+      expect(
+        await screen.findByText("Failed to load prompts")
+      ).toBeInTheDocument()
+    })
+
+    it("docks on parent rich-textarea container when available", async () => {
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: mockPrompts,
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const richTextarea = document.createElement("rich-textarea")
+      richTextarea.getBoundingClientRect = vi.fn().mockReturnValue({
+        top: 500,
+        bottom: 560,
+        left: 150,
+        right: 850,
+        width: 700,
+        height: 60,
+        x: 150,
+        y: 500,
+        toJSON: () => ({})
+      })
+
+      const input = document.createElement("div")
+      input.className = "ql-editor"
+      input.setAttribute("contenteditable", "true")
+      input.getBoundingClientRect = vi.fn().mockReturnValue({
+        top: 510,
+        bottom: 550,
+        left: 170,
+        right: 830,
+        width: 660,
+        height: 40,
+        x: 170,
+        y: 510,
+        toJSON: () => ({})
+      })
+      richTextarea.appendChild(input)
+      document.body.appendChild(richTextarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(input)
+
+      const dialog = await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      expect(dialog).toBeInTheDocument()
+      expect(dialog.style.width).toBe("700px")
+      expect(dialog.style.left).toBe("150px")
+
+      // Window resize and scroll re-computes position
+      fireEvent(window, new Event("resize"))
+      fireEvent(window, new Event("scroll"))
+      expect(dialog).toBeInTheDocument()
     })
   })
 })

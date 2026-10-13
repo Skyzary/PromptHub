@@ -1,7 +1,4 @@
-import {
-  hasTemplateVariables,
-  stripTemplateBrackets
-} from "../utils/template"
+import { hasTemplateVariables, stripTemplateBrackets } from "../utils/template"
 import type { ThemeMode } from "../utils/theme"
 
 export const GEMINI_INPUT_SELECTORS = [
@@ -51,35 +48,103 @@ export function findGeminiInput(
   return target.closest<HTMLElement>(GEMINI_INPUT_SELECTOR)
 }
 
-/**
- * Computes top and left coordinates for positioning the popover
- * adjacent to the active input element, flipping above/below based on viewport space.
- */
-export function computeGeminiPopoverPosition(rect: DOMRect): {
+export interface GeminiPopoverPosition {
   top: number
+  bottom?: number
   left: number
-} {
+  width: number
+  dockedAbove: boolean
+}
+
+/**
+ * Finds the parent container of the Gemini input (e.g. rich-textarea, .input-area)
+ * so PromptHub can dock directly to the full width of the prompt bar.
+ */
+export function findGeminiInputContainer(
+  inputEl: HTMLElement | null
+): HTMLElement | null {
+  if (!inputEl) return null
+
+  // 1. Check known Gemini outer containers FIRST (so we don't prematurely stop at inner rich-textarea)
+  const outer = inputEl.closest<HTMLElement>(
+    '.input-area-container, .chat-input-container, .input-area, .text-input-field, [class*="input-area"], [class*="chat-input"], [class*="text-input-field"], form'
+  )
+  if (outer && outer !== document.body && outer !== document.documentElement) {
+    return outer
+  }
+
+  // 2. Check if rich-textarea is wrapped by an input card
+  const rich = inputEl.closest<HTMLElement>("rich-textarea")
+  if (rich && rich.parentElement && rich.parentElement !== document.body) {
+    const parent = rich.parentElement
+    const parentRect = parent.getBoundingClientRect()
+    if (parentRect.width >= 320) {
+      return parent
+    }
+    return rich
+  }
+
+  return rich || inputEl
+}
+
+/**
+ * Computes coordinates for docking the popover directly onto Gemini's input bar,
+ * matching its width and attaching to its top or bottom boundary.
+ */
+export function computeGeminiPopoverPosition(
+  rect: DOMRect,
+  containerRect?: DOMRect | null
+): GeminiPopoverPosition {
+  const targetRect = containerRect || rect
   const viewportWidth =
     typeof window !== "undefined" && window.innerWidth > 0
       ? window.innerWidth
       : 1024
+  const viewportHeight =
+    typeof window !== "undefined" && window.innerHeight > 0
+      ? window.innerHeight
+      : 768
 
   const placeAbove =
-    rect.top >= POPOVER_ESTIMATED_HEIGHT_PX + VIEWPORT_MARGIN_PX
-  const top = placeAbove
-    ? Math.max(
-        VIEWPORT_MARGIN_PX,
-        rect.top - POPOVER_ESTIMATED_HEIGHT_PX - POPOVER_OFFSET_PX
-      )
-    : Math.max(VIEWPORT_MARGIN_PX, rect.bottom + POPOVER_OFFSET_PX)
+    targetRect.top >= POPOVER_ESTIMATED_HEIGHT_PX + VIEWPORT_MARGIN_PX
+
+  // Compute docked width matching container, clamped to viewport margins
+  const width = Math.min(
+    Math.max(340, targetRect.width || POPOVER_WIDTH_PX),
+    viewportWidth - VIEWPORT_MARGIN_PX * 2
+  )
 
   const maxLeft = Math.max(
     VIEWPORT_MARGIN_PX,
-    viewportWidth - POPOVER_WIDTH_PX - VIEWPORT_MARGIN_PX
+    viewportWidth - width - VIEWPORT_MARGIN_PX
   )
-  const left = Math.min(Math.max(VIEWPORT_MARGIN_PX, rect.left), maxLeft)
+  const left = Math.min(Math.max(VIEWPORT_MARGIN_PX, targetRect.left), maxLeft)
 
-  return { top, left }
+  if (placeAbove) {
+    const bottom = Math.max(
+      VIEWPORT_MARGIN_PX,
+      viewportHeight - targetRect.top + POPOVER_OFFSET_PX
+    )
+    const top = Math.max(
+      VIEWPORT_MARGIN_PX,
+      targetRect.top - POPOVER_ESTIMATED_HEIGHT_PX - POPOVER_OFFSET_PX
+    )
+    return {
+      top,
+      bottom,
+      left,
+      width,
+      dockedAbove: true
+    }
+  }
+
+  const top = targetRect.bottom + POPOVER_OFFSET_PX
+  return {
+    top,
+    left,
+    width,
+    dockedAbove: false
+  }
 }
 
 export const PROMPTHUB_TEMPLATE_STYLE_ID = "prompthub-template-variable-styles"
@@ -247,11 +312,7 @@ export function getContentEditableSelectionOffsets(
   let end = 0
   let currentPos = 0
 
-  const walker = document.createTreeWalker(
-    element,
-    NodeFilter.SHOW_TEXT,
-    null
-  )
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null)
 
   let node: Node | null = walker.nextNode()
   let foundStart = false
@@ -303,11 +364,7 @@ export function setContentEditableSelection(
   let endNode: Node | null = null
   let endNodeOffset = 0
 
-  const walker = document.createTreeWalker(
-    element,
-    NodeFilter.SHOW_TEXT,
-    null
-  )
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null)
 
   let node: Node | null = walker.nextNode()
   while (node) {
@@ -661,7 +718,7 @@ export function isGeminiSendButton(target: EventTarget | null): boolean {
 
   const isInInputArea = Boolean(
     btn.closest(
-      'rich-textarea, .input-area, .chat-input, .text-input-field, form, main, footer'
+      "rich-textarea, .input-area, .chat-input, .text-input-field, form, main, footer"
     )
   )
 
@@ -688,7 +745,9 @@ export function handleGeminiSendTrigger(
     }
 
     if (typeof document !== "undefined") {
-      const inputs = document.querySelectorAll<HTMLElement>(GEMINI_INPUT_SELECTOR)
+      const inputs = document.querySelectorAll<HTMLElement>(
+        GEMINI_INPUT_SELECTOR
+      )
       inputs.forEach((inp) => {
         if (cleanTemplateBracketsInInput(inp)) {
           anyCleaned = true
@@ -968,10 +1027,7 @@ export function handleGeminiTemplateKeyDown(event: KeyboardEvent): boolean {
 
   // 2. Typing inside unmodified template variable: erase placeholder name immediately!
   const isPrintable =
-    event.key.length === 1 &&
-    !event.ctrlKey &&
-    !event.metaKey &&
-    !event.altKey
+    event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey
   const isBackspaceOrDelete =
     event.key === "Backspace" || event.key === "Delete"
 

@@ -48,7 +48,9 @@ export default function Popup() {
   }
 
   return (
-    <div className={"popup"} data-theme={theme}>
+    <div
+      className={"popup"}
+      data-theme={theme}>
       <Header
         isSettingsOpen={isSettingsOpen}
         onSettingsClick={() => setIsSettingsOpen((prev) => !prev)}

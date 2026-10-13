@@ -15,6 +15,7 @@ import {
   handleGeminiTemplateKeyDown,
   handleGeminiTemplatePaste,
   highlightActiveVariableElement,
+  injectTemplateVariableStyles,
   insertTextIntoGeminiInput,
   isGeminiSendButton,
   isVariableModified,
@@ -22,9 +23,11 @@ import {
   POPOVER_ESTIMATED_HEIGHT_PX,
   POPOVER_OFFSET_PX,
   PROMPTHUB_GEMINI_ROOT_ID,
+  PROMPTHUB_TEMPLATE_STYLE_ID,
   resetModifiedTemplateVariables,
   setCollapsedInputCursor,
-  setContentEditableSelection
+  setContentEditableSelection,
+  TemplateHighlighter
 } from "../contents/gemini-dom"
 
 describe("gemini-dom module", () => {
@@ -333,11 +336,79 @@ describe("gemini-dom module", () => {
       })
     })
 
-    it("buildTemplateHtml wraps variables in .ph-template-variable spans", () => {
+    it("buildTemplateHtml wraps variables in .ph-template-variable spans without inline styles", () => {
       const html = buildTemplateHtml("Hello {{name}}!")
       expect(html).toContain('class="ph-template-variable"')
       expect(html).toContain('data-ph-var="name"')
       expect(html).toContain("{{name}}</span>")
+      expect(html).not.toContain("style=")
+    })
+
+    it("TemplateHighlighter applies and removes highlight classes and highlights active elements", () => {
+      const inputEl = document.createElement("div")
+      document.body.appendChild(inputEl)
+
+      // Apply classes via class method and injectTemplateVariableStyles
+      TemplateHighlighter.applyHighlightClasses(inputEl)
+      expect(
+        inputEl.classList.contains(TemplateHighlighter.CONTAINER_CLASS)
+      ).toBe(true)
+      expect(
+        document.body.classList.contains(TemplateHighlighter.ROOT_CLASS)
+      ).toBe(true)
+
+      // Remove classes
+      TemplateHighlighter.removeHighlightClasses(inputEl)
+      expect(
+        inputEl.classList.contains(TemplateHighlighter.CONTAINER_CLASS)
+      ).toBe(false)
+
+      // Test with null / undefined inputs
+      TemplateHighlighter.applyHighlightClasses(null)
+      TemplateHighlighter.removeHighlightClasses(null)
+
+      // Test injectTemplateVariableStyles helper and constants
+      expect(PROMPTHUB_TEMPLATE_STYLE_ID).toBe(
+        "prompthub-template-variable-styles"
+      )
+      injectTemplateVariableStyles(inputEl)
+      expect(
+        inputEl.classList.contains(TemplateHighlighter.CONTAINER_CLASS)
+      ).toBe(true)
+
+      // Test highlightActive
+      const container = document.createElement("div")
+      container.innerHTML = `
+        <span class="${TemplateHighlighter.VARIABLE_CLASS}">1</span>
+        <span class="${TemplateHighlighter.VARIABLE_CLASS}">2</span>
+      `
+      TemplateHighlighter.highlightActive(container, 1)
+      const spans = container.querySelectorAll(
+        `.${TemplateHighlighter.VARIABLE_CLASS}`
+      )
+      expect(
+        spans[0].classList.contains(TemplateHighlighter.ACTIVE_CLASS)
+      ).toBe(false)
+      expect(
+        spans[1].classList.contains(TemplateHighlighter.ACTIVE_CLASS)
+      ).toBe(true)
+
+      // Test escapeHtml and special characters in buildTemplateHtml
+      expect(TemplateHighlighter.escapeHtml('&<>"')).toBe("&amp;&lt;&gt;&quot;")
+      const escapedHtml = TemplateHighlighter.buildTemplateHtml(
+        "<b>{{foo & <bar>}}</b>"
+      )
+      expect(escapedHtml).toContain("&amp;")
+      expect(escapedHtml).toContain("&lt;")
+      expect(escapedHtml).toContain("&gt;")
+
+      // Test buildTemplateHtml with no variables and variables at end
+      expect(TemplateHighlighter.buildTemplateHtml("Plain text")).toBe(
+        "Plain text"
+      )
+      expect(TemplateHighlighter.buildTemplateHtml("End {{last}}")).toContain(
+        "{{last}}</span>"
+      )
     })
 
     it("jumpToNextTemplateVariable cycles through variables forward and backward in textarea with collapsed cursor", () => {

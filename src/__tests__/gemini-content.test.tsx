@@ -529,10 +529,11 @@ describe("Background script & Gemini content script", () => {
       expect(spans[1].textContent).toBe("{{feature}}")
       expect(spans[1]).toHaveAttribute("data-ph-var", "feature")
 
-      // Stylesheet is injected into document
-      expect(
-        document.getElementById("prompthub-template-variable-styles")
-      ).toBeInTheDocument()
+      // Template highlight classes are applied
+      expect(editor.classList.contains("ph-template-container")).toBe(true)
+      expect(document.body.classList.contains("ph-templates-enabled")).toBe(
+        true
+      )
 
       // Pressing Enter strips brackets in contenteditable
       fireEvent.keyDown(editor, { key: "Enter" })

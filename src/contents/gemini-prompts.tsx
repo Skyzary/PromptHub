@@ -27,6 +27,8 @@ import {
 import css from "./gemini-prompts.module.scss"
 import { useGeminiPromptsQuery } from "./hooks/useGeminiPromptsQuery"
 import { useThemeStorage } from "./hooks/useThemeStorage"
+import { TemplateHighlighter } from "./TemplateHighlighter"
+import "./template-variables.scss"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://gemini.google.com/*"]
@@ -48,7 +50,8 @@ export {
   jumpToNextTemplateVariable,
   loadPromptsForContentScript,
   useThemeStorage,
-  useGeminiPromptsQuery
+  useGeminiPromptsQuery,
+  TemplateHighlighter
 }
 
 export const createDefaultQueryClient = () =>

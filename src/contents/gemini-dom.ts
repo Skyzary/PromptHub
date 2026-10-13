@@ -1,5 +1,9 @@
 import { hasTemplateVariables, stripTemplateBrackets } from "../utils/template"
 import type { ThemeMode } from "../utils/theme"
+import {
+  TemplateHighlighter,
+  type TemplateVariableLocation
+} from "./TemplateHighlighter"
 
 export const GEMINI_INPUT_SELECTORS = [
   '.ql-editor[contenteditable="true"]',
@@ -160,61 +164,16 @@ export function computeGeminiPopoverPosition(
 export const PROMPTHUB_TEMPLATE_STYLE_ID = "prompthub-template-variable-styles"
 
 /**
- * Injects stylesheet for highlighting template variables in blue across Gemini DOM.
+ * Applies template variable highlight classes instead of injecting dynamic <style> tags.
  */
-export function injectTemplateVariableStyles(): void {
-  if (typeof document === "undefined") return
-  if (document.getElementById(PROMPTHUB_TEMPLATE_STYLE_ID)) return
-
-  const style = document.createElement("style")
-  style.id = PROMPTHUB_TEMPLATE_STYLE_ID
-  style.textContent = `
-    .ph-template-variable {
-      color: #2563eb !important;
-      background-color: rgba(37, 99, 235, 0.12) !important;
-      border: 1px solid rgba(37, 99, 235, 0.25) !important;
-      border-radius: 4px !important;
-      padding: 0 4px !important;
-      font-weight: 600 !important;
-      display: inline !important;
-      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
-    }
-    .ph-template-variable-active {
-      color: #1d4ed8 !important;
-      background-color: rgba(37, 99, 235, 0.26) !important;
-      border-color: #2563eb !important;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.38) !important;
-    }
-    [data-theme="dark"] .ph-template-variable,
-    body.dark-theme .ph-template-variable,
-    html[data-theme="dark"] .ph-template-variable,
-    html.dark .ph-template-variable {
-      color: #60a5fa !important;
-      background-color: rgba(59, 130, 246, 0.2) !important;
-      border-color: rgba(59, 130, 246, 0.35) !important;
-    }
-    [data-theme="dark"] .ph-template-variable-active,
-    body.dark-theme .ph-template-variable-active,
-    html[data-theme="dark"] .ph-template-variable-active,
-    html.dark .ph-template-variable-active {
-      color: #93c5fd !important;
-      background-color: rgba(59, 130, 246, 0.36) !important;
-      border-color: #60a5fa !important;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.48) !important;
-    }
-  `
-  document.head.appendChild(style)
+export function injectTemplateVariableStyles(
+  element?: HTMLElement | HTMLTextAreaElement | null
+): void {
+  TemplateHighlighter.applyHighlightClasses(element)
 }
 
-export interface TemplateVariableLocation {
-  index: number
-  name: string
-  raw: string
-  fullStart: number
-  fullEnd: number
-  innerStart: number
-  innerEnd: number
-}
+export type { TemplateVariableLocation }
+export { TemplateHighlighter }
 
 /**
  * Finds all {{variable}} positions in a given text string.
@@ -222,31 +181,7 @@ export interface TemplateVariableLocation {
 export function findTemplateVariablesInText(
   text: string
 ): TemplateVariableLocation[] {
-  const regex = /\{\{\s*([^}]+?)\s*\}\}/g
-  const results: TemplateVariableLocation[] = []
-  let match: RegExpExecArray | null
-  let idx = 0
-
-  while ((match = regex.exec(text)) !== null) {
-    const raw = match[0]
-    const name = (match[1] ?? "").trim()
-    const fullStart = match.index
-    const fullEnd = fullStart + raw.length
-    const innerStart = fullStart + raw.indexOf(name)
-    const innerEnd = innerStart + name.length
-
-    results.push({
-      index: idx++,
-      name,
-      raw,
-      fullStart,
-      fullEnd,
-      innerStart,
-      innerEnd
-    })
-  }
-
-  return results
+  return TemplateHighlighter.findVariablesInText(text)
 }
 
 /**
@@ -262,42 +197,11 @@ export function getGeminiInputText(element: HTMLElement): string {
   return element.textContent ?? ""
 }
 
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-}
-
 /**
- * Builds HTML string where all {{variable}} expressions are wrapped in blue styled spans.
+ * Builds HTML string where all {{variable}} expressions are wrapped in styled spans.
  */
 export function buildTemplateHtml(text: string): string {
-  const regex = /\{\{\s*([^}]+?)\s*\}\}/g
-  let lastIndex = 0
-  let html = ""
-  let varIdx = 0
-
-  let match: RegExpExecArray | null
-  while ((match = regex.exec(text)) !== null) {
-    const start = match.index
-    const raw = match[0]
-    const varName = (match[1] ?? "").trim()
-
-    if (start > lastIndex) {
-      html += escapeHtml(text.slice(lastIndex, start))
-    }
-
-    html += `<span class="ph-template-variable" data-ph-var="${escapeHtml(varName)}" data-ph-original="${escapeHtml(varName)}" data-ph-index="${varIdx++}" style="color: #2563eb; background-color: rgba(37, 99, 235, 0.12); border-radius: 4px; padding: 0 4px; font-weight: 600;">${escapeHtml(raw)}</span>`
-    lastIndex = start + raw.length
-  }
-
-  if (lastIndex < text.length) {
-    html += escapeHtml(text.slice(lastIndex))
-  }
-
-  return html
+  return TemplateHighlighter.buildTemplateHtml(text)
 }
 
 /**
@@ -459,14 +363,7 @@ export function highlightActiveVariableElement(
   container: HTMLElement,
   activeIdx: number
 ): void {
-  const spans = container.querySelectorAll<HTMLElement>(".ph-template-variable")
-  spans.forEach((span, i) => {
-    if (i === activeIdx) {
-      span.classList.add("ph-template-variable-active")
-    } else {
-      span.classList.remove("ph-template-variable-active")
-    }
-  })
+  TemplateHighlighter.highlightActive(container, activeIdx)
 }
 
 /**
@@ -1104,7 +1001,7 @@ export function insertTextIntoGeminiInput(
   text: string
 ): void {
   resetModifiedTemplateVariables()
-  injectTemplateVariableStyles()
+  TemplateHighlighter.applyHighlightClasses(element)
   element.focus()
 
   const vars = findTemplateVariablesInText(text)

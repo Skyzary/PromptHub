@@ -12,7 +12,7 @@ export const GEMINI_INPUT_SELECTOR = GEMINI_INPUT_SELECTORS.join(", ")
 
 export const PROMPTHUB_GEMINI_ROOT_ID = "prompthub-gemini-root"
 
-export const POPOVER_OFFSET_PX = 12
+export const POPOVER_OFFSET_PX = 32
 export const POPOVER_ESTIMATED_HEIGHT_PX = 340
 export const POPOVER_WIDTH_PX = 360
 export const VIEWPORT_MARGIN_PX = 12
@@ -45,7 +45,17 @@ export function findGeminiInput(
   if (excludeElement && excludeElement.contains(target)) {
     return null
   }
-  return target.closest<HTMLElement>(GEMINI_INPUT_SELECTOR)
+  const matched = target.closest<HTMLElement>(GEMINI_INPUT_SELECTOR)
+  if (matched) return matched
+
+  if (target.matches("rich-textarea, .chat-input-container, .input-area")) {
+    const editable = target.querySelector<HTMLElement>(
+      '[contenteditable="true"], textarea'
+    )
+    if (editable) return editable
+  }
+
+  return null
 }
 
 export interface GeminiPopoverPosition {
@@ -308,42 +318,21 @@ export function getContentEditableSelectionOffsets(
     return null
   }
 
-  let start = 0
-  let end = 0
-  let currentPos = 0
+  try {
+    const preStartRange = document.createRange()
+    preStartRange.setStart(element, 0)
+    preStartRange.setEnd(range.startContainer, range.startOffset)
+    const start = preStartRange.toString().length
 
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null)
+    const preEndRange = document.createRange()
+    preEndRange.setStart(element, 0)
+    preEndRange.setEnd(range.endContainer, range.endOffset)
+    const end = preEndRange.toString().length
 
-  let node: Node | null = walker.nextNode()
-  let foundStart = false
-  let foundEnd = false
-
-  while (node) {
-    const textLen = node.textContent?.length ?? 0
-
-    if (!foundStart && node === range.startContainer) {
-      start = currentPos + range.startOffset
-      foundStart = true
-    }
-
-    if (!foundEnd && node === range.endContainer) {
-      end = currentPos + range.endOffset
-      foundEnd = true
-    }
-
-    if (foundStart && foundEnd) {
-      break
-    }
-
-    currentPos += textLen
-    node = walker.nextNode()
-  }
-
-  if (!foundStart || !foundEnd) {
+    return { start, end }
+  } catch {
     return null
   }
-
-  return { start, end }
 }
 
 /**
@@ -1012,7 +1001,9 @@ export function handleGeminiTemplateKeyDown(event: KeyboardEvent): boolean {
   const target = event.target
   if (!(target instanceof HTMLElement)) return false
 
-  const inputElement = target.closest<HTMLElement>(GEMINI_INPUT_SELECTOR)
+  const inputElement =
+    findGeminiInput(target) ??
+    target.closest<HTMLElement>(GEMINI_INPUT_SELECTOR)
   if (!inputElement) return false
 
   const text = getGeminiInputText(inputElement)

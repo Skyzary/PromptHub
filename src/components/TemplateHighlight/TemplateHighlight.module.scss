@@ -1,0 +1,28 @@
+@use "../../vars.scss" as *;
+
+.templateContainer {
+  font-family: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: $line-height-lg;
+}
+
+.variable {
+  color: $accent-color;
+  background-color: $accent-soft;
+  border: $border-width solid $border-color;
+  padding: $space-2xs $space-xs;
+  border-radius: $radius-sm;
+  font-weight: $font-weight-semibold;
+  display: inline-block;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    box-shadow $transition-fast;
+}
+
+.variableActive {
+  background-color: $color-primary-600;
+  color: $color-white;
+  box-shadow: $shadow-focus-ring;
+}

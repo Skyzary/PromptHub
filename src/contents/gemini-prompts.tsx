@@ -5,18 +5,26 @@ import {
   PROMPTHUB_GET_PROMPTS_MESSAGE,
   type GetPromptsResponse
 } from "../background"
+import TemplateHighlight from "../components/TemplateHighlight/TemplateHighlight"
 import { fetchPrompts, PROMPTS_CACHE_STORAGE_KEY } from "../prompts-api"
 import type { IPrompt } from "../types"
 import { THEME_STORAGE_KEY, type ThemeMode } from "../utils/theme"
-import css from "./gemini-prompts.module.scss"
-
 import {
+  cleanTemplateBracketsInInput,
   computeGeminiPopoverPosition,
   detectGeminiPageTheme,
   findGeminiInput,
+  findGeminiInputContainer,
   getOrCreateGeminiRootContainer,
-  insertTextIntoGeminiInput
+  handleGeminiSendTrigger,
+  handleGeminiTemplateKeyDown,
+  handleGeminiTemplatePaste,
+  handleTemplateVariableTyping,
+  insertTextIntoGeminiInput,
+  jumpToNextTemplateVariable,
+  type GeminiPopoverPosition
 } from "./gemini-dom"
+import css from "./gemini-prompts.module.scss"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://gemini.google.com/*"]
@@ -28,6 +36,15 @@ export const findGeminiInputTarget = findGeminiInput
 export const computePopoverPosition = computeGeminiPopoverPosition
 export const insertPromptIntoElement = insertTextIntoGeminiInput
 export const detectPageTheme = detectGeminiPageTheme
+export {
+  cleanTemplateBracketsInInput,
+  findGeminiInputContainer,
+  handleGeminiSendTrigger,
+  handleGeminiTemplateKeyDown,
+  handleGeminiTemplatePaste,
+  handleTemplateVariableTyping,
+  jumpToNextTemplateVariable
+}
 
 async function loadPromptsForContentScript(
   forceRefresh: boolean
@@ -47,11 +64,7 @@ async function loadPromptsForContentScript(
     }
   }
 
-  if (
-    !forceRefresh &&
-    typeof chrome !== "undefined" &&
-    chrome.storage?.local
-  ) {
+  if (!forceRefresh && typeof chrome !== "undefined" && chrome.storage?.local) {
     const stored = await chrome.storage.local.get([
       PROMPTS_CACHE_STORAGE_KEY,
       THEME_STORAGE_KEY
@@ -80,6 +93,128 @@ async function loadPromptsForContentScript(
   }
 }
 
+const SparkleIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true">
+    <path
+      d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"
+      fill="url(#gemini-sparkle-grad)"
+    />
+    <defs>
+      <linearGradient
+        id="gemini-sparkle-grad"
+        x1="2"
+        y1="2"
+        x2="22"
+        y2="22"
+        gradientUnits="userSpaceOnUse">
+        <stop stopColor="#4285f4" />
+        <stop
+          offset="0.5"
+          stopColor="#9b72cb"
+        />
+        <stop
+          offset="1"
+          stopColor="#d96570"
+        />
+      </linearGradient>
+    </defs>
+  </svg>
+)
+
+const SearchIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true">
+    <circle
+      cx="11"
+      cy="11"
+      r="8"
+    />
+    <line
+      x1="21"
+      y1="21"
+      x2="16.65"
+      y2="16.65"
+    />
+  </svg>
+)
+
+const RefreshIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true">
+    <path d="M21.5 2v6h-6" />
+    <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-1.19" />
+  </svg>
+)
+
+const CloseIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true">
+    <line
+      x1="18"
+      y1="6"
+      x2="6"
+      y2="18"
+    />
+    <line
+      x1="6"
+      y1="6"
+      x2="18"
+      y2="18"
+    />
+  </svg>
+)
+
+const EnterIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true">
+    <polyline points="9 10 4 15 9 20" />
+    <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+  </svg>
+)
+
 export const GeminiPromptsOverlay = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [prompts, setPrompts] = useState<IPrompt[]>([])
@@ -88,9 +223,13 @@ export const GeminiPromptsOverlay = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [theme, setTheme] = useState<ThemeMode>(() => detectPageTheme())
-  const [position, setPosition] = useState<{ top: number; left: number }>({
+  const [selectedIndex, setSelectedIndex] = useState<number>(0)
+
+  const [position, setPosition] = useState<GeminiPopoverPosition>({
     top: 24,
-    left: 24
+    left: 24,
+    width: 360,
+    dockedAbove: true
   })
 
   const activeInputRef = useRef<HTMLElement | null>(null)
@@ -147,8 +286,13 @@ export const GeminiPromptsOverlay = () => {
         return
       }
       activeInputRef.current = matchedInput
+      const container = findGeminiInputContainer(matchedInput)
+      const containerRect = container ? container.getBoundingClientRect() : null
       setPosition(
-        computeGeminiPopoverPosition(matchedInput.getBoundingClientRect())
+        computeGeminiPopoverPosition(
+          matchedInput.getBoundingClientRect(),
+          containerRect
+        )
       )
       setIsOpen(true)
     }
@@ -157,11 +301,17 @@ export const GeminiPromptsOverlay = () => {
       openForTarget(event.target)
     }
 
+    const handlePointerDown = (event: PointerEvent) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
+    }
+
     const handleClick = (event: MouseEvent) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
       openForTarget(event.target)
     }
 
     const handleMouseDownOutside = (event: MouseEvent) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
       const target = event.target
       if (!(target instanceof Node)) {
         return
@@ -175,24 +325,102 @@ export const GeminiPromptsOverlay = () => {
       setIsOpen(false)
     }
 
+    const handleSubmit = (event: Event) => {
+      handleGeminiSendTrigger(event, activeInputRef.current)
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (handleGeminiTemplateKeyDown(event)) {
+        return
+      }
+
       if (event.key === "Escape") {
         setIsOpen(false)
+        return
+      }
+
+      if (!isOpen) {
+        return
+      }
+
+      const target = event.target as Node | null
+      const isInsidePopover = popoverRef.current?.contains(target)
+
+      if (isInsidePopover) {
+        if (event.key === "ArrowDown") {
+          event.preventDefault()
+          setSelectedIndex(
+            (prev) => (prev + 1) % (filteredPromptsRef.current.length || 1)
+          )
+          return
+        }
+
+        if (event.key === "ArrowUp") {
+          event.preventDefault()
+          setSelectedIndex((prev) => {
+            const count = filteredPromptsRef.current.length || 1
+            return (prev - 1 + count) % count
+          })
+          return
+        }
+
+        if (event.key === "Enter" && !event.shiftKey) {
+          const list = filteredPromptsRef.current
+          if (selectedIndex >= 0 && selectedIndex < list.length) {
+            event.preventDefault()
+            handleSelectPrompt(list[selectedIndex])
+            return
+          }
+        }
       }
     }
 
+    const handlePaste = (event: ClipboardEvent) => {
+      handleGeminiTemplatePaste(event)
+    }
+
     document.addEventListener("focusin", handleFocusIn, true)
-    document.addEventListener("click", handleClick, true)
+    document.addEventListener("pointerdown", handlePointerDown, true)
     document.addEventListener("mousedown", handleMouseDownOutside, true)
+    document.addEventListener("click", handleClick, true)
+    document.addEventListener("paste", handlePaste, true)
+    document.addEventListener("submit", handleSubmit, true)
     document.addEventListener("keydown", handleKeyDown, true)
 
     return () => {
       document.removeEventListener("focusin", handleFocusIn, true)
-      document.removeEventListener("click", handleClick, true)
+      document.removeEventListener("pointerdown", handlePointerDown, true)
       document.removeEventListener("mousedown", handleMouseDownOutside, true)
+      document.removeEventListener("click", handleClick, true)
+      document.removeEventListener("paste", handlePaste, true)
+      document.removeEventListener("submit", handleSubmit, true)
       document.removeEventListener("keydown", handleKeyDown, true)
     }
-  }, [])
+  }, [isOpen, selectedIndex])
+
+  // Keep drawer aligned on window resize or scroll
+  useEffect(() => {
+    if (!isOpen) return
+
+    const updatePosition = () => {
+      if (!activeInputRef.current) return
+      const container = findGeminiInputContainer(activeInputRef.current)
+      const containerRect = container ? container.getBoundingClientRect() : null
+      setPosition(
+        computeGeminiPopoverPosition(
+          activeInputRef.current.getBoundingClientRect(),
+          containerRect
+        )
+      )
+    }
+
+    window.addEventListener("resize", updatePosition)
+    window.addEventListener("scroll", updatePosition, true)
+    return () => {
+      window.removeEventListener("resize", updatePosition)
+      window.removeEventListener("scroll", updatePosition, true)
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen) {
@@ -201,11 +429,7 @@ export const GeminiPromptsOverlay = () => {
   }, [isOpen, loadPrompts])
 
   const filteredPrompts = useMemo(() => {
-    const tokens = searchQuery
-      .trim()
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean)
+    const tokens = searchQuery.trim().toLowerCase().split(/\s+/).filter(Boolean)
 
     if (tokens.length === 0) {
       return prompts
@@ -230,6 +454,13 @@ export const GeminiPromptsOverlay = () => {
     })
   }, [prompts, searchQuery])
 
+  const filteredPromptsRef = useRef(filteredPrompts)
+  filteredPromptsRef.current = filteredPrompts
+
+  useEffect(() => {
+    setSelectedIndex(0)
+  }, [searchQuery])
+
   const handleSelectPrompt = (prompt: IPrompt) => {
     if (activeInputRef.current) {
       insertTextIntoGeminiInput(activeInputRef.current, prompt.body)
@@ -241,18 +472,39 @@ export const GeminiPromptsOverlay = () => {
     return null
   }
 
+  const isDockedAbove = position.dockedAbove && position.bottom !== undefined
+
   return (
     <div
       ref={popoverRef}
-      className={css.popover}
+      className={`${css.popover} ${
+        position.dockedAbove ? css.dockedAbove : css.dockedBelow
+      }`}
       data-theme={theme}
-      style={{ top: `${position.top}px`, left: `${position.left}px` }}
+      style={{
+        left: `${position.left}px`,
+        width: `${position.width}px`,
+        ...(isDockedAbove
+          ? { bottom: `${position.bottom}px` }
+          : { top: `${position.top}px` })
+      }}
       role="dialog"
       aria-label="PromptHub Gemini Prompts">
       <div className={css.header}>
         <div className={css.brand}>
-          <span className={css.logoBadge}>PH</span>
+          <SparkleIcon className={css.brandSparkle} />
           <h3 className={css.title}>PromptHub</h3>
+        </div>
+        <div className={css.searchBar}>
+          <SearchIcon className={css.searchIcon} />
+          <input
+            type="text"
+            className={css.searchInput}
+            placeholder="Search prompts or #tag..."
+            aria-label="Search Gemini prompts"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
         <div className={css.headerActions}>
           <button
@@ -262,7 +514,7 @@ export const GeminiPromptsOverlay = () => {
             disabled={isLoading}
             aria-label="Refresh prompts"
             title="Refresh prompts">
-            ↻
+            <RefreshIcon />
           </button>
           <button
             type="button"
@@ -270,20 +522,9 @@ export const GeminiPromptsOverlay = () => {
             onClick={() => setIsOpen(false)}
             aria-label="Close prompts popover"
             title="Close">
-            ×
+            <CloseIcon />
           </button>
         </div>
-      </div>
-
-      <div className={css.searchBar}>
-        <input
-          type="text"
-          className={css.searchInput}
-          placeholder="Search prompts or #tag..."
-          aria-label="Search Gemini prompts"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
       </div>
 
       {isLoading ? (
@@ -293,7 +534,9 @@ export const GeminiPromptsOverlay = () => {
           Please sign in via the PromptHub extension popup to see your prompts.
         </div>
       ) : errorMessage ? (
-        <div className={css.errorBox} role="alert">
+        <div
+          className={css.errorBox}
+          role="alert">
           {errorMessage}
         </div>
       ) : filteredPrompts.length === 0 ? (
@@ -304,26 +547,43 @@ export const GeminiPromptsOverlay = () => {
         </div>
       ) : (
         <ul className={css.list}>
-          {filteredPrompts.map((prompt) => (
+          {filteredPrompts.map((prompt, index) => (
             <li key={prompt._id}>
               <button
                 type="button"
-                className={css.promptItem}
-                onClick={() => handleSelectPrompt(prompt)}>
-                <div className={css.promptHeader}>
-                  <span className={css.promptTitle}>{prompt.title}</span>
-                  <span className={css.insertHint}>Insert</span>
-                </div>
-                <span className={css.promptPreview}>{prompt.body}</span>
-                {prompt.tags && prompt.tags.length > 0 && (
-                  <div className={css.tagRow}>
-                    {prompt.tags.map((tag) => (
-                      <span key={tag} className={css.tagBadge}>
-                        #{tag}
-                      </span>
-                    ))}
+                className={`${css.promptItem} ${
+                  index === selectedIndex ? css.promptItemSelected : ""
+                }`}
+                onClick={() => handleSelectPrompt(prompt)}
+                onMouseEnter={() => setSelectedIndex(index)}>
+                <div className={css.promptItemContent}>
+                  <div className={css.itemSparkleBadge}>
+                    <span className={css.promptBullet}>✦</span>
                   </div>
-                )}
+                  <div className={css.itemDetails}>
+                    <div className={css.promptHeader}>
+                      <span className={css.promptTitle}>{prompt.title}</span>
+                      {prompt.tags && prompt.tags.length > 0 && (
+                        <div className={css.tagRow}>
+                          {prompt.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className={css.tagBadge}>
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className={css.promptPreview}>
+                      <TemplateHighlight text={prompt.body} />
+                    </div>
+                  </div>
+                </div>
+                <div className={css.insertHint}>
+                  <EnterIcon className={css.enterIcon} />
+                  <span>Insert</span>
+                </div>
               </button>
             </li>
           ))}

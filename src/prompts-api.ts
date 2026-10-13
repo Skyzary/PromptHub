@@ -192,9 +192,7 @@ export class PromptsApi {
     return response
   }
 
-  async deleteAllPrompts(
-    accessToken?: string
-  ): Promise<ApiMessageResponse> {
+  async deleteAllPrompts(accessToken?: string): Promise<ApiMessageResponse> {
     const response = await apiRequest<ApiMessageResponse>(
       `${this.baseUrl}/prompts/delete/all`,
       {

@@ -59,7 +59,9 @@ export default function PromptCard({
         {tags && tags.length > 0 && (
           <div className={css.tagsRow}>
             {tags.map((tag) => (
-              <span key={tag} className={css.tagBadge}>
+              <span
+                key={tag}
+                className={css.tagBadge}>
                 #{tag}
               </span>
             ))}

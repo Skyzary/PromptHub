@@ -1,114 +1,182 @@
 @use "../vars.scss" as *;
 
 .popover {
-  --bg-primary: #{$color-white};
-  --bg-secondary: #{$color-slate-100};
-  --bg-card: #{$color-slate-50};
-  --bg-hover: #{$color-slate-200};
-  --text-primary: #{$color-slate-900};
-  --text-secondary: #{$color-slate-700};
-  --text-muted: #{$color-slate-500};
-  --border-color: #{$color-slate-200};
-  --accent-color: #{$color-primary-600};
-  --accent-soft: #{$color-primary-100};
+  // Google Gemini typography
+  --font-gemini: "Google Sans", "Google Sans Text", Roboto, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
 
+  // Gemini surface tokens - Light Mode
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0f4f9;
+  --bg-card: #f8fafd;
+  --bg-hover: #f0f4f9;
+  --bg-selected: #e8f0fe;
+  --text-primary: #1f1f1f;
+  --text-secondary: #444746;
+  --text-muted: #727775;
+  --border-color: rgba(0, 0, 0, 0.12);
+  --accent-color: #0b57d0;
+  --accent-soft: rgba(11, 87, 208, 0.1);
+  --accent-border: rgba(11, 87, 208, 0.28);
+  --card-hover-shadow: 0 4px 14px rgba(11, 87, 208, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-docked: 0 -8px 24px rgba(15, 23, 42, 0.08);
+
+  // Gemini surface tokens - Dark Mode
   &[data-theme="dark"] {
-    --bg-primary: #{$color-slate-900};
-    --bg-secondary: #{$color-slate-800};
-    --bg-card: #{$color-slate-800};
-    --bg-hover: #{$color-slate-700};
-    --text-primary: #{$color-slate-50};
-    --text-secondary: #{$color-slate-300};
-    --text-muted: #{$color-slate-400};
-    --border-color: #{$color-slate-700};
-    --accent-color: #{$color-primary-500};
-    --accent-soft: #{$color-primary-900};
+    --bg-primary: #1e1f20;
+    --bg-secondary: #282a2c;
+    --bg-card: #222426;
+    --bg-hover: #282a2c;
+    --bg-selected: #242d3d;
+    --text-primary: #e3e3e3;
+    --text-secondary: #c4c7c5;
+    --text-muted: #8e918f;
+    --border-color: rgba(255, 255, 255, 0.12);
+    --accent-color: #a8c7fa;
+    --accent-soft: rgba(168, 199, 250, 0.16);
+    --accent-border: rgba(168, 199, 250, 0.32);
+    --card-hover-shadow: 0 6px 18px rgba(0, 0, 0, 0.45),
+      0 1px 4px rgba(168, 199, 250, 0.15);
+    --shadow-docked: 0 -10px 32px rgba(0, 0, 0, 0.5);
   }
 
   position: fixed;
   z-index: $z-gemini-popover;
-  width: $gemini-popover-width;
   max-height: $gemini-popover-max-height;
-  background-color: $bg-primary;
-  color: $text-primary;
-  border: $border-width solid $border-color;
-  border-radius: $radius-2xl;
-  box-shadow: $shadow-modal;
-  font-family: $font-family-base;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: $border-width solid var(--border-color);
+  font-family: var(--font-gemini);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   transition:
-    background-color $transition-medium,
-    color $transition-medium,
-    border-color $transition-medium;
+    background-color $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast;
+
+  border-radius: 20px;
+  box-shadow: var(--shadow-docked);
+
+  &.dockedAbove,
+  &.dockedBelow {
+    border-radius: 20px;
+    box-shadow: var(--shadow-docked);
+  }
 }
 
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: $space-xl $space-2xl;
-  background-color: $bg-card;
-  border-bottom: $border-width solid $border-color;
+  gap: $space-md;
+  padding: 10px 16px;
+  background-color: var(--bg-primary);
+  border-bottom: $border-width solid var(--border-color);
+  box-sizing: border-box;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: $space-lg;
+  gap: $space-xs;
+  flex-shrink: 0;
 }
 
-.logoBadge {
-  width: $size-gemini-logo;
-  height: $size-gemini-logo;
-  border-radius: $radius-sm;
-  background: $gradient-logo;
-  color: $color-white;
+.brandSparkle {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-2xs;
-  font-weight: $font-weight-bold;
-  box-shadow: $shadow-logo;
 }
 
 .title {
   margin: $space-0;
-  font-size: $font-size-base;
-  font-weight: $font-weight-bold;
-  color: $text-primary;
+  font-family: var(--font-gemini);
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.searchBar {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border: $border-width solid transparent;
+  border-radius: $radius-pill;
+  padding: 0 12px;
+  height: 36px;
+  box-sizing: border-box;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 1px var(--accent-color);
+    background-color: var(--bg-primary);
+  }
+}
+
+.searchIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-right: 8px;
+  display: inline-flex;
+}
+
+.searchInput {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-gemini);
+  font-size: $font-size-sm;
+  outline: none;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: $space-sm;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .iconBtn {
-  height: $btn-height-xs;
-  padding: $space-0 $space-lg;
-  border: $border-width solid $border-color;
-  border-radius: $radius-sm;
-  background-color: $bg-secondary;
-  color: $text-secondary;
-  font-family: $font-family-base;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: $radius-pill;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-gemini);
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition:
     background-color $transition-fast,
-    color $transition-fast,
-    border-color $transition-fast;
+    color $transition-fast;
 
   &:hover:not(:disabled) {
-    background-color: $bg-hover;
-    color: $text-primary;
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
   }
 
   &:disabled {
@@ -117,135 +185,210 @@
   }
 }
 
-.searchBar {
-  padding: $space-lg $space-2xl;
-  border-bottom: $border-width solid $border-color;
-  background-color: $bg-primary;
-}
-
-.searchInput {
-  width: 100%;
-  height: $btn-height-md;
-  padding: $space-0 $space-xl;
-  border: $border-width solid $border-color;
-  border-radius: $radius-md;
-  background-color: $bg-secondary;
-  color: $text-primary;
-  font-family: $font-family-base;
-  font-size: $font-size-sm;
-  outline: none;
-  box-sizing: border-box;
-  transition:
-    border-color $transition-fast,
-    box-shadow $transition-fast,
-    background-color $transition-fast;
-
-  &::placeholder {
-    color: $text-muted;
-  }
-
-  &:focus {
-    background-color: $bg-primary;
-    border-color: $accent-color;
-    box-shadow: $shadow-focus-ring;
-  }
-}
-
 .list {
   margin: $space-0;
-  padding: $space-lg;
+  padding: 8px 10px;
   list-style: none;
   max-height: $gemini-list-max-height;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: $space-base;
+  gap: 4px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.25);
+    border-radius: $radius-pill;
+  }
 }
 
 .promptItem {
   width: 100%;
   text-align: left;
-  padding: $space-lg $space-xl;
-  border: $border-width solid $border-color;
-  border-radius: $radius-md;
-  background-color: $bg-card;
-  color: $text-primary;
-  font-family: $font-family-base;
+  padding: 10px 14px;
+  border: $border-width solid transparent;
+  border-radius: 16px;
+  background-color: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-gemini);
   cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: $space-xs;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
   box-sizing: border-box;
   transition:
     background-color $transition-fast,
     border-color $transition-fast,
-    box-shadow $transition-fast;
+    box-shadow $transition-fast,
+    transform $transition-fast;
 
-  &:hover {
-    background-color: $bg-hover;
-    border-color: $accent-color;
-    box-shadow: $shadow-card-hover;
+  &:hover,
+  &.promptItemSelected {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-border);
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-1px);
+
+    .itemSparkleBadge {
+      background-color: var(--accent-color);
+      transform: scale(1.08);
+
+      .promptBullet {
+        color: var(--bg-primary);
+      }
+    }
+
+    .promptTitle {
+      color: var(--accent-color);
+    }
+
+    .insertHint {
+      opacity: 1;
+      background-color: var(--accent-color);
+      color: var(--bg-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+      transform: scale(1.03);
+    }
   }
+
+  &.promptItemSelected {
+    background-color: var(--bg-selected);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+.promptItemContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.itemSparkleBadge {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-pill;
+  background-color: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition:
+    background-color $transition-fast,
+    transform $transition-fast;
+}
+
+.promptBullet {
+  color: var(--accent-color);
+  font-size: 13px;
+  line-height: 1;
+  transition: color $transition-fast;
+}
+
+.itemDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
 }
 
 .promptHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: $space-base;
+  gap: $space-sm;
+  min-width: 0;
 }
 
 .promptTitle {
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: $text-primary;
-  line-height: $line-height-md;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.insertHint {
-  font-size: $font-size-2xs;
-  font-weight: $font-weight-semibold;
-  color: $accent-color;
-  background-color: $accent-soft;
-  padding: $space-2xs $space-base;
-  border-radius: $radius-pill;
-  flex-shrink: 0;
-}
-
-.promptPreview {
-  font-size: $font-size-xs;
-  color: $text-muted;
-  line-height: $line-height-xs;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  transition: color $transition-fast;
 }
 
 .tagRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-sm;
-  margin-top: $space-2xs;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .tagBadge {
-  font-size: $font-size-2xs;
-  font-weight: $font-weight-medium;
-  color: $accent-color;
-  background-color: $accent-soft;
-  border: $border-width solid $border-color;
-  padding: $space-2xs $space-base;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border: $border-width solid var(--border-color);
+  padding: 1px 8px;
   border-radius: $radius-pill;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.promptPreview {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  div {
+    display: inline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.insertHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent-color);
+  background-color: var(--accent-soft);
+  padding: 4px 10px;
+  border-radius: $radius-pill;
+  flex-shrink: 0;
+  opacity: 0.85;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    opacity $transition-fast,
+    transform $transition-fast,
+    box-shadow $transition-fast;
+}
+
+.enterIcon {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
 }
 
 .stateBox {
   padding: $space-4xl $space-2xl;
   text-align: center;
   font-size: $font-size-sm;
-  color: $text-muted;
+  color: var(--text-muted);
   line-height: $line-height-md;
 }
 

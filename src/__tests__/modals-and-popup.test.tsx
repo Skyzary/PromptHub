@@ -67,7 +67,9 @@ describe("CreatePromptModal", () => {
 
     createPromptSpy.mockRejectedValueOnce("raw failure")
     await user.click(screen.getByRole("button", { name: "Create" }))
-    expect(await screen.findByText("Failed to create prompt")).toBeInTheDocument()
+    expect(
+      await screen.findByText("Failed to create prompt")
+    ).toBeInTheDocument()
 
     // Click Cancel button -> calls handleClose
     await user.click(screen.getByRole("button", { name: "Cancel" }))
@@ -92,6 +94,25 @@ describe("CreatePromptModal", () => {
       tags: ["typescript", "frontend"]
     })
     expect(onCreated).toHaveBeenCalledTimes(1)
+  })
+
+  it("displays template preview box when body contains template variables", () => {
+    render(
+      <CreatePromptModal
+        isOpen={true}
+        onClose={vi.fn()}
+      />
+    )
+
+    expect(screen.queryByTestId("template-preview-box")).not.toBeInTheDocument()
+
+    fireEvent.change(screen.getByLabelText("Prompt text"), {
+      target: { value: "Generate {{lang}} code for {{task}}" }
+    })
+
+    expect(screen.getByTestId("template-preview-box")).toBeInTheDocument()
+    expect(screen.getByTestId("template-variable-lang")).toBeInTheDocument()
+    expect(screen.getByTestId("template-variable-task")).toBeInTheDocument()
   })
 })
 
@@ -259,6 +280,33 @@ describe("PromptDetailsModal", () => {
       expect(updateBodySpy).toHaveBeenCalled()
       expect(onUpdated).toHaveBeenCalled()
     })
+  })
+
+  it("renders template variable highlights in details view and edit mode preview", async () => {
+    const user = userEvent.setup()
+    const templatePrompt: IPrompt = {
+      ...SAMPLE_PROMPT,
+      body: "Refactor this {{component}} in {{framework}}"
+    }
+
+    render(
+      <PromptDetailsModal
+        prompt={templatePrompt}
+        isOpen={true}
+        onClose={vi.fn()}
+      />
+    )
+
+    expect(
+      screen.getByTestId("template-variable-component")
+    ).toBeInTheDocument()
+    expect(
+      screen.getByTestId("template-variable-framework")
+    ).toBeInTheDocument()
+
+    // Switch to editing body
+    await user.click(screen.getByRole("button", { name: /edit prompt/i }))
+    expect(screen.getByTestId("template-preview-box")).toBeInTheDocument()
   })
 })
 

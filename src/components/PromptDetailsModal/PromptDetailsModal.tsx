@@ -11,6 +11,7 @@ import {
 import * as z from "zod"
 
 import PromptIcon from "~src/components/PromptIcon/PromptIcon"
+import TemplateHighlight from "~src/components/TemplateHighlight/TemplateHighlight"
 import Btn from "~src/components/ui/Btn/Btn"
 import {
   deletePrompt,
@@ -19,6 +20,7 @@ import {
   updatePromptTitle
 } from "~src/prompts-api"
 import type { IPrompt } from "~src/types"
+import { hasTemplateVariables } from "~src/utils/template"
 
 import css from "./PromptDetailsModal.module.scss"
 
@@ -434,6 +436,16 @@ export default function PromptDetailsModal({
                 maxLength={10000}
                 autoFocus
               />
+              {hasTemplateVariables(body) && (
+                <div
+                  className={css.templatePreviewBox}
+                  data-testid="template-preview-box">
+                  <span className={css.templatePreviewLabel}>
+                    Template preview:
+                  </span>
+                  <TemplateHighlight text={body} />
+                </div>
+              )}
               <div className={css.editButtonsRow}>
                 <button
                   type="button"
@@ -454,7 +466,9 @@ export default function PromptDetailsModal({
               </div>
             </>
           ) : (
-            <div className={css.bodyBox}>{currentPrompt.body}</div>
+            <div className={css.bodyBox}>
+              <TemplateHighlight text={currentPrompt.body} />
+            </div>
           )}
         </div>
 

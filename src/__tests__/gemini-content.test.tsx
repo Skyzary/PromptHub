@@ -35,6 +35,12 @@ const mockPrompts: IPrompt[] = [
     title: "Summarize Article",
     body: "Summarize this article in 5 bullet points.",
     tags: ["summary"]
+  },
+  {
+    _id: "p3",
+    title: "Draft Email",
+    body: "Write a polite follow-up email.",
+    tags: undefined
   }
 ]
 
@@ -403,6 +409,122 @@ describe("Background script & Gemini content script", () => {
       ).not.toBeInTheDocument()
     })
 
+    it("inserts template prompt directly into Gemini input with blue highlight and supports in-input arrow jumping", async () => {
+      const templatePrompt: IPrompt = {
+        _id: "tpl1",
+        title: "Translate & Polish",
+        body: "Translate this text to {{language}} in a {{tone}} style: {{text}}",
+        tags: ["translation"]
+      }
+
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: [templatePrompt],
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+
+      // Open popover by focusing textarea
+      fireEvent.click(textarea)
+      expect(await screen.findByText("Translate & Polish")).toBeInTheDocument()
+
+      // Click on template prompt -> inserts directly into Gemini input and closes popover
+      fireEvent.click(screen.getByText("Translate & Polish"))
+      expect(
+        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+      ).not.toBeInTheDocument()
+
+      expect(textarea.value).toBe(
+        "Translate this text to {{language}} in a {{tone}} style: {{text}}"
+      )
+
+      // First variable ("language") has collapsed caret at innerEnd (no standard selection highlight)
+      expect(textarea.selectionStart).toBe(33)
+      expect(textarea.selectionEnd).toBe(33) // collapsed!
+
+      // Press ArrowRight to jump to next variable ("tone")
+      fireEvent.keyDown(textarea, { key: "ArrowRight" })
+      expect(textarea.selectionStart).toBe(47) // innerEnd of "tone"
+      expect(textarea.selectionEnd).toBe(47)
+
+      // Press ArrowRight to jump to next variable ("text")
+      fireEvent.keyDown(textarea, { key: "ArrowRight" })
+      expect(textarea.selectionStart).toBe(63) // innerEnd of "text"
+      expect(textarea.selectionEnd).toBe(63)
+
+      // Press ArrowLeft to jump back to previous variable ("tone")
+      fireEvent.keyDown(textarea, { key: "ArrowLeft" })
+      expect(textarea.selectionStart).toBe(43) // innerStart of "tone"
+      expect(textarea.selectionEnd).toBe(43)
+
+      // Pressing Enter to submit strips all brackets
+      fireEvent.keyDown(textarea, { key: "Enter" })
+      expect(textarea.value).toBe(
+        "Translate this text to language in a tone style: text"
+      )
+    })
+
+    it("inserts template prompt into contenteditable with blue highlighted spans", async () => {
+      const templatePrompt: IPrompt = {
+        _id: "tpl2",
+        title: "Code Generator",
+        body: "Generate a {{framework}} component for {{feature}}",
+        tags: ["code"]
+      }
+
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: [templatePrompt],
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const editor = document.createElement("div")
+      editor.className = "ql-editor"
+      editor.setAttribute("contenteditable", "true")
+      const p = document.createElement("p")
+      editor.appendChild(p)
+      document.body.appendChild(editor)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(p)
+      expect(await screen.findByText("Code Generator")).toBeInTheDocument()
+
+      fireEvent.click(screen.getByText("Code Generator"))
+      expect(
+        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+      ).not.toBeInTheDocument()
+
+      // Contenteditable p contains spans with .ph-template-variable and blue styling
+      const spans = p.querySelectorAll(".ph-template-variable")
+      expect(spans).toHaveLength(2)
+      expect(spans[0].textContent).toBe("{{framework}}")
+      expect(spans[0]).toHaveAttribute("data-ph-var", "framework")
+      expect(spans[1].textContent).toBe("{{feature}}")
+      expect(spans[1]).toHaveAttribute("data-ph-var", "feature")
+
+      // Stylesheet is injected into document
+      expect(
+        document.getElementById("prompthub-template-variable-styles")
+      ).toBeInTheDocument()
+
+      // Pressing Enter strips brackets in contenteditable
+      fireEvent.keyDown(editor, { key: "Enter" })
+      expect(p.textContent).toBe("Generate a framework component for feature")
+      expect(p.querySelectorAll(".ph-template-variable")).toHaveLength(0)
+    })
+
     it("renders unauthenticated and error states and falls back to storage or fetchPrompts", async () => {
       vi.stubGlobal("chrome", {
         runtime: {
@@ -527,6 +649,114 @@ describe("Background script & Gemini content script", () => {
       })
 
       unmount()
+    })
+
+    it("supports keyboard navigation with ArrowDown, ArrowUp, and Enter", async () => {
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: mockPrompts,
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(textarea)
+
+      await screen.findByText("Code Review Assistant")
+      const searchInput = screen.getByLabelText("Search Gemini prompts")
+
+      // ArrowDown to move to second prompt
+      fireEvent.keyDown(searchInput, { key: "ArrowDown" })
+      // ArrowUp to move back up
+      fireEvent.keyDown(searchInput, { key: "ArrowUp" })
+      // ArrowDown again to move to second prompt ("Summarize Article")
+      fireEvent.keyDown(searchInput, { key: "ArrowDown" })
+      // Press Enter to insert selected prompt
+      fireEvent.keyDown(searchInput, { key: "Enter" })
+
+      expect(textarea.value).toBe("Summarize this article in 5 bullet points.")
+      expect(
+        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+      ).not.toBeInTheDocument()
+    })
+
+    it("displays generic error message when prompt fetching rejects with non-Error", async () => {
+      vi.spyOn(promptsApiModule, "fetchPrompts").mockRejectedValueOnce(
+        "String network rejection"
+      )
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(textarea)
+
+      expect(
+        await screen.findByText("Failed to load prompts")
+      ).toBeInTheDocument()
+    })
+
+    it("docks on parent rich-textarea container when available", async () => {
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: mockPrompts,
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const richTextarea = document.createElement("rich-textarea")
+      richTextarea.getBoundingClientRect = vi.fn().mockReturnValue({
+        top: 500,
+        bottom: 560,
+        left: 150,
+        right: 850,
+        width: 700,
+        height: 60,
+        x: 150,
+        y: 500,
+        toJSON: () => ({})
+      })
+
+      const input = document.createElement("div")
+      input.className = "ql-editor"
+      input.setAttribute("contenteditable", "true")
+      input.getBoundingClientRect = vi.fn().mockReturnValue({
+        top: 510,
+        bottom: 550,
+        left: 170,
+        right: 830,
+        width: 660,
+        height: 40,
+        x: 170,
+        y: 510,
+        toJSON: () => ({})
+      })
+      richTextarea.appendChild(input)
+      document.body.appendChild(richTextarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(input)
+
+      const dialog = await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      expect(dialog).toBeInTheDocument()
+      expect(dialog.style.width).toBe("700px")
+      expect(dialog.style.left).toBe("150px")
+
+      // Window resize and scroll re-computes position
+      fireEvent(window, new Event("resize"))
+      fireEvent(window, new Event("scroll"))
+      expect(dialog).toBeInTheDocument()
     })
   })
 })

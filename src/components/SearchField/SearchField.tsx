@@ -8,10 +8,7 @@ interface SearchFieldProps {
   onSearch: (query: string) => void
 }
 
-export default function SearchField({
-  value,
-  onSearch
-}: SearchFieldProps) {
+export default function SearchField({ value, onSearch }: SearchFieldProps) {
   const [query, setQuery] = useState(value ?? "")
 
   useEffect(() => {

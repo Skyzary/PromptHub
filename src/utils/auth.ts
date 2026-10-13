@@ -8,12 +8,22 @@ import type {
 import { userSchema } from "../validation/user-validation"
 import { apiRequest, DEFAULT_API_BASE_URL } from "./api-request"
 
-const ACCESS_TOKEN_STORAGE_KEY = "prompthub_access_token"
-const REFRESH_TOKEN_STORAGE_KEY = "prompthub_refresh_token"
+export const ACCESS_TOKEN_STORAGE_KEY = "prompthub_access_token"
+export const REFRESH_TOKEN_STORAGE_KEY = "prompthub_refresh_token"
 
 let inMemoryAccessToken: string | null = null
 let inMemoryRefreshToken: string | null = null
 const authListeners = new Set<(isAuthenticated: boolean) => void>()
+
+function syncChromeStorage(key: string, value: string | null): void {
+  if (typeof chrome !== "undefined" && chrome.storage?.local) {
+    if (value) {
+      void chrome.storage.local.set({ [key]: value })
+    } else {
+      void chrome.storage.local.remove(key)
+    }
+  }
+}
 
 function notifyAuthListeners(isAuthenticated: boolean): void {
   authListeners.forEach((listener) => listener(isAuthenticated))
@@ -61,6 +71,7 @@ export function setAccessToken(token: string | null): void {
       window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
     }
   }
+  syncChromeStorage(ACCESS_TOKEN_STORAGE_KEY, token)
   notifyAuthListeners(Boolean(token || inMemoryRefreshToken))
 }
 
@@ -95,6 +106,7 @@ export function setRefreshToken(token: string | null): void {
       window.localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY)
     }
   }
+  syncChromeStorage(REFRESH_TOKEN_STORAGE_KEY, token)
   notifyAuthListeners(Boolean(inMemoryAccessToken || token))
 }
 

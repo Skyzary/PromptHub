@@ -103,12 +103,15 @@ describe("UI & Presentational Components", () => {
         name="TS Assistant"
         description="Review TypeScript code"
         type="development"
+        tags={["typescript", "code"]}
         onClick={onCardClick}
       />
     )
 
     expect(screen.getByText("TS Assistant")).toBeInTheDocument()
     expect(screen.getByText("Review TypeScript code")).toBeInTheDocument()
+    expect(screen.getByText("#typescript")).toBeInTheDocument()
+    expect(screen.getByText("#code")).toBeInTheDocument()
 
     // Click copy button -> should NOT trigger onCardClick
     const copyBtn = screen.getByRole("button", { name: /copy prompt/i })

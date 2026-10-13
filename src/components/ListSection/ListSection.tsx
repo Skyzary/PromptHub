@@ -103,6 +103,7 @@ export default function ListSection({
               name={prompt.title}
               description={prompt.body}
               type={prompt.tags?.[0] ?? "other"}
+              tags={prompt.tags}
               onClick={() => setSelectedPrompt(prompt)}
             />
           ))}

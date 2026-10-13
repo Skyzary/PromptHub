@@ -1,0 +1,258 @@
+@use "../vars.scss" as *;
+
+.popover {
+  --bg-primary: #{$color-white};
+  --bg-secondary: #{$color-slate-100};
+  --bg-card: #{$color-slate-50};
+  --bg-hover: #{$color-slate-200};
+  --text-primary: #{$color-slate-900};
+  --text-secondary: #{$color-slate-700};
+  --text-muted: #{$color-slate-500};
+  --border-color: #{$color-slate-200};
+  --accent-color: #{$color-primary-600};
+  --accent-soft: #{$color-primary-100};
+
+  &[data-theme="dark"] {
+    --bg-primary: #{$color-slate-900};
+    --bg-secondary: #{$color-slate-800};
+    --bg-card: #{$color-slate-800};
+    --bg-hover: #{$color-slate-700};
+    --text-primary: #{$color-slate-50};
+    --text-secondary: #{$color-slate-300};
+    --text-muted: #{$color-slate-400};
+    --border-color: #{$color-slate-700};
+    --accent-color: #{$color-primary-500};
+    --accent-soft: #{$color-primary-900};
+  }
+
+  position: fixed;
+  z-index: $z-gemini-popover;
+  width: $gemini-popover-width;
+  max-height: $gemini-popover-max-height;
+  background-color: $bg-primary;
+  color: $text-primary;
+  border: $border-width solid $border-color;
+  border-radius: $radius-2xl;
+  box-shadow: $shadow-modal;
+  font-family: $font-family-base;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition:
+    background-color $transition-medium,
+    color $transition-medium,
+    border-color $transition-medium;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-xl $space-2xl;
+  background-color: $bg-card;
+  border-bottom: $border-width solid $border-color;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: $space-lg;
+}
+
+.logoBadge {
+  width: $size-gemini-logo;
+  height: $size-gemini-logo;
+  border-radius: $radius-sm;
+  background: $gradient-logo;
+  color: $color-white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-bold;
+  box-shadow: $shadow-logo;
+}
+
+.title {
+  margin: $space-0;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.iconBtn {
+  height: $btn-height-xs;
+  padding: $space-0 $space-lg;
+  border: $border-width solid $border-color;
+  border-radius: $radius-sm;
+  background-color: $bg-secondary;
+  color: $text-secondary;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: $bg-hover;
+    color: $text-primary;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.searchBar {
+  padding: $space-lg $space-2xl;
+  border-bottom: $border-width solid $border-color;
+  background-color: $bg-primary;
+}
+
+.searchInput {
+  width: 100%;
+  height: $btn-height-md;
+  padding: $space-0 $space-xl;
+  border: $border-width solid $border-color;
+  border-radius: $radius-md;
+  background-color: $bg-secondary;
+  color: $text-primary;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    background-color $transition-fast;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    background-color: $bg-primary;
+    border-color: $accent-color;
+    box-shadow: $shadow-focus-ring;
+  }
+}
+
+.list {
+  margin: $space-0;
+  padding: $space-lg;
+  list-style: none;
+  max-height: $gemini-list-max-height;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-base;
+}
+
+.promptItem {
+  width: 100%;
+  text-align: left;
+  padding: $space-lg $space-xl;
+  border: $border-width solid $border-color;
+  border-radius: $radius-md;
+  background-color: $bg-card;
+  color: $text-primary;
+  font-family: $font-family-base;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  box-sizing: border-box;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    border-color: $accent-color;
+    box-shadow: $shadow-card-hover;
+  }
+}
+
+.promptHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-base;
+}
+
+.promptTitle {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  line-height: $line-height-md;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.insertHint {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  color: $accent-color;
+  background-color: $accent-soft;
+  padding: $space-2xs $space-base;
+  border-radius: $radius-pill;
+  flex-shrink: 0;
+}
+
+.promptPreview {
+  font-size: $font-size-xs;
+  color: $text-muted;
+  line-height: $line-height-xs;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  margin-top: $space-2xs;
+}
+
+.tagBadge {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-medium;
+  color: $accent-color;
+  background-color: $accent-soft;
+  border: $border-width solid $border-color;
+  padding: $space-2xs $space-base;
+  border-radius: $radius-pill;
+}
+
+.stateBox {
+  padding: $space-4xl $space-2xl;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $text-muted;
+  line-height: $line-height-md;
+}
+
+.errorBox {
+  padding: $space-4xl $space-2xl;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-red-600;
+  line-height: $line-height-md;
+}

@@ -7,6 +7,7 @@ interface PromptCardProps {
   name: string
   description: string
   type: string
+  tags?: string[]
   onClick?: () => void
 }
 
@@ -14,6 +15,7 @@ export default function PromptCard({
   name,
   type,
   description,
+  tags,
   onClick
 }: PromptCardProps) {
   const [copied, setCopied] = useState(false)
@@ -54,6 +56,15 @@ export default function PromptCard({
           </button>
         </div>
         <p className={css.promptCardDescription}>{description}</p>
+        {tags && tags.length > 0 && (
+          <div className={css.tagsRow}>
+            {tags.map((tag) => (
+              <span key={tag} className={css.tagBadge}>
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </li>
   )

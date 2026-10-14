@@ -294,6 +294,9 @@ export function useGeminiOverlayEvents({
     }
 
     const handleInput = (event: Event) => {
+      if (isProgrammaticInsert) {
+        return
+      }
       const target = event.target as Node | null
       if (!isTargetInsidePopover(target, event)) {
         const input =
@@ -302,6 +305,8 @@ export function useGeminiOverlayEvents({
         const text = input ? getGeminiInputText(input).trim() : ""
         if (!text) {
           isDismissedRef.current = false
+        } else if (hasTemplateVariables(text)) {
+          return
         } else {
           dismissOnTyping()
         }
@@ -309,6 +314,9 @@ export function useGeminiOverlayEvents({
     }
 
     const handleCompositionStart = (event: CompositionEvent) => {
+      if (isProgrammaticInsert) {
+        return
+      }
       const target = event.target as Node | null
       if (!isTargetInsidePopover(target, event)) {
         dismissOnTyping()

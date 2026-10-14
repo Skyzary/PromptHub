@@ -84,7 +84,10 @@ export function handleTemplateVariableTyping(
         const activeSpan = inputElement.querySelector<HTMLElement>(
           `.${TemplateHighlighter.ACTIVE_CLASS}`
         )
-        if (activeSpan && activeSpan.getAttribute("data-ph-modified") !== "true") {
+        if (
+          activeSpan &&
+          activeSpan.getAttribute("data-ph-modified") !== "true"
+        ) {
           span = activeSpan
         }
       }

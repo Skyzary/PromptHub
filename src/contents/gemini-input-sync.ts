@@ -6,22 +6,44 @@ import {
 } from "./gemini-template-state"
 import { TemplateHighlighter } from "./TemplateHighlighter"
 
+export let isProgrammaticInsert = false
+
+export function setProgrammaticInsert(value: boolean): void {
+  isProgrammaticInsert = value
+}
+
 /**
  * Helper to dispatch an input event and change event on an input element.
  */
 export function dispatchInputEvent(element: HTMLElement, data: string): void {
-  const inputEvent =
-    typeof InputEvent === "function"
-      ? new InputEvent("input", {
-          bubbles: true,
-          cancelable: true,
-          data,
-          inputType: "insertText"
-        })
-      : new Event("input", { bubbles: true })
+  isProgrammaticInsert = true
+  try {
+    const isTextarea =
+      element instanceof HTMLTextAreaElement ||
+      element instanceof HTMLInputElement
+    const richContainer = element.closest<HTMLElement>("rich-textarea")
+    const target = !isTextarea && richContainer ? richContainer : element
 
-  element.dispatchEvent(inputEvent)
-  element.dispatchEvent(new Event("change", { bubbles: true }))
+    const inputEvent =
+      typeof InputEvent === "function"
+        ? new InputEvent("input", {
+            bubbles: true,
+            cancelable: true,
+            ...(isTextarea && data ? { data, inputType: "insertText" } : {})
+          })
+        : new Event("input", { bubbles: true })
+
+    target.dispatchEvent(inputEvent)
+    target.dispatchEvent(new Event("change", { bubbles: true }))
+  } finally {
+    if (typeof setTimeout === "function") {
+      setTimeout(() => {
+        isProgrammaticInsert = false
+      }, 50)
+    } else {
+      isProgrammaticInsert = false
+    }
+  }
 }
 
 /**
@@ -30,6 +52,8 @@ export function dispatchInputEvent(element: HTMLElement, data: string): void {
  * contenteditable text, and textarea values so Gemini sends clean text.
  */
 export function cleanTemplateBracketsInInput(element: HTMLElement): boolean {
+  isProgrammaticInsert = true
+  try {
   const currentText = getGeminiInputText(element)
   if (!hasTemplateVariables(currentText)) {
     return false
@@ -123,6 +147,15 @@ export function cleanTemplateBracketsInInput(element: HTMLElement): boolean {
   element.dispatchEvent(new Event("change", { bubbles: true }))
 
   return true
+  } finally {
+    if (typeof setTimeout === "function") {
+      setTimeout(() => {
+        isProgrammaticInsert = false
+      }, 50)
+    } else {
+      isProgrammaticInsert = false
+    }
+  }
 }
 
 /**
@@ -136,7 +169,9 @@ export function insertTextIntoGeminiInput(
   element: HTMLElement,
   text: string
 ): void {
-  resetModifiedTemplateVariables()
+  isProgrammaticInsert = true
+  try {
+    resetModifiedTemplateVariables()
   TemplateHighlighter.applyHighlightClasses(element)
   element.focus()
 
@@ -157,36 +192,98 @@ export function insertTextIntoGeminiInput(
     return
   }
 
-  const paragraph = element.querySelector("p")
-  if (hasVars) {
-    const html = TemplateHighlighter.buildTemplateHtml(text)
-    if (paragraph) {
-      paragraph.innerHTML = html
-    } else {
-      element.innerHTML = html
-    }
-  } else {
-    if (paragraph) {
-      paragraph.textContent = text
-    } else {
-      element.textContent = text
+  // 1. If Quill instance is present, update its text model first
+  const anyEl = element as unknown as {
+    __quill?: { setText?: (t: string) => void }
+    parentElement?: { __quill?: { setText?: (t: string) => void } }
+  }
+  const richTextarea = element.closest("rich-textarea") as unknown as {
+    quill?: { setText?: (t: string) => void }
+    __quill?: { setText?: (t: string) => void }
+  } | null
+  const qlContainer = element.closest(".ql-container") as unknown as {
+    __quill?: { setText?: (t: string) => void }
+  } | null
+
+  const quillInstance =
+    anyEl.__quill ||
+    anyEl.parentElement?.__quill ||
+    richTextarea?.quill ||
+    richTextarea?.__quill ||
+    qlContainer?.__quill
+
+  if (!hasVars && quillInstance && typeof quillInstance.setText === "function") {
+    try {
+      quillInstance.setText(text)
+    } catch {
+      // Continue to next sync methods
     }
   }
 
+  const paragraph = element.querySelector("p")
+  const targetContainer = paragraph ?? element
+  if (hasVars) {
+    TemplateHighlighter.appendTemplateNodes(targetContainer, text)
+  } else {
+    targetContainer.textContent = text
+  }
+
+  const richContainer = element.closest<HTMLElement>("rich-textarea")
+  const eventTarget: HTMLElement =
+    hasVars && richContainer ? richContainer : element
+
+  // Dispatch change and non-destructive generic input event
+  // Avoid dispatching directly to ql-editor when hasVars is true,
+  // as Quill will parse it as plain text and wipe all custom DOM nodes!
   const inputEvent =
     typeof InputEvent === "function"
       ? new InputEvent("input", {
           bubbles: true,
           cancelable: true,
-          data: text,
-          inputType: "insertText"
+          ...(hasVars ? {} : { data: text, inputType: "insertText" })
         })
       : new Event("input", { bubbles: true })
 
-  element.dispatchEvent(inputEvent)
+  eventTarget.dispatchEvent(inputEvent)
+  eventTarget.dispatchEvent(new Event("change", { bubbles: true }))
 
   if (hasVars) {
-    setCollapsedInputCursor(element, vars[0].innerEnd)
-    highlightActiveVariableElement(element, 0)
+    const setInitialCursor = () => {
+      highlightActiveVariableElement(element, 0)
+      const activeSpan = element.querySelector(
+        `.${TemplateHighlighter.ACTIVE_CLASS}`
+      )
+      if (
+        activeSpan &&
+        activeSpan.firstChild &&
+        typeof window !== "undefined"
+      ) {
+        const sel = window.getSelection()
+        if (sel) {
+          const range = document.createRange()
+          range.setStart(activeSpan.firstChild, 2)
+          range.setEnd(activeSpan.firstChild, 2)
+          sel.removeAllRanges()
+          sel.addRange(range)
+          return
+        }
+      }
+      setCollapsedInputCursor(element, vars[0].innerEnd)
+    }
+
+    setInitialCursor()
+    if (typeof setTimeout === "function") {
+      setTimeout(setInitialCursor, 0)
+      setTimeout(setInitialCursor, 50)
+    }
+  }
+  } finally {
+    if (typeof setTimeout === "function") {
+      setTimeout(() => {
+        isProgrammaticInsert = false
+      }, 100)
+    } else {
+      isProgrammaticInsert = false
+    }
   }
 }

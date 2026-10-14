@@ -10,7 +10,8 @@ import {
 } from "./gemini-input-sync"
 import {
   getGeminiInputText,
-  getInputSelectionOffsets
+  getInputSelectionOffsets,
+  setCollapsedInputCursor
 } from "./gemini-selection"
 import {
   isVariableModified,
@@ -67,12 +68,26 @@ export function handleTemplateVariableTyping(
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0)
       const node = range.startContainer
-      const span =
-        node instanceof Element
-          ? node.closest<HTMLElement>(`.${TemplateHighlighter.VARIABLE_CLASS}`)
-          : node.parentElement?.closest<HTMLElement>(
-              `.${TemplateHighlighter.VARIABLE_CLASS}`
-            )
+      let span: HTMLElement | null = null
+      if (node instanceof HTMLElement) {
+        span = node.classList.contains(TemplateHighlighter.VARIABLE_CLASS)
+          ? node
+          : node.closest<HTMLElement>(`.${TemplateHighlighter.VARIABLE_CLASS}`)
+      } else if (node.parentElement) {
+        span = node.parentElement.closest<HTMLElement>(
+          `.${TemplateHighlighter.VARIABLE_CLASS}`
+        )
+      }
+
+      // Check if active variable class is present in input
+      if (!span) {
+        const activeSpan = inputElement.querySelector<HTMLElement>(
+          `.${TemplateHighlighter.ACTIVE_CLASS}`
+        )
+        if (activeSpan && activeSpan.getAttribute("data-ph-modified") !== "true") {
+          span = activeSpan
+        }
+      }
 
       if (span && inputElement.contains(span)) {
         if (span.getAttribute("data-ph-modified") === "true") {
@@ -167,6 +182,38 @@ export function handleTemplateVariableTyping(
       inputElement.dispatchEvent(new Event("change", { bubbles: true }))
       return true
     }
+  } else {
+    // Contenteditable fallback (e.g. Quill without span wrapper)
+    if (isBackspaceOrDelete) {
+      event.preventDefault()
+      event.stopPropagation()
+      const before = text.slice(0, currentVar.fullStart)
+      const after = text.slice(currentVar.fullEnd)
+      const newText = before + "{{}}" + after
+      const paragraph = inputElement.querySelector("p")
+      const targetContainer = paragraph ?? inputElement
+      targetContainer.textContent = newText
+      const newCursorPos = currentVar.fullStart + 2
+      setCollapsedInputCursor(inputElement, newCursorPos)
+      dispatchInputEvent(inputElement, "")
+      return true
+    }
+
+    if (isPrintable) {
+      event.preventDefault()
+      event.stopPropagation()
+      const char = event.key
+      const before = text.slice(0, currentVar.fullStart)
+      const after = text.slice(currentVar.fullEnd)
+      const newText = before + `{{${char}}}` + after
+      const paragraph = inputElement.querySelector("p")
+      const targetContainer = paragraph ?? inputElement
+      targetContainer.textContent = newText
+      const newCursorPos = currentVar.fullStart + 2 + char.length
+      setCollapsedInputCursor(inputElement, newCursorPos)
+      dispatchInputEvent(inputElement, char)
+      return true
+    }
   }
 
   return false
@@ -244,6 +291,34 @@ export function handleGeminiTemplatePaste(event: ClipboardEvent): boolean {
       inputElement.dispatchEvent(new Event("input", { bubbles: true }))
       inputElement.dispatchEvent(new Event("change", { bubbles: true }))
       return true
+    }
+  } else {
+    // Contenteditable fallback paste
+    const text = getGeminiInputText(inputElement)
+    const vars = TemplateHighlighter.findVariablesInText(text)
+    const selection = getInputSelectionOffsets(inputElement)
+    if (selection) {
+      const currentVar = vars.find(
+        (v) =>
+          (selection.start >= v.fullStart && selection.start <= v.fullEnd) ||
+          (selection.end >= v.fullStart && selection.end <= v.fullEnd)
+      )
+
+      if (currentVar && !modifiedVariableIndices.has(currentVar.index)) {
+        event.preventDefault()
+        event.stopPropagation()
+        modifiedVariableIndices.add(currentVar.index)
+        const before = text.slice(0, currentVar.fullStart)
+        const after = text.slice(currentVar.fullEnd)
+        const newText = before + `{{${pastedText}}}` + after
+        const paragraph = inputElement.querySelector("p")
+        const targetContainer = paragraph ?? inputElement
+        targetContainer.textContent = newText
+        const newPos = currentVar.fullStart + 2 + pastedText.length
+        setCollapsedInputCursor(inputElement, newPos)
+        dispatchInputEvent(inputElement, pastedText)
+        return true
+      }
     }
   }
 

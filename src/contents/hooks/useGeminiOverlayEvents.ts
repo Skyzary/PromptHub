@@ -1,12 +1,15 @@
 import { useEffect, useRef, type MutableRefObject, type RefObject } from "react"
 
 import type { IPrompt } from "../../types"
+import { hasTemplateVariables } from "../../utils/template"
 import { findGeminiInput } from "../gemini-elements"
 import {
   handleGeminiSendTrigger,
   handleGeminiTemplateKeyDown,
   handleGeminiTemplatePaste
 } from "../gemini-event-handlers"
+import { isProgrammaticInsert } from "../gemini-input-sync"
+import { getGeminiInputText } from "../gemini-selection"
 
 export interface UseGeminiOverlayEventsOptions {
   isOpen: boolean
@@ -47,6 +50,17 @@ export function useGeminiOverlayEvents({
     }
 
     const openForTarget = (target: EventTarget | null) => {
+      if (isDismissedRef.current) {
+        return
+      }
+
+      const input =
+        activeInputRef.current ??
+        (target instanceof HTMLElement ? findGeminiInput(target) : null)
+      if (input && hasTemplateVariables(getGeminiInputText(input))) {
+        return
+      }
+
       const opened = updatePositionForTarget(target)
       if (opened) {
         setIsOpen(true)
@@ -82,6 +96,13 @@ export function useGeminiOverlayEvents({
         return
       }
 
+      const input =
+        activeInputRef.current ??
+        (target instanceof HTMLElement ? findGeminiInput(target) : null)
+      if (input && hasTemplateVariables(getGeminiInputText(input))) {
+        return
+      }
+
       openForTarget(event.target)
     }
 
@@ -92,7 +113,10 @@ export function useGeminiOverlayEvents({
         activeInputRef.current &&
         (!relatedTarget || !activeInputRef.current.contains(relatedTarget))
       ) {
-        isDismissedRef.current = false
+        const text = getGeminiInputText(activeInputRef.current).trim()
+        if (!text) {
+          isDismissedRef.current = false
+        }
       }
     }
 
@@ -102,6 +126,18 @@ export function useGeminiOverlayEvents({
 
     const handleClick = (event: MouseEvent) => {
       handleGeminiSendTrigger(event, activeInputRef.current)
+      const target = event.target
+      if (target instanceof Node && isTargetInsidePopover(target, event)) {
+        return
+      }
+
+      const input =
+        activeInputRef.current ??
+        (target instanceof HTMLElement ? findGeminiInput(target) : null)
+      if (input && hasTemplateVariables(getGeminiInputText(input))) {
+        return
+      }
+
       isDismissedRef.current = false
       openForTarget(event.target)
     }
@@ -132,6 +168,28 @@ export function useGeminiOverlayEvents({
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as Node | null
+      const isInsidePopover = isTargetInsidePopover(target, event)
+      const input =
+        activeInputRef.current ??
+        (target instanceof HTMLElement ? findGeminiInput(target) : null)
+      const hasVars = input
+        ? hasTemplateVariables(getGeminiInputText(input))
+        : false
+
+      // If the editor already contains a template with variables, template navigation
+      // (Tab, arrows) and variable editing/submission in the editor take absolute precedence!
+      if (hasVars && !isInsidePopover) {
+        if (handleGeminiTemplateKeyDown(event)) {
+          dismissOnTyping()
+          return
+        }
+        if (event.key === "Enter" && !event.shiftKey && !event.altKey) {
+          dismissOnTyping()
+          return
+        }
+      }
+
       if (!isOpen) {
         handleGeminiTemplateKeyDown(event)
         return
@@ -145,8 +203,6 @@ export function useGeminiOverlayEvents({
         return
       }
 
-      const target = event.target as Node | null
-      const isInsidePopover = isTargetInsidePopover(target, event)
       const isGeminiInputTarget =
         target === activeInputRef.current ||
         (target instanceof HTMLElement && Boolean(findGeminiInput(target)))
@@ -194,7 +250,8 @@ export function useGeminiOverlayEvents({
           if (list.length > 0 && currentIdx >= 0 && currentIdx < list.length) {
             event.preventDefault()
             event.stopPropagation()
-            isDismissedRef.current = false
+            isDismissedRef.current = true
+            setIsOpen(false)
             handleSelectPrompt(list[currentIdx])
             return
           }
@@ -202,6 +259,12 @@ export function useGeminiOverlayEvents({
             dismissOnTyping()
           }
         }
+      }
+
+      // First priority: handle template navigation or variable typing
+      if (handleGeminiTemplateKeyDown(event)) {
+        dismissOnTyping()
+        return
       }
 
       // If the user starts typing outside the popover,
@@ -220,10 +283,6 @@ export function useGeminiOverlayEvents({
           dismissOnTyping()
         }
       }
-
-      if (handleGeminiTemplateKeyDown(event)) {
-        return
-      }
     }
 
     const handlePaste = (event: ClipboardEvent) => {
@@ -237,7 +296,15 @@ export function useGeminiOverlayEvents({
     const handleInput = (event: Event) => {
       const target = event.target as Node | null
       if (!isTargetInsidePopover(target, event)) {
-        dismissOnTyping()
+        const input =
+          activeInputRef.current ??
+          (target instanceof HTMLElement ? findGeminiInput(target) : null)
+        const text = input ? getGeminiInputText(input).trim() : ""
+        if (!text) {
+          isDismissedRef.current = false
+        } else {
+          dismissOnTyping()
+        }
       }
     }
 

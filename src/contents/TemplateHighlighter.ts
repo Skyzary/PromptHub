@@ -18,8 +18,11 @@ export class TemplateHighlighter {
   public static readonly CONTAINER_CLASS = "ph-template-container"
   public static readonly ROOT_CLASS = "ph-templates-enabled"
 
+  public static readonly STYLE_ELEMENT_ID = "prompthub-template-variable-styles"
+
   /**
-   * Applies highlight container and root classes instead of dynamic <style> injection.
+   * Applies highlight container and root classes and injects global styles into document.head
+   * so that light DOM elements (like Gemini Quill editor) receive template variable styling.
    */
   public static applyHighlightClasses(
     element?: HTMLElement | HTMLTextAreaElement | null
@@ -29,6 +32,50 @@ export class TemplateHighlighter {
     }
     if (typeof document !== "undefined" && document.body) {
       document.body.classList.add(TemplateHighlighter.ROOT_CLASS)
+
+      if (!document.getElementById(TemplateHighlighter.STYLE_ELEMENT_ID)) {
+        const style = document.createElement("style")
+        style.id = TemplateHighlighter.STYLE_ELEMENT_ID
+        style.textContent = `
+          .ph-template-container {
+            position: relative;
+          }
+          .ph-template-variable {
+            color: #2563eb !important;
+            background-color: rgba(37, 99, 235, 0.12) !important;
+            border: 1px solid rgba(37, 99, 235, 0.25) !important;
+            border-radius: 4px !important;
+            padding: 0 4px !important;
+            font-weight: 600 !important;
+            display: inline !important;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+          }
+          .ph-template-variable-active {
+            color: #1d4ed8 !important;
+            background-color: rgba(37, 99, 235, 0.26) !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.38) !important;
+          }
+          [data-theme="dark"] .ph-template-variable,
+          body.dark-theme .ph-template-variable,
+          html[data-theme="dark"] .ph-template-variable,
+          html.dark .ph-template-variable {
+            color: #60a5fa !important;
+            background-color: rgba(59, 130, 246, 0.2) !important;
+            border-color: rgba(59, 130, 246, 0.35) !important;
+          }
+          [data-theme="dark"] .ph-template-variable-active,
+          body.dark-theme .ph-template-variable-active,
+          html[data-theme="dark"] .ph-template-variable-active,
+          html.dark .ph-template-variable-active {
+            color: #93c5fd !important;
+            background-color: rgba(59, 130, 246, 0.36) !important;
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.48) !important;
+          }
+        `
+        document.head.appendChild(style)
+      }
     }
   }
 
@@ -109,6 +156,54 @@ export class TemplateHighlighter {
   }
 
   /**
+   * Appends template content as real DOM Nodes into a target element.
+   * Completely avoids `element.innerHTML = ...` to prevent TrustedHTML policy violations
+   * on pages like gemini.google.com that enforce Trusted Types.
+   */
+  public static appendTemplateNodes(target: HTMLElement, text: string): void {
+    while (target.firstChild) {
+      target.removeChild(target.firstChild)
+    }
+
+    const regex = /\{\{\s*([^}]+?)\s*\}\}/g
+    let lastIndex = 0
+    let varIdx = 0
+    let match: RegExpExecArray | null
+
+    while ((match = regex.exec(text)) !== null) {
+      const start = match.index
+      const raw = match[0]
+      const captured = match[1] ?? ""
+      const varName = captured.trim()
+
+      if (start > lastIndex) {
+        target.appendChild(
+          document.createTextNode(text.slice(lastIndex, start))
+        )
+      }
+
+      const span = document.createElement("span")
+      span.className = TemplateHighlighter.VARIABLE_CLASS
+      span.setAttribute("data-ph-var", varName)
+      span.setAttribute("data-ph-original", varName)
+      span.setAttribute("data-ph-index", String(varIdx++))
+      span.style.color = "#2563eb"
+      span.style.backgroundColor = "rgba(37, 99, 235, 0.15)"
+      span.style.borderRadius = "4px"
+      span.style.padding = "0 4px"
+      span.style.fontWeight = "600"
+      span.textContent = raw
+      target.appendChild(span)
+
+      lastIndex = start + raw.length
+    }
+
+    if (lastIndex < text.length) {
+      target.appendChild(document.createTextNode(text.slice(lastIndex)))
+    }
+  }
+
+  /**
    * Highlights the active template variable element visually with ACTIVE_CLASS
    * while removing it from other variable elements.
    */
@@ -122,8 +217,12 @@ export class TemplateHighlighter {
     spans.forEach((span, i) => {
       if (i === activeIdx) {
         span.classList.add(TemplateHighlighter.ACTIVE_CLASS)
+        span.style.backgroundColor = "rgba(37, 99, 235, 0.28)"
+        span.style.outline = "2px solid rgba(37, 99, 235, 0.5)"
       } else {
         span.classList.remove(TemplateHighlighter.ACTIVE_CLASS)
+        span.style.backgroundColor = "rgba(37, 99, 235, 0.15)"
+        span.style.outline = "none"
       }
     })
   }

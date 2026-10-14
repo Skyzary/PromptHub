@@ -35,3 +35,8 @@ dist/
 .idea
 .repomix-output.xml
 repomix-output.xml
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+.agents/
+step-*.png
+screenshot-*.png

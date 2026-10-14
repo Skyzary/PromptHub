@@ -854,5 +854,88 @@ describe("Background script & Gemini content script", () => {
       fireEvent.keyDown(textarea, { key: "Escape" })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
     })
+
+    it("closes popover when user starts typing, presses Backspace/Delete, or pastes in Gemini input", async () => {
+      vi.stubGlobal("chrome", {
+        runtime: {
+          sendMessage: vi.fn().mockResolvedValue({
+            ok: true,
+            prompts: mockPrompts,
+            isAuthenticated: true
+          })
+        }
+      })
+
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+
+      render(<GeminiPromptsOverlay />)
+      fireEvent.click(textarea)
+
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+
+      // 1. Typing in search field inside popover does NOT close popover
+      const searchInput = screen.getByLabelText("Search Gemini prompts")
+      fireEvent.keyDown(searchInput, { key: "a" })
+      expect(screen.getByRole("dialog")).toBeInTheDocument()
+
+      // 2. Typing printable character in Gemini textarea closes popover
+      fireEvent.keyDown(textarea, { key: "h" })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // Trailing focusin from contenteditable/Quill does NOT reopen popover while user is in input
+      fireEvent.focusIn(textarea)
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // 3. Re-open and test Backspace
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.keyDown(textarea, { key: "Backspace" })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // 4. Re-open and test Delete
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.keyDown(textarea, { key: "Delete" })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // 5. Re-open and test paste
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.paste(textarea, { clipboardData: { getData: () => "pasted" } })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // 6. Re-open and test input event
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.input(textarea, { target: { value: "typing" } })
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // 7. Re-open and test IME compositionstart event
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.compositionStart(textarea)
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // 8. Non-typing modifier keys like Shift do not close popover
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.keyDown(textarea, { key: "Shift" })
+      expect(screen.getByRole("dialog")).toBeInTheDocument()
+    })
   })
 })

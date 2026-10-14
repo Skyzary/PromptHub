@@ -1,0 +1,319 @@
+@use "../../vars.scss" as *;
+
+.iconPickerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $space-base;
+  width: 100%;
+
+  &.compactContainer {
+    width: auto;
+    flex-shrink: 0;
+  }
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-secondary;
+}
+
+.triggerBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-lg;
+  padding: 6px 12px;
+  background-color: $bg-secondary;
+  border: $border-width solid $border-color;
+  border-radius: $radius-xl;
+  color: $text-primary;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    border-color: $accent-border;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent-color;
+    box-shadow: 0 0 0 1px $accent-color;
+  }
+}
+
+.compactTrigger {
+  width: auto;
+  padding: 3px 6px 3px 3px;
+  border-radius: $radius-xl;
+  gap: $space-xs;
+}
+
+.triggerLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-xl;
+}
+
+.triggerIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-md;
+}
+
+.triggerText {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+}
+
+.triggerChevron {
+  color: $text-muted;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+// Modal / Dialog
+.overlay {
+  position: fixed;
+  inset: $space-0;
+  background-color: $overlay-bg;
+  backdrop-filter: $blur-overlay;
+  -webkit-backdrop-filter: $blur-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2xl;
+  z-index: 1000;
+}
+
+.modal {
+  width: 100%;
+  max-width: 360px;
+  background-color: $bg-primary;
+  color: $text-primary;
+  border: $border-width solid $border-color;
+  border-radius: $radius-4xl;
+  padding: $space-4xl;
+  box-shadow: $shadow-modal;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  box-sizing: border-box;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: $space-sm;
+  border-bottom: $border-width solid $border-color;
+}
+
+.modalTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+  margin: $space-0;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  font-size: $font-size-icon;
+  line-height: $line-height-none;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-pill;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover {
+    color: $text-primary;
+    background-color: $bg-hover;
+  }
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 34px;
+  padding: 0 28px 0 32px;
+  background-color: $bg-secondary;
+  color: $text-primary;
+  border: $border-width solid transparent;
+  border-radius: $radius-pill;
+  font-size: $font-size-sm;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:hover {
+    background-color: $bg-hover;
+  }
+
+  &:focus {
+    background-color: $bg-primary;
+    border-color: $accent-color;
+    box-shadow: 0 0 0 1px $accent-color;
+  }
+}
+
+.clearSearchBtn {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: $radius-pill;
+
+  &:hover {
+    color: $text-primary;
+  }
+}
+
+.categoryTabs {
+  display: flex;
+  gap: $space-xs;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: $space-2xs;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.categoryChip {
+  padding: 3px 10px;
+  border-radius: $radius-pill;
+  font-size: 11px;
+  font-weight: $font-weight-medium;
+  border: $border-width solid $border-color;
+  background-color: $bg-secondary;
+  color: $text-secondary;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $text-primary;
+    border-color: $accent-border;
+  }
+}
+
+.categoryChipActive {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+
+  :global([data-theme="dark"]) & {
+    color: #042e6f;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: $space-md;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: $space-xs;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(128, 128, 128, 0.25);
+    border-radius: $radius-pill;
+  }
+}
+
+.iconTile {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-lg;
+  border: $border-width solid transparent;
+  background-color: $bg-card;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    border-color: $accent-border;
+    transform: scale(1.08);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.iconTileSelected {
+  border-color: var(--accent-color);
+  background-color: var(--accent-soft);
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+.emptyState {
+  padding: $space-4xl $space-xl;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $text-muted;
+}

@@ -1,9 +1,11 @@
 import React, { useState } from "react"
 import * as z from "zod"
 
+import IconPicker from "~src/components/IconPicker/IconPicker"
 import TemplateHighlight from "~src/components/TemplateHighlight/TemplateHighlight"
 import Btn from "~src/components/ui/Btn/Btn"
 import { createPrompt, invalidatePromptsCache } from "~src/prompts-api"
+import { setPromptIcon } from "~src/utils/prompt-icons"
 import { hasTemplateVariables } from "~src/utils/template"
 
 import css from "./CreatePromptModal.module.scss"
@@ -22,6 +24,7 @@ export default function CreatePromptModal({
   const [title, setTitle] = useState("")
   const [body, setBody] = useState("")
   const [customTagsInput, setCustomTagsInput] = useState("")
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -33,6 +36,7 @@ export default function CreatePromptModal({
     setTitle("")
     setBody("")
     setCustomTagsInput("")
+    setSelectedIcon(null)
     setError(null)
   }
 
@@ -58,7 +62,16 @@ export default function CreatePromptModal({
     )
 
     try {
-      await createPrompt({ title, body, tags })
+      await createPrompt({
+        title,
+        body,
+        tags,
+        ...(selectedIcon ? { icon: selectedIcon } : {})
+      })
+      if (selectedIcon) {
+        // Also map by title so local resolver finds it immediately
+        await setPromptIcon(title.trim(), selectedIcon)
+      }
       invalidatePromptsCache()
       resetForm()
       onCreated?.()
@@ -125,6 +138,14 @@ export default function CreatePromptModal({
               className={css.input}
               maxLength={100}
               required
+            />
+          </div>
+
+          <div className={css.fieldGroup}>
+            <IconPicker
+              value={selectedIcon}
+              onChange={setSelectedIcon}
+              label="Icon"
             />
           </div>
 

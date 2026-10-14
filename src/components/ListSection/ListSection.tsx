@@ -6,6 +6,7 @@ import {
   subscribePromptsCache
 } from "~src/prompts-api"
 import type { IPrompt } from "~src/types"
+import { resolvePromptIcon } from "~src/utils/prompt-icons"
 
 import PromptCard from "../PromptCard/PromptCard"
 import PromptDetailsModal from "../PromptDetailsModal/PromptDetailsModal"
@@ -147,6 +148,7 @@ export default function ListSection({
               description={prompt.body}
               type={prompt.tags?.[0] ?? "other"}
               tags={prompt.tags}
+              icon={prompt.icon ?? resolvePromptIcon(prompt)}
               onClick={() => setSelectedPrompt(prompt)}
             />
           ))}

@@ -3,6 +3,7 @@ export interface CreatePromptBody {
   title: string
   body: string
   tags: Array<string>
+  icon?: string
   updatedAt?: Date
   createdAt?: Date
 }
@@ -37,6 +38,7 @@ export interface IPrompt {
   createdAt?: Date
   updatedAt?: Date
   tags: Array<string>
+  icon?: string
 }
 
 export type CreatePromptRequest = Omit<

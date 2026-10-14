@@ -34,5 +34,5 @@ jobs:
       - name: Run Typecheck
         run: pnpm run typecheck
 
-      - name: Run Tests with Coverage
+      - name: Run Tests with Coverage (Enforce Thresholds >= 85%)
         run: pnpm run test:coverage

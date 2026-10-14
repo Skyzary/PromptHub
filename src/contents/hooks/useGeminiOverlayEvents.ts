@@ -302,7 +302,15 @@ export function useGeminiOverlayEvents({
         const input =
           activeInputRef.current ??
           (target instanceof HTMLElement ? findGeminiInput(target) : null)
-        const text = input ? getGeminiInputText(input).trim() : ""
+        const targetValue =
+          target &&
+          "value" in target &&
+          typeof (target as { value?: unknown }).value === "string"
+            ? (target as { value: string }).value
+            : null
+        const text = (
+          targetValue ?? (input ? getGeminiInputText(input) : "")
+        ).trim()
         if (!text) {
           isDismissedRef.current = false
         } else if (hasTemplateVariables(text)) {

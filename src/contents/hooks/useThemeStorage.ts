@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { THEME_STORAGE_KEY, type ThemeMode } from "../../utils/theme"
-import { detectGeminiPageTheme } from "../gemini-dom"
+import { detectGeminiPageTheme } from "../gemini-elements"
 
 export function useThemeStorage(initialTheme?: ThemeMode) {
   const [theme, setTheme] = useState<ThemeMode>(

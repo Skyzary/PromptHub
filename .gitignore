@@ -33,3 +33,5 @@ dist/
 .tsbuildinfo
 *.tsbuildinfo
 .idea
+.repomix-output.xml
+repomix-output.xml

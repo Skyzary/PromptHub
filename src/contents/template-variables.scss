@@ -1,0 +1,46 @@
+@use "../vars.scss" as *;
+
+.ph-template-container {
+  position: relative;
+}
+
+.ph-template-variable {
+  color: var(--color-primary-600, #{$color-primary-600});
+  background-color: var(--accent-soft, rgba(37, 99, 235, 0.12));
+  border: $border-width solid var(--accent-border, rgba(37, 99, 235, 0.25));
+  border-radius: $radius-sm;
+  padding: 0 $space-xs;
+  font-weight: $font-weight-semibold;
+  display: inline;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  :global([data-theme="dark"]) &,
+  :global(body.dark-theme) &,
+  :global(html[data-theme="dark"]) &,
+  :global(html.dark) & {
+    color: var(--color-primary-400, #{$color-primary-500});
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.35);
+  }
+}
+
+.ph-template-variable-active {
+  color: var(--color-primary-700, #{$color-primary-700});
+  background-color: rgba(37, 99, 235, 0.26);
+  border-color: var(--color-primary-600, #{$color-primary-600});
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.38);
+
+  :global([data-theme="dark"]) &,
+  :global(body.dark-theme) &,
+  :global(html[data-theme="dark"]) &,
+  :global(html.dark) & {
+    color: #93c5fd;
+    background-color: rgba(59, 130, 246, 0.36);
+    border-color: var(--color-primary-400, #{$color-primary-500});
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.48);
+  }
+}

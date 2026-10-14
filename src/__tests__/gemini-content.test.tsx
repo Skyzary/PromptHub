@@ -885,6 +885,10 @@ describe("Background script & Gemini content script", () => {
       fireEvent.keyDown(textarea, { key: "h" })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
 
+      // Trailing focusin from contenteditable/Quill does NOT reopen popover while user is in input
+      fireEvent.focusIn(textarea)
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
       // 3. Re-open and test Backspace
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
@@ -917,7 +921,15 @@ describe("Background script & Gemini content script", () => {
       fireEvent.input(textarea, { target: { value: "typing" } })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
 
-      // 7. Non-typing modifier keys like Shift do not close popover
+      // 7. Re-open and test IME compositionstart event
+      fireEvent.click(textarea)
+      await screen.findByRole("dialog", {
+        name: /prompthub gemini prompts/i
+      })
+      fireEvent.compositionStart(textarea)
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      // 8. Non-typing modifier keys like Shift do not close popover
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
         name: /prompthub gemini prompts/i

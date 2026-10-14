@@ -30,6 +30,7 @@ import css from "./gemini-prompts.module.scss"
 import { useGeminiPromptsQuery } from "./hooks/useGeminiPromptsQuery"
 import { useThemeStorage } from "./hooks/useThemeStorage"
 import { TemplateHighlighter } from "./TemplateHighlighter"
+
 import "./template-variables.scss"
 
 export const config: PlasmoCSConfig = {
@@ -214,6 +215,25 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
             handleSelectPrompt(list[currentIdx])
             return
           }
+          if (event.key === "Enter" && !isInsidePopover) {
+            setIsOpen(false)
+          }
+        }
+      }
+
+      // If the user starts typing outside the popover,
+      // close the popover window so it doesn't obstruct typing.
+      if (!isInsidePopover) {
+        const isPrintable =
+          event.key.length === 1 &&
+          !event.ctrlKey &&
+          !event.metaKey &&
+          !event.altKey
+        const isDeleteOrBackspace =
+          event.key === "Backspace" || event.key === "Delete"
+
+        if (isPrintable || isDeleteOrBackspace) {
+          setIsOpen(false)
         }
       }
 
@@ -223,7 +243,18 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
     }
 
     const handlePaste = (event: ClipboardEvent) => {
+      const target = event.target as Node | null
+      if (!popoverRef.current?.contains(target)) {
+        setIsOpen(false)
+      }
       handleGeminiTemplatePaste(event)
+    }
+
+    const handleInput = (event: Event) => {
+      const target = event.target as Node | null
+      if (!popoverRef.current?.contains(target)) {
+        setIsOpen(false)
+      }
     }
 
     document.addEventListener("focusin", handleFocusIn, true)
@@ -231,6 +262,7 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
     document.addEventListener("mousedown", handleMouseDownOutside, true)
     document.addEventListener("click", handleClick, true)
     document.addEventListener("paste", handlePaste, true)
+    document.addEventListener("input", handleInput, true)
     document.addEventListener("submit", handleSubmit, true)
     document.addEventListener("keydown", handleKeyDown, true)
 
@@ -240,6 +272,7 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
       document.removeEventListener("mousedown", handleMouseDownOutside, true)
       document.removeEventListener("click", handleClick, true)
       document.removeEventListener("paste", handlePaste, true)
+      document.removeEventListener("input", handleInput, true)
       document.removeEventListener("submit", handleSubmit, true)
       document.removeEventListener("keydown", handleKeyDown, true)
     }

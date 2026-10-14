@@ -5,7 +5,8 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: $space-xl;
+  gap: $space-lg;
+  box-sizing: border-box;
 }
 
 .listHeaderRow {
@@ -16,8 +17,8 @@
 
 .listHeading {
   color: $text-muted;
-  font-weight: $font-weight-semibold;
-  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-2xs;
   line-height: $line-height-xs;
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wide;
@@ -25,19 +26,20 @@
 
 .listCount {
   font-size: $font-size-2xs;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   color: $text-secondary;
   background-color: $bg-secondary;
-  padding: $space-2xs $space-lg;
+  padding: 1px 8px;
   border-radius: $radius-pill;
 }
 
 .listContainer {
   list-style: none;
-  padding-left: $space-0;
+  padding: 4px 2px 6px 2px;
   display: flex;
   flex-direction: column;
   gap: $space-lg;
+  margin-top: $space-base;
   max-height: $list-max-height;
   overflow-y: auto;
   padding-right: $space-2xs;
@@ -51,13 +53,14 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: $border-color;
+    background-color: rgba(128, 128, 128, 0.25);
     border-radius: $radius-pill;
   }
 }
 
 .emptyState {
-  padding: $space-6xl $space-4xl;
+  margin-top: $space-base;
+  padding: $space-5xl $space-4xl;
   text-align: center;
   background-color: $bg-card;
   border: $border-width dashed $border-color;
@@ -72,20 +75,22 @@
 }
 
 .resetFilterBtn {
-  padding: $space-sm $space-2xl;
-  border-radius: $radius-md;
+  padding: $space-sm $space-4xl;
+  border-radius: $radius-pill;
   border: $border-width solid $border-color;
   background-color: $bg-secondary;
   color: $text-secondary;
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   cursor: pointer;
   transition:
     background-color $transition-fast,
-    color $transition-fast;
+    color $transition-fast,
+    border-color $transition-fast;
 
   &:hover {
     background-color: $bg-hover;
+    border-color: $accent-border;
     color: $text-primary;
   }
 }

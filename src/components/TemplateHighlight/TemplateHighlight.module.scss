@@ -10,10 +10,10 @@
 .variable {
   color: $accent-color;
   background-color: $accent-soft;
-  border: $border-width solid $border-color;
-  padding: $space-2xs $space-xs;
-  border-radius: $radius-sm;
-  font-weight: $font-weight-semibold;
+  border: $border-width solid $accent-border;
+  padding: $space-2xs $space-base;
+  border-radius: $radius-pill;
+  font-weight: $font-weight-medium;
   display: inline-block;
   transition:
     background-color $transition-fast,
@@ -22,7 +22,11 @@
 }
 
 .variableActive {
-  background-color: $color-primary-600;
-  color: $color-white;
+  background-color: var(--accent-color);
+  color: #ffffff;
   box-shadow: $shadow-focus-ring;
+
+  :global([data-theme="dark"]) & {
+    color: #042e6f;
+  }
 }

@@ -10,6 +10,7 @@
   padding: $space-0 $space-4xl;
   border-bottom: $border-width solid $border-color;
   background-color: $bg-primary;
+  box-sizing: border-box;
   transition:
     background-color $transition-medium,
     border-color $transition-medium;
@@ -35,8 +36,8 @@
 }
 
 .logoText {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-medium;
   line-height: $line-height-2xl;
   letter-spacing: $letter-spacing-tight;
   color: $text-primary;
@@ -48,24 +49,34 @@
   border: none;
   color: $text-secondary;
   cursor: pointer;
-  padding: $space-base;
-  width: $size-logo;
-  height: $size-logo;
-  border-radius: $radius-md;
+  padding: $space-0;
+  width: 34px;
+  height: 34px;
+  border-radius: $radius-pill;
   display: flex;
   align-items: center;
   justify-content: center;
   transition:
     background-color $transition-fast,
-    color $transition-fast;
+    color $transition-fast,
+    transform $transition-fast;
 
   &:hover {
-    background-color: $bg-secondary;
+    background-color: $bg-hover;
     color: $text-primary;
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
 .settingsBtnActive {
   background-color: $accent-soft;
   color: $accent-color;
+
+  &:hover {
+    background-color: $accent-soft;
+    color: $accent-color;
+  }
 }

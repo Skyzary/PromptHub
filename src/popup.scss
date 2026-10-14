@@ -4,30 +4,44 @@
 :root[data-theme="light"],
 .popup,
 .popup[data-theme="light"] {
-  --bg-primary: #{$color-white};
-  --bg-secondary: #{$color-slate-100};
-  --bg-card: #{$color-slate-50};
-  --bg-hover: #{$color-slate-200};
-  --text-primary: #{$color-slate-900};
-  --text-secondary: #{$color-slate-700};
-  --text-muted: #{$color-slate-500};
-  --border-color: #{$color-slate-200};
-  --accent-color: #{$color-primary-600};
-  --accent-soft: #{$color-primary-100};
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0f4f9;
+  --bg-card: #f8fafd;
+  --bg-hover: #f0f4f9;
+  --bg-selected: #e8f0fe;
+  --text-primary: #1f1f1f;
+  --text-secondary: #444746;
+  --text-muted: #727775;
+  --border-color: rgba(0, 0, 0, 0.12);
+  --accent-color: #0b57d0;
+  --accent-soft: rgba(11, 87, 208, 0.1);
+  --accent-border: rgba(11, 87, 208, 0.28);
+  --btn-primary-bg: #0b57d0;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #0842a0;
+  --card-hover-shadow: 0 4px 14px rgba(11, 87, 208, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 :root[data-theme="dark"],
 .popup[data-theme="dark"] {
-  --bg-primary: #{$color-slate-900};
-  --bg-secondary: #{$color-slate-800};
-  --bg-card: #{$color-slate-800};
-  --bg-hover: #{$color-slate-700};
-  --text-primary: #{$color-slate-50};
-  --text-secondary: #{$color-slate-300};
-  --text-muted: #{$color-slate-400};
-  --border-color: #{$color-slate-700};
-  --accent-color: #{$color-primary-500};
-  --accent-soft: #{$color-primary-900};
+  --bg-primary: #1e1f20;
+  --bg-secondary: #282a2c;
+  --bg-card: #222426;
+  --bg-hover: #282a2c;
+  --bg-selected: #242d3d;
+  --text-primary: #e3e3e3;
+  --text-secondary: #c4c7c5;
+  --text-muted: #8e918f;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --accent-color: #a8c7fa;
+  --accent-soft: rgba(168, 199, 250, 0.16);
+  --accent-border: rgba(168, 199, 250, 0.32);
+  --btn-primary-bg: #a8c7fa;
+  --btn-primary-text: #042e6f;
+  --btn-primary-hover: #c2e7ff;
+  --card-hover-shadow: 0 6px 18px rgba(0, 0, 0, 0.45),
+    0 1px 4px rgba(168, 199, 250, 0.15);
 }
 
 * {

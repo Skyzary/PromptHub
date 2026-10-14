@@ -5,6 +5,7 @@
   inset: $space-0;
   background-color: $overlay-bg;
   backdrop-filter: $blur-overlay;
+  -webkit-backdrop-filter: $blur-overlay;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,12 +21,13 @@
   background-color: $bg-primary;
   color: $text-primary;
   border: $border-width solid $border-color;
-  border-radius: $radius-3xl;
+  border-radius: $radius-4xl;
   padding: $space-4xl;
   box-shadow: $shadow-modal;
   display: flex;
   flex-direction: column;
-  gap: $space-3xl;
+  gap: $space-2xl;
+  box-sizing: border-box;
 }
 
 .modalHeader {
@@ -38,8 +40,9 @@
 
 .modalTitle {
   font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-medium;
   color: $text-primary;
+  letter-spacing: $letter-spacing-tight;
 }
 
 .closeBtn {
@@ -49,12 +52,19 @@
   font-size: $font-size-icon;
   line-height: $line-height-none;
   cursor: pointer;
-  padding: $space-sm $space-base;
-  border-radius: $radius-sm;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-pill;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
 
   &:hover {
     color: $text-primary;
-    background-color: $bg-secondary;
+    background-color: $bg-hover;
   }
 }
 
@@ -72,20 +82,22 @@
 
 .label {
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   color: $text-secondary;
 }
 
 .input,
 .textarea {
-  padding: $space-xl $space-2xl;
+  padding: 10px 14px;
   width: 100%;
   background-color: $bg-secondary;
   color: $text-primary;
-  border-radius: $radius-xl;
-  font-size: $font-size-lg;
-  border: $border-width solid $border-color;
+  border-radius: $radius-lg;
+  font-size: $font-size-base;
+  border: $border-width solid transparent;
   font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
   transition:
     border-color $transition-fast,
     background-color $transition-fast,
@@ -95,11 +107,14 @@
     color: $text-muted;
   }
 
+  &:hover {
+    background-color: $bg-hover;
+  }
+
   &:focus {
-    border-color: $color-primary-600;
+    border-color: $accent-color;
     background-color: $bg-primary;
-    box-shadow: $shadow-focus-ring;
-    outline: none;
+    box-shadow: 0 0 0 1px $accent-color;
   }
 }
 
@@ -110,8 +125,8 @@
 }
 
 .templatePreviewBox {
-  padding: $space-xl $space-2xl;
-  border-radius: $radius-xl;
+  padding: 10px 14px;
+  border-radius: $radius-lg;
   background-color: $bg-card;
   border: $border-width solid $border-color;
   display: flex;
@@ -121,20 +136,26 @@
 
 .templatePreviewLabel {
   font-size: $font-size-2xs;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   color: $text-muted;
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wide;
 }
 
 .errorBox {
-  padding: $space-xl $space-2xl;
-  border-radius: $radius-xl;
+  padding: 10px 14px;
+  border-radius: $radius-lg;
   background-color: $color-red-50;
   border: $border-width solid $color-red-200;
   color: $color-red-600;
   font-size: $font-size-sm;
   line-height: $line-height-xs;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: rgba(242, 139, 130, 0.3);
+    color: #f28b82;
+  }
 }
 
 .actions {
@@ -144,10 +165,10 @@
 }
 
 .actionBtn {
-  height: $btn-height-input;
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  border-radius: $radius-xl;
+  height: $btn-height-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
   padding-top: $space-0;
   padding-bottom: $space-0;
 

@@ -6,36 +6,45 @@
   width: 100%;
   padding: $space-4xl $space-4xl $space-sm $space-4xl;
   gap: $space-4xl;
+  box-sizing: border-box;
 }
 
 .tabs {
   display: flex;
   background-color: $bg-secondary;
-  border-radius: $radius-2xl;
-  padding: $space-sm;
-  gap: $space-sm;
+  border-radius: $radius-pill;
+  padding: 4px;
+  gap: 4px;
 }
 
 .tabBtn {
   flex: 1;
   height: $btn-height-tab;
   border: none;
-  border-radius: $radius-md;
+  border-radius: $radius-pill;
   background-color: transparent;
-  color: $text-muted;
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
+  color: $text-secondary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
   cursor: pointer;
   transition:
-    background-color $transition-medium,
-    color $transition-medium,
-    box-shadow $transition-medium;
+    background-color $transition-fast,
+    color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    color: $text-primary;
+  }
 }
 
 .tabBtnActive {
   background-color: $bg-primary;
-  color: $text-primary;
+  color: $accent-color;
   box-shadow: $shadow-sm;
+
+  &:hover {
+    color: $accent-color;
+  }
 }
 
 .form {
@@ -51,20 +60,22 @@
 }
 
 .label {
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
   color: $text-secondary;
 }
 
 .input {
-  padding: $space-xl $space-2xl;
+  padding: $space-0 14px;
   width: 100%;
-  height: $btn-height-auth-input;
+  height: $btn-height-input;
   background-color: $bg-secondary;
   color: $text-primary;
-  border-radius: $radius-xl;
-  font-size: $font-size-xl;
-  border: $border-width solid $border-color;
+  border-radius: $radius-lg;
+  font-size: $font-size-base;
+  border: $border-width solid transparent;
+  outline: none;
+  box-sizing: border-box;
   transition:
     border-color $transition-fast,
     background-color $transition-fast,
@@ -74,11 +85,14 @@
     color: $text-muted;
   }
 
+  &:hover {
+    background-color: $bg-hover;
+  }
+
   &:focus {
-    border-color: $color-primary-600;
+    border-color: $accent-color;
     background-color: $bg-primary;
-    box-shadow: $shadow-focus-ring;
-    outline: none;
+    box-shadow: 0 0 0 1px $accent-color;
   }
 }
 
@@ -89,17 +103,25 @@
 }
 
 .errorBox {
-  padding: $space-xl $space-2xl;
-  border-radius: $radius-xl;
+  padding: 10px 14px;
+  border-radius: $radius-lg;
   background-color: $color-red-50;
   border: $border-width solid $color-red-200;
   color: $color-red-600;
   font-size: $font-size-sm;
   line-height: $line-height-xs;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: rgba(242, 139, 130, 0.3);
+    color: #f28b82;
+  }
 }
 
 .submitBtn {
   margin-top: $space-2xs;
+  height: $btn-height-xl;
+  border-radius: $radius-pill;
   box-shadow: $shadow-primary-btn;
 
   &:disabled {

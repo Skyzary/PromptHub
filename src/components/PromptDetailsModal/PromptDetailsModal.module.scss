@@ -5,6 +5,7 @@
   inset: $space-0;
   background-color: $overlay-bg;
   backdrop-filter: $blur-overlay;
+  -webkit-backdrop-filter: $blur-overlay;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,12 +21,13 @@
   background-color: $bg-primary;
   color: $text-primary;
   border: $border-width solid $border-color;
-  border-radius: $radius-3xl;
+  border-radius: $radius-4xl;
   padding: $space-4xl;
   box-shadow: $shadow-modal;
   display: flex;
   flex-direction: column;
-  gap: $space-3xl;
+  gap: $space-2xl;
+  box-sizing: border-box;
 }
 
 .modalHeader {
@@ -56,26 +58,27 @@
 
 .modalTitle {
   font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-medium;
   color: $text-primary;
   line-height: $line-height-2xl;
+  letter-spacing: $letter-spacing-tight;
   word-break: break-word;
   margin: $space-0;
 }
 
 .closeBtn {
-  background: $bg-secondary;
-  border: $border-width solid $border-color;
-  color: $text-secondary;
-  font-size: $font-size-2xl;
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  font-size: $font-size-icon;
   line-height: $line-height-none;
   cursor: pointer;
-  width: $size-close-btn;
-  height: $size-close-btn;
-  display: flex;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: $radius-md;
+  border-radius: $radius-pill;
   flex-shrink: 0;
   transition:
     background-color $transition-fast,
@@ -102,7 +105,7 @@
 
 .label {
   font-size: $font-size-xs;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-medium;
   color: $text-secondary;
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wide;
@@ -123,10 +126,10 @@
   background-color: $bg-secondary;
   border: $border-width solid $border-color;
   color: $text-secondary;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  padding: $space-sm $space-xl;
-  border-radius: $radius-md;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  padding: 3px 10px;
+  border-radius: $radius-pill;
   cursor: pointer;
   transition:
     background-color $transition-fast,
@@ -145,50 +148,90 @@
 }
 
 .editTitleBtn {
-  background-color: $color-indigo-50;
-  border-color: $color-indigo-200;
-  color: $color-indigo-700;
+  background-color: #e8f0fe;
+  border-color: rgba(11, 87, 208, 0.25);
+  color: #0b57d0;
 
   &:hover:not(:disabled) {
-    background-color: $color-indigo-100;
-    border-color: $color-indigo-300;
-    color: $color-indigo-800;
+    background-color: #d2e3fc;
+    color: #0842a0;
+  }
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(168, 199, 250, 0.16);
+    border-color: rgba(168, 199, 250, 0.32);
+    color: #a8c7fa;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(168, 199, 250, 0.25);
+      color: #c2e7ff;
+    }
   }
 }
 
 .editTagsBtn {
-  background-color: $color-purple-50;
-  border-color: $color-purple-200;
-  color: $color-purple-700;
+  background-color: #f3e8fd;
+  border-color: rgba(132, 48, 206, 0.25);
+  color: #8430ce;
 
   &:hover:not(:disabled) {
-    background-color: $color-purple-100;
-    border-color: $color-purple-300;
-    color: $color-purple-800;
+    background-color: #e8d0fb;
+    color: #681da8;
+  }
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(197, 138, 249, 0.16);
+    border-color: rgba(197, 138, 249, 0.32);
+    color: #c58af9;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(197, 138, 249, 0.25);
+      color: #e8d0fb;
+    }
   }
 }
 
 .copyActionBtn {
-  background-color: $color-green-50;
-  border-color: $color-green-300;
-  color: $color-green-800;
+  background-color: #e6f4ea;
+  border-color: rgba(19, 115, 51, 0.25);
+  color: #137333;
 
   &:hover:not(:disabled) {
-    background-color: $color-green-200;
-    border-color: $color-green-400;
-    color: $color-green-900;
+    background-color: #ceead6;
+    color: #0d652d;
+  }
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(129, 201, 149, 0.16);
+    border-color: rgba(129, 201, 149, 0.32);
+    color: #81c995;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(129, 201, 149, 0.25);
+      color: #a7f3d0;
+    }
   }
 }
 
 .editPromptBtn {
-  background-color: $color-amber-50;
-  border-color: $color-amber-200;
-  color: $color-amber-700;
+  background-color: #fef7e0;
+  border-color: rgba(176, 96, 0, 0.25);
+  color: #b06000;
 
   &:hover:not(:disabled) {
-    background-color: $color-amber-100;
-    border-color: $color-amber-300;
-    color: $color-amber-800;
+    background-color: #feefc3;
+    color: #804400;
+  }
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(253, 214, 99, 0.16);
+    border-color: rgba(253, 214, 99, 0.32);
+    color: #fdd663;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(253, 214, 99, 0.25);
+      color: #feefc3;
+    }
   }
 }
 
@@ -204,14 +247,17 @@
 }
 
 .saveInlineBtn {
-  background-color: $color-green-600;
-  border-color: $color-green-600;
-  color: $color-white;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #ffffff;
+
+  :global([data-theme="dark"]) & {
+    color: #042e6f;
+  }
 
   &:hover:not(:disabled) {
-    background-color: $color-green-700;
-    border-color: $color-green-700;
-    color: $color-white;
+    background-color: var(--btn-primary-hover);
+    border-color: var(--btn-primary-hover);
   }
 }
 
@@ -226,21 +272,23 @@
   flex: 1;
   min-height: $btn-height-md;
   font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   padding: $space-base $space-2xl;
-  border-radius: $radius-md;
+  border-radius: $radius-pill;
 }
 
 .input,
 .textarea {
-  padding: $space-xl $space-2xl;
+  padding: 10px 14px;
   width: 100%;
   background-color: $bg-secondary;
   color: $text-primary;
-  border-radius: $radius-xl;
-  font-size: $font-size-xl;
-  border: $border-width solid $border-color;
+  border-radius: $radius-lg;
+  font-size: $font-size-base;
+  border: $border-width solid transparent;
   font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
   transition:
     border-color $transition-fast,
     background-color $transition-fast,
@@ -250,23 +298,26 @@
     color: $text-muted;
   }
 
+  &:hover {
+    background-color: $bg-hover;
+  }
+
   &:focus {
-    border-color: $color-primary-600;
+    border-color: $accent-color;
     background-color: $bg-primary;
-    box-shadow: $shadow-focus-ring;
-    outline: none;
+    box-shadow: 0 0 0 1px $accent-color;
   }
 }
 
 .textarea {
   min-height: $textarea-min-height-lg;
   resize: vertical;
-  line-height: $line-height-xl;
+  line-height: $line-height-lg;
 }
 
 .templatePreviewBox {
-  padding: $space-xl $space-2xl;
-  border-radius: $radius-xl;
+  padding: 10px 14px;
+  border-radius: $radius-lg;
   background-color: $bg-card;
   border: $border-width solid $border-color;
   display: flex;
@@ -276,7 +327,7 @@
 
 .templatePreviewLabel {
   font-size: $font-size-2xs;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   color: $text-muted;
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wide;
@@ -285,9 +336,9 @@
 .bodyBox {
   background-color: $bg-card;
   border: $border-width solid $border-color;
-  border-radius: $radius-xl;
-  padding: $space-2xl;
-  font-size: $font-size-lg;
+  border-radius: $radius-lg;
+  padding: 12px 14px;
+  font-size: $font-size-base;
   line-height: $line-height-xl;
   color: $text-primary;
   white-space: pre-wrap;
@@ -305,13 +356,13 @@
 .tagBadge {
   display: inline-flex;
   align-items: center;
-  padding: $space-sm $space-xl;
+  padding: 2px 10px;
   border-radius: $radius-pill;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  background-color: $color-primary-50;
-  color: $color-primary-700;
-  border: $border-width solid $color-primary-200;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  background-color: $bg-secondary;
+  color: $text-secondary;
+  border: $border-width solid $border-color;
 }
 
 .emptyTags {
@@ -328,13 +379,19 @@
 }
 
 .errorBox {
-  padding: $space-xl $space-2xl;
-  border-radius: $radius-xl;
+  padding: 10px 14px;
+  border-radius: $radius-lg;
   background-color: $color-red-50;
   border: $border-width solid $color-red-200;
   color: $color-red-600;
-  font-size: $font-size-md;
+  font-size: $font-size-sm;
   line-height: $line-height-xs;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: rgba(242, 139, 130, 0.3);
+    color: #f28b82;
+  }
 }
 
 .deleteConfirmBox {
@@ -345,12 +402,21 @@
   border-radius: $radius-2xl;
   background-color: $color-red-50;
   border: $border-width solid $color-red-200;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: rgba(242, 139, 130, 0.3);
+  }
 }
 
 .deleteConfirmText {
   font-size: $font-size-base;
   color: $color-red-800;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
+
+  :global([data-theme="dark"]) & {
+    color: #f28b82;
+  }
 }
 
 .deleteConfirmActions {
@@ -371,21 +437,32 @@
   align-items: center;
   justify-content: center;
   gap: $space-md;
-  background-color: $color-red-100;
+  background-color: $color-red-50;
   color: $color-red-700;
   font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   line-height: $line-height-md;
-  border-radius: $radius-xl;
-  border: $border-width solid $color-red-300;
+  border-radius: $radius-pill;
+  border: $border-width solid $color-red-200;
   cursor: pointer;
   transition:
     background-color $transition-normal,
     color $transition-normal;
 
   &:hover:not(:disabled) {
-    background-color: $color-red-700;
+    background-color: $color-red-600;
     color: $color-white;
+  }
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: rgba(242, 139, 130, 0.3);
+    color: #f28b82;
+
+    &:hover:not(:disabled) {
+      background-color: #d93025;
+      color: #ffffff;
+    }
   }
 
   &:disabled {
@@ -403,8 +480,8 @@
   justify-content: center;
   gap: $space-md;
   font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  border-radius: $radius-xl;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
 
   &:disabled {
     opacity: $opacity-disabled;

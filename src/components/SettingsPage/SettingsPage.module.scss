@@ -6,6 +6,7 @@
   width: 100%;
   padding: $space-3xl $space-4xl $space-sm $space-4xl;
   gap: $space-3xl;
+  box-sizing: border-box;
 }
 
 .topBar {
@@ -23,25 +24,28 @@
   border: $border-width solid $border-color;
   color: $text-secondary;
   font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  padding: $space-base $space-2xl;
-  border-radius: $radius-lg;
+  font-weight: $font-weight-medium;
+  padding: 6px 14px;
+  border-radius: $radius-pill;
   cursor: pointer;
   transition:
     background-color $transition-fast,
+    border-color $transition-fast,
     color $transition-fast;
 
   &:hover {
     background-color: $bg-hover;
+    border-color: $accent-border;
     color: $text-primary;
   }
 }
 
 .pageTitle {
   font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-medium;
   color: $text-primary;
   margin: $space-0;
+  letter-spacing: $letter-spacing-tight;
 }
 
 .card {
@@ -50,13 +54,13 @@
   gap: $space-2xl;
   background-color: $bg-card;
   border: $border-width solid $border-color;
-  border-radius: $radius-2xl;
+  border-radius: $radius-3xl;
   padding: $space-3xl;
 }
 
 .sectionLabel {
   font-size: $font-size-xs;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-medium;
   color: $text-muted;
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wide;
@@ -78,7 +82,7 @@
 .themeIconWrapper {
   width: $size-theme-icon-box;
   height: $size-theme-icon-box;
-  border-radius: $radius-xl;
+  border-radius: $radius-pill;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,7 +99,7 @@
 
 .settingTitle {
   font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   color: $text-primary;
 }
 
@@ -109,16 +113,20 @@
   width: $switch-width;
   height: $switch-height;
   border-radius: $radius-pill;
-  background-color: $color-slate-300;
-  border: none;
-  padding: $space-xs;
+  background-color: $bg-secondary;
+  border: $border-width solid $border-color;
+  padding: 2px;
   cursor: pointer;
-  transition: background-color $transition-medium;
+  transition:
+    background-color $transition-medium,
+    border-color $transition-medium;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .switchBtnActive {
-  background-color: $color-primary-600;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 .switchThumb {
@@ -126,13 +134,20 @@
   width: $switch-thumb-size;
   height: $switch-thumb-size;
   border-radius: $radius-circle;
-  background-color: $color-white;
+  background-color: $text-muted;
   box-shadow: $shadow-thumb;
-  transition: transform $transition-medium;
+  transition:
+    transform $transition-medium,
+    background-color $transition-medium;
 }
 
 .switchBtnActive .switchThumb {
-  transform: translateX($space-5xl);
+  transform: translateX(18px);
+  background-color: #ffffff;
+
+  :global([data-theme="dark"]) & {
+    background-color: #042e6f;
+  }
 }
 
 .logoutBtn {
@@ -145,16 +160,18 @@
   background-color: $bg-secondary;
   color: $text-primary;
   font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  border-radius: $radius-xl;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
   border: $border-width solid $border-color;
   cursor: pointer;
   transition:
     background-color $transition-normal,
+    border-color $transition-normal,
     color $transition-normal;
 
   &:hover:not(:disabled) {
     background-color: $bg-hover;
+    border-color: $accent-border;
   }
 
   &:disabled {
@@ -170,20 +187,31 @@
   align-items: center;
   justify-content: center;
   gap: $space-base;
-  background-color: $color-red-100;
+  background-color: $color-red-50;
   color: $color-red-700;
   font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  border-radius: $radius-xl;
-  border: $border-width solid $color-red-300;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
+  border: $border-width solid $color-red-200;
   cursor: pointer;
   transition:
     background-color $transition-normal,
     color $transition-normal;
 
   &:hover:not(:disabled) {
-    background-color: $color-red-700;
+    background-color: $color-red-600;
     color: $color-white;
+  }
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: rgba(242, 139, 130, 0.3);
+    color: #f28b82;
+
+    &:hover:not(:disabled) {
+      background-color: #d93025;
+      color: #ffffff;
+    }
   }
 
   &:disabled {
@@ -193,14 +221,20 @@
 }
 
 .successBox {
-  padding: $space-xl $space-2xl;
-  border-radius: $radius-xl;
+  padding: 10px 14px;
+  border-radius: $radius-lg;
   background-color: $color-green-50;
-  border: $border-width solid $color-green-300;
+  border: $border-width solid $color-green-200;
   color: $color-green-800;
-  font-size: $font-size-md;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   line-height: $line-height-xs;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(129, 201, 149, 0.16);
+    border-color: rgba(129, 201, 149, 0.3);
+    color: #81c995;
+  }
 }
 
 .modalOverlay {
@@ -208,6 +242,7 @@
   inset: $space-0;
   background-color: $overlay-bg;
   backdrop-filter: $blur-overlay;
+  -webkit-backdrop-filter: $blur-overlay;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -221,12 +256,13 @@
   background-color: $bg-primary;
   color: $text-primary;
   border: $border-width solid $border-color;
-  border-radius: $radius-3xl;
+  border-radius: $radius-4xl;
   padding: $space-4xl;
   box-shadow: $shadow-modal;
   display: flex;
   flex-direction: column;
   gap: $space-3xl;
+  box-sizing: border-box;
 }
 
 .confirmModalHeader {
@@ -247,35 +283,41 @@
 .warningIconWrapper {
   width: $size-theme-icon-box;
   height: $size-theme-icon-box;
-  border-radius: $radius-xl;
+  border-radius: $radius-pill;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: $color-red-100;
+  background-color: $color-red-50;
   color: $color-red-700;
   flex-shrink: 0;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    color: #f28b82;
+  }
 }
 
 .confirmModalTitle {
   font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-medium;
   color: $text-primary;
   margin: $space-0;
+  letter-spacing: $letter-spacing-tight;
 }
 
 .closeModalBtn {
-  background: $bg-secondary;
-  border: $border-width solid $border-color;
-  color: $text-secondary;
-  font-size: $font-size-2xl;
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  font-size: $font-size-icon;
   line-height: $line-height-none;
   cursor: pointer;
-  width: $size-close-btn;
-  height: $size-close-btn;
-  display: flex;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: $radius-md;
+  border-radius: $radius-pill;
   flex-shrink: 0;
   transition:
     background-color $transition-fast,
@@ -307,31 +349,38 @@
 
 .fieldLabel {
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   color: $text-secondary;
 }
 
 .passwordInput {
   width: 100%;
   height: $btn-height-input;
-  padding: $space-0 $space-2xl;
-  border-radius: $radius-xl;
-  border: $border-width solid $border-color;
-  background-color: $bg-card;
+  padding: $space-0 14px;
+  border-radius: $radius-lg;
+  border: $border-width solid transparent;
+  background-color: $bg-secondary;
   color: $text-primary;
   font-size: $font-size-base;
   outline: none;
+  box-sizing: border-box;
   transition:
     border-color $transition-fast,
+    background-color $transition-fast,
     box-shadow $transition-fast;
 
   &::placeholder {
     color: $text-muted;
   }
 
+  &:hover {
+    background-color: $bg-hover;
+  }
+
   &:focus {
-    border-color: $color-primary-600;
-    box-shadow: $shadow-focus-ring;
+    border-color: $accent-color;
+    background-color: $bg-primary;
+    box-shadow: 0 0 0 1px $accent-color;
   }
 
   &:disabled {
@@ -341,13 +390,19 @@
 }
 
 .errorBox {
-  padding: $space-xl $space-2xl;
-  border-radius: $radius-xl;
+  padding: 10px 14px;
+  border-radius: $radius-lg;
   background-color: $color-red-50;
   border: $border-width solid $color-red-200;
   color: $color-red-600;
-  font-size: $font-size-md;
+  font-size: $font-size-sm;
   line-height: $line-height-xs;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: rgba(242, 139, 130, 0.3);
+    color: #f28b82;
+  }
 }
 
 .confirmModalActions {
@@ -364,8 +419,8 @@
   justify-content: center;
   gap: $space-md;
   font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  border-radius: $radius-xl;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
 }
 
 .confirmDeleteBtn {
@@ -378,16 +433,16 @@
   background-color: $color-red-600;
   color: $color-white;
   font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  border-radius: $radius-xl;
-  border: $border-width solid $color-red-700;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
+  border: none;
   cursor: pointer;
   transition:
     background-color $transition-normal,
     color $transition-normal;
 
   &:hover:not(:disabled) {
-    background-color: $color-red-700;
+    background-color: #b3261e;
   }
 
   &:disabled {

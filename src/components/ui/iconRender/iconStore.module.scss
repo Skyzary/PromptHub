@@ -4,7 +4,7 @@
   width: $size-icon-box;
   height: $size-icon-box;
   flex-shrink: 0;
-  border-radius: $radius-xl;
+  border-radius: $radius-lg;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,77 +18,81 @@
 }
 
 .developmentIcon {
-  color: $color-primary-600;
+  color: #0b57d0;
 
   :global([data-theme="dark"]) & {
-    color: $color-primary-500;
+    color: #a8c7fa;
   }
 }
 
 .developmentIconWrapper {
-  background-color: $color-primary-100;
+  background-color: #e8f0fe;
 
   :global([data-theme="dark"]) & {
-    background-color: $color-primary-900;
+    background-color: rgba(168, 199, 250, 0.16);
   }
 }
 
 .dailyIcon {
-  color: $color-purple-600;
+  color: #8430ce;
 
   :global([data-theme="dark"]) & {
-    color: $color-purple-300;
+    color: #c58af9;
   }
 }
 
 .dailyIconWrapper {
-  background-color: $color-purple-50;
+  background-color: #f3e8fd;
 
   :global([data-theme="dark"]) & {
-    background-color: $color-purple-800;
+    background-color: rgba(197, 138, 249, 0.16);
   }
 }
 
 .educationIcon {
-  color: $color-green-600;
+  color: #137333;
 
   :global([data-theme="dark"]) & {
-    color: $color-green-400;
+    color: #81c995;
   }
 }
 
 .educationIconWrapper {
-  background-color: $color-green-100;
+  background-color: #e6f4ea;
 
   :global([data-theme="dark"]) & {
-    background-color: $color-green-900;
+    background-color: rgba(129, 201, 149, 0.16);
   }
 }
 
 .entertainmentIcon {
-  color: $color-pink-600;
+  color: #d93025;
+
+  :global([data-theme="dark"]) & {
+    color: #f28b82;
+  }
 }
 
 .entertainmentIconWrapper {
-  background-color: $color-pink-100;
+  background-color: #fce8e6;
 
   :global([data-theme="dark"]) & {
-    background-color: $color-slate-800;
+    background-color: rgba(242, 139, 130, 0.16);
   }
 }
 
 .defaultIcon {
-  color: $color-slate-600;
+  color: #444746;
 
   :global([data-theme="dark"]) & {
-    color: $color-slate-400;
+    color: #c4c7c5;
   }
 }
 
 .defaultIconWrapper {
-  background-color: $color-slate-100;
+  background-color: #f0f4f9;
 
   :global([data-theme="dark"]) & {
-    background-color: $color-slate-800;
+    background-color: #282a2c;
   }
 }

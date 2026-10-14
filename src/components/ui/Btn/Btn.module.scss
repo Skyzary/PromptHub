@@ -3,20 +3,38 @@
 .primary {
   width: 100%;
   height: $btn-height-xl;
-  background-color: $color-primary-600;
-  color: $color-white;
-  padding-top: $space-2xl;
-  padding-bottom: $space-2xl;
-  font-size: $font-size-xl;
+  background-color: var(--btn-primary-bg, #0b57d0);
+  color: var(--btn-primary-text, #ffffff);
+  padding: $space-0 $space-4xl;
+  font-size: $font-size-base;
   font-weight: $font-weight-medium;
   line-height: $line-height-xl;
-  border-radius: $radius-2xl;
-  border-color: transparent;
+  border-radius: $radius-pill;
+  border: none;
   cursor: pointer;
-  transition: background-color $transition-smooth;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-md;
+  box-shadow: $shadow-primary-btn;
+  transition:
+    background-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast;
 
-  &:hover {
-    background-color: $color-primary-800;
+  &:hover:not(:disabled) {
+    background-color: var(--btn-primary-hover, #0842a0);
+    box-shadow: 0 2px 8px rgba(11, 87, 208, 0.28);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+    box-shadow: none;
   }
 }
 
@@ -25,17 +43,35 @@
   height: $btn-height-xl;
   background-color: $bg-secondary;
   color: $text-secondary;
-  padding-top: $space-2xl;
-  padding-bottom: $space-2xl;
-  font-size: $font-size-xl;
+  padding: $space-0 $space-4xl;
+  font-size: $font-size-base;
   font-weight: $font-weight-medium;
   line-height: $line-height-xl;
-  border-radius: $radius-2xl;
+  border-radius: $radius-pill;
   border: $border-width solid $border-color;
   cursor: pointer;
-  transition: background-color $transition-medium;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-md;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    transform $transition-fast;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: $bg-hover;
+    border-color: $accent-border;
+    color: $text-primary;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
   }
 }

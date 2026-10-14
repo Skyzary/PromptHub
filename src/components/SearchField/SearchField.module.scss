@@ -1,9 +1,10 @@
 @use "../../vars.scss" as *;
 
 .searchFieldContainer {
-  padding: $space-lg $space-4xl;
+  padding: $space-lg $space-4xl $space-sm $space-4xl;
   display: flex;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .inputWrapper {
@@ -15,19 +16,25 @@
 
 .searchIcon {
   position: absolute;
-  left: $space-xl;
+  left: 12px;
   pointer-events: none;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .searchField {
-  padding: 0 $space-3xl 0 32px;
+  padding: 0 34px 0 36px;
   width: 100%;
   height: $btn-height-tab;
   background-color: $bg-secondary;
   color: $text-primary;
-  border-radius: $radius-lg;
-  font-size: $font-size-md;
-  border: $border-width solid $border-color;
+  border-radius: $radius-pill;
+  font-size: $font-size-base;
+  border: $border-width solid transparent;
+  outline: none;
+  box-sizing: border-box;
   transition:
     background-color $transition-fast,
     border-color $transition-fast,
@@ -37,17 +44,20 @@
     color: $text-muted;
   }
 
+  &:hover {
+    background-color: $bg-hover;
+  }
+
   &:focus {
     background-color: $bg-primary;
-    border-color: $color-primary-600;
-    box-shadow: $shadow-focus-ring;
-    outline: none;
+    border-color: $accent-color;
+    box-shadow: 0 0 0 1px $accent-color;
   }
 }
 
 .clearBtn {
   position: absolute;
-  right: $space-md;
+  right: 8px;
   width: 24px;
   height: 24px;
   border: none;

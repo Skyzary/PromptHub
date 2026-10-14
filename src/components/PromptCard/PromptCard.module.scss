@@ -8,18 +8,28 @@
   gap: $space-2xl;
   background-color: $bg-card;
   border: $border-width solid $border-color;
-  padding: $space-2xl;
+  padding: $space-2xl $space-3xl;
   border-radius: $radius-2xl;
   cursor: pointer;
+  box-sizing: border-box;
+  position: relative;
   transition:
-    background-color $transition-normal,
-    border-color $transition-normal,
-    box-shadow $transition-normal;
+    background-color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast;
 
   &:hover {
     background-color: $bg-hover;
-    border-color: $accent-color;
-    box-shadow: $shadow-card-hover;
+    border-color: $accent-border;
+    box-shadow: $card-hover-shadow;
+
+    .promptCardTitle {
+      color: $accent-color;
+    }
+  }
+
+  &:active {
+    box-shadow: none;
   }
 }
 
@@ -39,17 +49,18 @@
 
 .promptCardTitle {
   font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-medium;
   line-height: $line-height-xl;
   color: $text-primary;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color $transition-fast;
 }
 
 .promptCardDescription {
-  line-height: $line-height-sm;
-  font-size: $font-size-md;
+  line-height: $line-height-md;
+  font-size: $font-size-sm;
   color: $text-muted;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -74,38 +85,51 @@
   justify-content: center;
   background-color: transparent;
   border: none;
-  padding: $space-sm;
-  border-radius: $radius-sm;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-pill;
   cursor: pointer;
   flex-shrink: 0;
   transition:
     color $transition-fast,
-    background-color $transition-fast;
+    background-color $transition-fast,
+    transform $transition-fast;
 
   &:hover {
     color: $accent-color;
-    background-color: $bg-secondary;
+    background-color: $accent-soft;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
 .copyBtnCopied {
   color: $color-green-600;
+  background-color: $color-green-50;
+
+  :global([data-theme="dark"]) & {
+    color: #81c995;
+    background-color: rgba(129, 201, 149, 0.16);
+  }
 }
 
 .tagsRow {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-sm;
+  gap: $space-base;
   margin-top: $space-2xs;
 }
 
 .tagBadge {
   font-size: $font-size-2xs;
   font-weight: $font-weight-medium;
-  color: $accent-color;
-  background-color: $accent-soft;
+  color: $text-secondary;
+  background-color: $bg-secondary;
   border: $border-width solid $border-color;
-  padding: $space-2xs $space-base;
+  padding: 1px 8px;
   border-radius: $radius-pill;
   line-height: $line-height-xs;
 }

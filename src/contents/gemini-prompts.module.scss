@@ -187,7 +187,7 @@
 
 .list {
   margin: $space-0;
-  padding: 8px 10px;
+  padding: 12px 10px 8px 10px;
   list-style: none;
   max-height: $gemini-list-max-height;
   overflow-y: auto;
@@ -227,15 +227,13 @@
   transition:
     background-color $transition-fast,
     border-color $transition-fast,
-    box-shadow $transition-fast,
-    transform $transition-fast;
+    box-shadow $transition-fast;
 
   &:hover,
   &.promptItemSelected {
     background-color: var(--bg-hover);
     border-color: var(--accent-border);
     box-shadow: var(--card-hover-shadow);
-    transform: translateY(-1px);
 
     .promptIconWrapper {
       transform: scale(0.88);
@@ -259,7 +257,6 @@
   }
 
   &:active {
-    transform: translateY(0);
     box-shadow: none;
   }
 }

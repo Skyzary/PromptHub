@@ -3,5 +3,7 @@
 .addNewBtn {
   width: calc(100% - #{$space-4xl * 2});
   margin: auto $space-4xl $space-0 $space-4xl;
+  height: $btn-height-xl;
   box-shadow: $shadow-primary-btn;
+  letter-spacing: -0.01em;
 }

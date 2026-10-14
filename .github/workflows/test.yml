@@ -36,3 +36,12 @@ jobs:
 
       - name: Run Tests with Coverage (Enforce Thresholds >= 85%)
         run: pnpm run test:coverage
+
+      - name: Build Extension for E2E
+        run: pnpm run build
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright E2E Tests
+        run: pnpm run test:e2e

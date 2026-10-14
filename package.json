@@ -13,6 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:playwright": "playwright test",
     "prettier": "prettier --check \"src/**/*.{ts,tsx,scss,css}\""
   },
   "dependencies": {

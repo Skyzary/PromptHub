@@ -20,6 +20,7 @@ import {
   isGeminiSendButton,
   isVariableModified,
   jumpToNextTemplateVariable,
+  modifiedVariableIndices,
   POPOVER_ESTIMATED_HEIGHT_PX,
   POPOVER_OFFSET_PX,
   PROMPTHUB_GEMINI_ROOT_ID,
@@ -268,6 +269,38 @@ describe("gemini-dom module", () => {
       expect(textarea.value).toBe("Textarea prompt")
       expect(inputFired).toBe(true)
       expect(changeFired).toBe(true)
+    })
+
+    it("handles rich-textarea parent and throwing quill.setText gracefully", () => {
+      const richTextarea = document.createElement("rich-textarea")
+      const editor = document.createElement("div")
+      editor.className = "ql-editor"
+      editor.setAttribute("contenteditable", "true")
+      richTextarea.appendChild(editor)
+      document.body.appendChild(richTextarea)
+      ;(
+        richTextarea as unknown as {
+          quill?: { setText?: (t: string) => void }
+        }
+      ).quill = {
+        setText: () => {
+          throw new Error("Quill error")
+        }
+      }
+
+      insertTextIntoGeminiInput(editor, "Plain prompt with throwing quill")
+      expect(editor.textContent).toBe("Plain prompt with throwing quill")
+
+      insertTextIntoGeminiInput(editor, "Hello {{user}} with rich-textarea")
+      expect(editor.querySelector(".ph-template-variable")).not.toBeNull()
+    })
+
+    it("inserts template text into textarea and sets cursor", () => {
+      const textarea = document.createElement("textarea")
+      document.body.appendChild(textarea)
+      insertTextIntoGeminiInput(textarea, "Hello {{friend}}!")
+      expect(textarea.value).toBe("Hello {{friend}}!")
+      expect(textarea.selectionEnd).toBe(14)
     })
   })
 
@@ -833,6 +866,7 @@ describe("gemini-dom module", () => {
       document.body.appendChild(textarea)
 
       const currentVar = findTemplateVariablesInText(textarea.value)[0]
+      modifiedVariableIndices.add(currentVar.index)
 
       // At end of modified variable
       textarea.setSelectionRange(currentVar.innerEnd, currentVar.innerEnd)
@@ -853,6 +887,37 @@ describe("gemini-dom module", () => {
       })
       Object.defineProperty(leftEvt, "target", { value: textarea })
       expect(handleGeminiTemplateKeyDown(leftEvt)).toBe(true)
+
+      // In middle of modified variable -> returns false
+      textarea.setSelectionRange(
+        currentVar.innerStart + 1,
+        currentVar.innerStart + 1
+      )
+      const midRightEvt = new KeyboardEvent("keydown", {
+        key: "ArrowRight",
+        bubbles: true,
+        cancelable: true
+      })
+      Object.defineProperty(midRightEvt, "target", { value: textarea })
+      expect(handleGeminiTemplateKeyDown(midRightEvt)).toBe(false)
+
+      const midLeftEvt = new KeyboardEvent("keydown", {
+        key: "ArrowLeft",
+        bubbles: true,
+        cancelable: true
+      })
+      Object.defineProperty(midLeftEvt, "target", { value: textarea })
+      expect(handleGeminiTemplateKeyDown(midLeftEvt)).toBe(false)
+
+      // Outside variable -> returns false
+      textarea.setSelectionRange(0, 0)
+      const outsideEvt = new KeyboardEvent("keydown", {
+        key: "ArrowRight",
+        bubbles: true,
+        cancelable: true
+      })
+      Object.defineProperty(outsideEvt, "target", { value: textarea })
+      expect(handleGeminiTemplateKeyDown(outsideEvt)).toBe(false)
     })
 
     it("returns false if target is not editable or input element is missing", () => {

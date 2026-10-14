@@ -8,6 +8,7 @@ interface PromptCardProps {
   description: string
   type: string
   tags?: string[]
+  icon?: string
   onClick?: () => void
 }
 
@@ -16,6 +17,7 @@ export default function PromptCard({
   type,
   description,
   tags,
+  icon,
   onClick
 }: PromptCardProps) {
   const [copied, setCopied] = useState(false)
@@ -32,6 +34,7 @@ export default function PromptCard({
       className={css.promptCard}
       onClick={onClick}>
       <PromptIcon
+        icon={icon}
         type={type}
         tags={tags}
       />

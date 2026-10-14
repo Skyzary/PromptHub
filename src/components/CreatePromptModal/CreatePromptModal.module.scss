@@ -121,7 +121,7 @@
 .textarea {
   min-height: $textarea-min-height-sm;
   resize: vertical;
-  line-height: $line-height-lg;
+  line-height: $line-height-relaxed;
 }
 
 .templatePreviewBox {
@@ -132,6 +132,7 @@
   display: flex;
   flex-direction: column;
   gap: $space-xs;
+  line-height: $line-height-relaxed;
 }
 
 .templatePreviewLabel {

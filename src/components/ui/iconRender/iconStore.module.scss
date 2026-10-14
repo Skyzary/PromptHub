@@ -17,6 +17,68 @@
   display: block;
 }
 
+// Google Material color themes for Lucide icons
+.color_blue {
+  background-color: #e8f0fe;
+  color: #0b57d0;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(168, 199, 250, 0.16);
+    color: #a8c7fa;
+  }
+}
+
+.color_purple {
+  background-color: #f3e8fd;
+  color: #8430ce;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(197, 138, 249, 0.16);
+    color: #c58af9;
+  }
+}
+
+.color_green {
+  background-color: #e6f4ea;
+  color: #137333;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(129, 201, 149, 0.16);
+    color: #81c995;
+  }
+}
+
+.color_amber {
+  background-color: #fef7e0;
+  color: #b06000;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(253, 214, 99, 0.16);
+    color: #fdd663;
+  }
+}
+
+.color_red {
+  background-color: #fce8e6;
+  color: #d93025;
+
+  :global([data-theme="dark"]) & {
+    background-color: rgba(242, 139, 130, 0.16);
+    color: #f28b82;
+  }
+}
+
+.color_gray {
+  background-color: #f0f4f9;
+  color: #444746;
+
+  :global([data-theme="dark"]) & {
+    background-color: #282a2c;
+    color: #c4c7c5;
+  }
+}
+
+// Legacy Category icon themes
 .developmentIcon {
   color: #0b57d0;
 

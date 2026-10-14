@@ -1,6 +1,11 @@
 import React from "react"
 
 import { types } from "~src/components/ui/iconRender/iconStore"
+import css from "~src/components/ui/iconRender/iconStore.module.scss"
+import {
+  getPromptIconDescriptor,
+  PROMPT_ICONS_BY_ID
+} from "~src/utils/prompt-icons"
 
 const TYPE_ALIASES: Record<string, string> = {
   // Development
@@ -83,12 +88,54 @@ export function resolvePromptIconType(type?: string, tags?: string[]): string {
 }
 
 export interface PromptIconProps {
+  icon?: string
   type?: string
   tags?: string[]
   className?: string
+  size?: number | string
 }
 
-export default function PromptIcon({ type, tags, className }: PromptIconProps) {
+export default function PromptIcon({
+  icon,
+  type,
+  tags,
+  className,
+  size = "20px"
+}: PromptIconProps) {
+  // 1. Direct Lucide icon check
+  const candidateId =
+    icon ??
+    (type && PROMPT_ICONS_BY_ID.has(type.toLowerCase()) ? type : undefined) ??
+    (tags
+      ? tags.find((t) => t.startsWith("icon:"))?.slice(5) ??
+        tags.find((t) => PROMPT_ICONS_BY_ID.has(t.toLowerCase()))
+      : undefined)
+
+  const descriptor = getPromptIconDescriptor(candidateId)
+
+  if (descriptor) {
+    const IconComponent = descriptor.icon
+    const colorClass = css[`color_${descriptor.color}`] ?? css.color_blue
+
+    const content = (
+      <div
+        className={`${css.iconWrapper} ${colorClass}`}
+        data-testid={`prompt-icon-${descriptor.id}`}>
+        <IconComponent
+          className={css.icon}
+          size={size}
+          aria-hidden={true}
+        />
+      </div>
+    )
+
+    if (className) {
+      return <div className={className}>{content}</div>
+    }
+    return content
+  }
+
+  // 2. Legacy fallback via types / categories
   const resolvedType = resolvePromptIconType(type, tags)
   const iconRender = types[resolvedType] || types.other
 

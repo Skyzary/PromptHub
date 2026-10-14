@@ -10,7 +10,7 @@ import {
 } from "react-icons/md"
 import * as z from "zod"
 
-import PromptIcon from "~src/components/PromptIcon/PromptIcon"
+import IconPicker from "~src/components/IconPicker/IconPicker"
 import TemplateHighlight from "~src/components/TemplateHighlight/TemplateHighlight"
 import Btn from "~src/components/ui/Btn/Btn"
 import {
@@ -20,6 +20,7 @@ import {
   updatePromptTitle
 } from "~src/prompts-api"
 import type { IPrompt } from "~src/types"
+import { resolvePromptIcon, setPromptIcon } from "~src/utils/prompt-icons"
 import { hasTemplateVariables } from "~src/utils/template"
 
 import css from "./PromptDetailsModal.module.scss"
@@ -260,8 +261,21 @@ export default function PromptDetailsModal({
     setError(null)
   }
 
+  const handleIconChange = async (newIcon: string) => {
+    if (!currentPrompt) return
+    const id = getPromptId(currentPrompt)
+    if (id) {
+      await setPromptIcon(id, newIcon)
+    }
+    if (currentPrompt.title) {
+      await setPromptIcon(currentPrompt.title, newIcon)
+    }
+    const updated = { ...currentPrompt, icon: newIcon }
+    setCurrentPrompt(updated)
+    onUpdated?.(updated)
+  }
+
   const isAnyEditing = isEditingTitle || isEditingBody || isEditingTags
-  const primaryType = currentPrompt.tags?.[0] ?? "other"
 
   return (
     <div
@@ -276,9 +290,10 @@ export default function PromptDetailsModal({
         {/* Header + Title Section */}
         <div className={css.modalHeader}>
           <div className={css.headerMain}>
-            <PromptIcon
-              type={primaryType}
-              tags={currentPrompt.tags}
+            <IconPicker
+              compact
+              value={currentPrompt.icon ?? resolvePromptIcon(currentPrompt)}
+              onChange={handleIconChange}
             />
             <div className={css.titleDisplayRow}>
               <h2

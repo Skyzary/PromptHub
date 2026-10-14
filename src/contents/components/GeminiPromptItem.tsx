@@ -3,6 +3,7 @@ import React from "react"
 import PromptIcon from "../../components/PromptIcon/PromptIcon"
 import TemplateHighlight from "../../components/TemplateHighlight/TemplateHighlight"
 import type { IPrompt } from "../../types"
+import { resolvePromptIcon } from "../../utils/prompt-icons"
 import css from "../gemini-prompts.module.scss"
 import { EnterIcon } from "./GeminiIcons"
 
@@ -27,6 +28,7 @@ export const GeminiPromptItem: React.FC<GeminiPromptItemProps> = ({
     <div className={css.promptItemContent}>
       <div className={css.promptIconWrapper}>
         <PromptIcon
+          icon={prompt.icon ?? resolvePromptIcon(prompt)}
           type={prompt.tags?.[0] ?? "other"}
           tags={prompt.tags}
         />

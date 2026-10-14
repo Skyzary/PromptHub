@@ -4,17 +4,21 @@
   font-family: inherit;
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: $line-height-lg;
+  line-height: inherit;
 }
 
 .variable {
   color: $accent-color;
   background-color: $accent-soft;
   border: $border-width solid $accent-border;
-  padding: $space-2xs $space-base;
+  padding: 1px $space-base;
   border-radius: $radius-pill;
   font-weight: $font-weight-medium;
   display: inline-block;
+  line-height: 1.3;
+  vertical-align: middle;
+  margin: 2px 1px;
+  box-sizing: border-box;
   transition:
     background-color $transition-fast,
     color $transition-fast,

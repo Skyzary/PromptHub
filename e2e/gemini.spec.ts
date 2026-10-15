@@ -90,7 +90,7 @@ test.describe("Gemini Page Content Script Integration (E2E)", () => {
     expect(editorState.firstActive).toBe(true)
 
     // Type into first variable
-    await geminiPage.keyboard.type("TypeScript")
+    await geminiPage.keyboard.type("TypeScript", { delay: 20 })
 
     // Press Tab to jump to the second variable
     await geminiPage.keyboard.press("Tab")
@@ -101,8 +101,11 @@ test.describe("Gemini Page Content Script Integration (E2E)", () => {
     })
     expect(secondVarActive).toBe(true)
 
+    // Allow caret and DOM to settle after Tab before typing
+    await geminiPage.waitForTimeout(100)
+
     // Type into second variable
-    await geminiPage.keyboard.type("Security")
+    await geminiPage.keyboard.type("Security", { delay: 20 })
 
     // Press Enter to clean up brackets before prompt submission
     await geminiPage.keyboard.press("Enter")

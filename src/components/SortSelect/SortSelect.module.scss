@@ -1,0 +1,130 @@
+@use "../../vars.scss" as *;
+
+.sortContainer {
+  position: relative;
+  display: inline-flex;
+}
+
+.sortTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: transparent;
+  border: $border-width solid transparent;
+  border-radius: $radius-pill;
+  color: $text-secondary;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast,
+    transform $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $text-primary;
+    border-color: $border-color;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.sortTriggerActive {
+    background-color: $accent-soft;
+    border-color: $accent-border;
+    color: $accent-color;
+  }
+}
+
+.sortIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 50;
+  min-width: 230px;
+  background-color: $bg-card;
+  border: $border-width solid $border-color;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-modal;
+  padding: $space-xs;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: $space-base $space-xl;
+  background: transparent;
+  border: none;
+  border-radius: $radius-sm;
+  color: $text-primary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-regular;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $accent-color;
+  }
+
+  &.menuItemActive {
+    background-color: $accent-soft;
+    color: $accent-color;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.menuItemLeading {
+  display: flex;
+  align-items: center;
+  gap: $space-lg;
+  min-width: 0;
+}
+
+.optionIcon {
+  font-size: 15px;
+  flex-shrink: 0;
+  color: $text-secondary;
+
+  .menuItem:hover & {
+    color: $accent-color;
+  }
+
+  .menuItemActive & {
+    color: $accent-color;
+  }
+}
+
+.checkIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+  color: $accent-color;
+  margin-left: $space-lg;
+}
+
+.menuItemLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+

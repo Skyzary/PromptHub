@@ -395,12 +395,21 @@ describe("ListSection & Popup Integration", () => {
     )
     await user.click(screen.getByRole("button", { name: "#daily" }))
     expect(screen.queryByText("TypeScript Refactoring")).not.toBeInTheDocument()
-    expect(screen.getByText("Daily Planner")).toBeInTheDocument()
-
     // Reset via All button
     await user.click(screen.getByRole("button", { name: "All" }))
     expect(screen.getByText("TypeScript Refactoring")).toBeInTheDocument()
     expect(screen.getByText("Daily Planner")).toBeInTheDocument()
+
+    // Test sorting dropdown interactions
+    const sortButton = screen.getByRole("button", { name: /sort prompts/i })
+    expect(sortButton).toBeInTheDocument()
+    await user.click(sortButton)
+
+    // Select Alphabetical (A → Z)
+    await user.click(screen.getByRole("button", { name: /alphabetical \(a → z\)/i }))
+    const cardHeadings = screen.getAllByRole("heading", { level: 3 })
+    expect(cardHeadings[0]).toHaveTextContent("Daily Planner")
+    expect(cardHeadings[1]).toHaveTextContent("TypeScript Refactoring")
 
     // Open details modal, update title, then delete
     rerender(

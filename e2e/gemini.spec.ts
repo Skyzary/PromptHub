@@ -89,6 +89,9 @@ test.describe("Gemini Page Content Script Integration (E2E)", () => {
     expect(editorState.varCount).toBe(2)
     expect(editorState.firstActive).toBe(true)
 
+    // Allow initial caret to settle before typing
+    await geminiPage.waitForTimeout(100)
+
     // Type into first variable
     await geminiPage.keyboard.type("TypeScript", { delay: 20 })
 

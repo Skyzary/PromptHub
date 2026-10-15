@@ -5,7 +5,6 @@ import {
   DEFAULT_SORT_OPTION,
   getStoredSortOption,
   setStoredSortOption,
-  SORT_OPTIONS,
   SORT_STORAGE_KEY,
   sortPrompts
 } from "../utils/prompt-sort"
@@ -127,8 +126,27 @@ describe("prompt-sort utility", () => {
         createdAt: new Date("2026-01-01T00:00:00Z")
       }
     ]
-    const sorted = sortPrompts(equalDates, "created-desc")
-    expect(sorted.map((p) => p._id)).toEqual(["eq1", "eq2"])
+    const sortedDesc = sortPrompts(equalDates, "created-desc")
+    expect(sortedDesc.map((p) => p._id)).toEqual(["eq1", "eq2"])
+
+    const sortedAsc = sortPrompts(equalDates, "created-asc")
+    expect(sortedAsc.map((p) => p._id)).toEqual(["eq1", "eq2"])
+
+    const sortedTitleAsc = sortPrompts(equalDates, "title-asc")
+    expect(sortedTitleAsc.map((p) => p._id)).toEqual(["eq1", "eq2"])
+
+    const sortedTitleDesc = sortPrompts(equalDates, "title-desc")
+    expect(sortedTitleDesc.map((p) => p._id)).toEqual(["eq1", "eq2"])
+
+    const sortedUpdatedDesc = sortPrompts(equalDates, "updated-desc")
+    expect(sortedUpdatedDesc.map((p) => p._id)).toEqual(["eq1", "eq2"])
+
+    const sortedUpdatedAsc = sortPrompts(equalDates, "updated-asc")
+    expect(sortedUpdatedAsc.map((p) => p._id)).toEqual(["eq1", "eq2"])
+
+    // @ts-expect-error test invalid sort option
+    const sortedDefault = sortPrompts(equalDates, "unknown-sort")
+    expect(sortedDefault.map((p) => p._id)).toEqual(["eq1", "eq2"])
   })
 
   it("reads and writes stored sort option in localStorage and chrome storage", () => {

@@ -404,8 +404,20 @@ describe("ListSection & Popup Integration", () => {
     const sortButton = screen.getByRole("button", { name: /sort prompts/i })
     expect(sortButton).toBeInTheDocument()
     await user.click(sortButton)
+    expect(screen.getByRole("listbox")).toBeInTheDocument()
 
-    // Select Alphabetical (A → Z)
+    // Test Escape key closes dropdown
+    await user.keyboard("{Escape}")
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument()
+
+    // Test outside click closes dropdown
+    await user.click(sortButton)
+    expect(screen.getByRole("listbox")).toBeInTheDocument()
+    await user.click(document.body)
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument()
+
+    // Reopen and select Alphabetical (A → Z)
+    await user.click(sortButton)
     await user.click(screen.getByRole("button", { name: /alphabetical \(a → z\)/i }))
     const cardHeadings = screen.getAllByRole("heading", { level: 3 })
     expect(cardHeadings[0]).toHaveTextContent("Daily Planner")

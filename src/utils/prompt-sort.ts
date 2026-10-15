@@ -1,4 +1,4 @@
-import type { IPrompt } from "./types"
+import type { IPrompt } from "../types"
 
 export type SortOption =
   | "created-desc"

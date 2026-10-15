@@ -57,6 +57,36 @@ test.describe("Popup Extension Interface (E2E)", () => {
     await expect(page.getByText("Bug Triage Summary")).toBeVisible()
     await expect(page.getByText("Code Review Assistant")).not.toBeVisible()
 
+    // Reset tag filter to All
+    await page.getByRole("button", { name: "All" }).click()
+    await expect(page.getByText("Code Review Assistant")).toBeVisible()
+    await expect(page.getByText("Bug Triage Summary")).toBeVisible()
+
+    // Test Sort dropdown
+    const sortButton = page.getByRole("button", { name: /sort prompts/i })
+    await expect(sortButton).toBeVisible()
+    await page.screenshot({ path: "playwright_sort_button_closed.png" })
+    await sortButton.click()
+
+    // Verify sort options menu is open
+    const sortMenu = page.getByRole("listbox", { name: /sort options/i })
+    await expect(sortMenu).toBeVisible()
+    await page.screenshot({ path: "playwright_sort_dropdown_open.png" })
+    await expect(
+      sortMenu.getByRole("button", { name: /alphabetical \(a → z\)/i })
+    ).toBeVisible()
+
+    // Select Alphabetical (A → Z)
+    await sortMenu
+      .getByRole("button", { name: /alphabetical \(a → z\)/i })
+      .click()
+    await expect(sortMenu).not.toBeVisible()
+
+    // Verify order: "Bug Triage Summary" comes before "Code Review Assistant"
+    const titles = page.locator("h3[class*='promptCardTitle']")
+    await expect(titles.first()).toHaveText("Bug Triage Summary")
+    await expect(titles.nth(1)).toHaveText("Code Review Assistant")
+
     await page.close()
   })
 

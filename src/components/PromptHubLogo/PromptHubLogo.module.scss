@@ -1,18 +1,16 @@
 @use "../../vars.scss" as *;
 
 .logoWrapper {
-  width: $size-logo;
-  height: $size-logo;
-  background: $gradient-logo;
-  box-shadow: $shadow-logo;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: $radius-lg;
   flex-shrink: 0;
 }
 
 .logoIcon {
-  width: 12px;
-  height: 15px;
+  width: 34px;
+  height: 34px;
+  display: block;
 }

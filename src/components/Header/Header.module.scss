@@ -23,17 +23,6 @@
   gap: $space-xl;
 }
 
-.logoWrapper {
-  width: $size-logo;
-  height: $size-logo;
-  background: $gradient-logo;
-  box-shadow: $shadow-logo;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: $radius-lg;
-  flex-shrink: 0;
-}
 
 .logoText {
   font-size: $font-size-2xl;

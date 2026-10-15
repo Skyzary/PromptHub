@@ -7,9 +7,16 @@ import {
 } from "~src/prompts-api"
 import type { IPrompt } from "~src/types"
 import { resolvePromptIcon } from "~src/utils/prompt-icons"
+import {
+  getStoredSortOption,
+  setStoredSortOption,
+  sortPrompts,
+  type SortOption
+} from "~src/utils/prompt-sort"
 
 import PromptCard from "../PromptCard/PromptCard"
 import PromptDetailsModal from "../PromptDetailsModal/PromptDetailsModal"
+import SortSelect from "../SortSelect/SortSelect"
 import TagFilter from "../TagFilter/TagFilter"
 import css from "./ListSection.module.scss"
 
@@ -33,6 +40,14 @@ export default function ListSection({
   )
   const [selectedPrompt, setSelectedPrompt] = useState<IPrompt | null>(null)
   const [internalTag, setInternalTag] = useState<string | null>(null)
+  const [sortOption, setSortOption] = useState<SortOption>(() =>
+    getStoredSortOption()
+  )
+
+  const handleSortChange = (newSort: SortOption) => {
+    setSortOption(newSort)
+    setStoredSortOption(newSort)
+  }
 
   const activeTag = selectedTag !== undefined ? selectedTag : internalTag
   const setActiveTag = onSelectTag ?? setInternalTag
@@ -44,8 +59,28 @@ export default function ListSection({
     }
 
     const loadPrompts = async (forceRefresh = false) => {
+      // 1. Try to fetch fresh or memory/localStorage cached prompts
       const data = await fetchPrompts(undefined, forceRefresh)
-      setPrompts(data)
+      if (Array.isArray(data) && data.length > 0) {
+        setPrompts(data)
+        return
+      }
+
+      // 2. If empty (e.g. backend offline or extension reopened), fallback to chrome.storage.local
+      if (typeof chrome !== "undefined" && chrome.storage?.local) {
+        try {
+          const stored = await chrome.storage.local.get("prompthub_prompts_cache")
+          const storedCache = stored?.prompthub_prompts_cache
+          if (Array.isArray(storedCache) && storedCache.length > 0) {
+            setPrompts(storedCache)
+            return
+          }
+        } catch {
+          // Ignore storage read error
+        }
+      }
+
+      setPrompts(data ?? [])
     }
 
     void loadPrompts(true)
@@ -119,6 +154,10 @@ export default function ListSection({
       })
     : prompts
 
+  const sortedAndFilteredPrompts = useMemo(() => {
+    return sortPrompts(filteredPrompts, sortOption)
+  }, [filteredPrompts, sortOption])
+
   const handleResetFilters = () => {
     setActiveTag(null)
     onClearFilters?.()
@@ -127,10 +166,16 @@ export default function ListSection({
   return (
     <section className={css.listSection}>
       <div className={css.listHeaderRow}>
-        <h2 className={css.listHeading}>
-          {isFiltering ? "Search Results" : "Recent & Favorites"}
-        </h2>
-        <span className={css.listCount}>{filteredPrompts.length}</span>
+        <div className={css.headerTitleGroup}>
+          <h2 className={css.listHeading}>
+            {isFiltering ? "Search Results" : "Recent & Favorites"}
+          </h2>
+          <span className={css.listCount}>{sortedAndFilteredPrompts.length}</span>
+        </div>
+        <SortSelect
+          value={sortOption}
+          onChange={handleSortChange}
+        />
       </div>
       {availableTags.length > 0 && (
         <TagFilter
@@ -139,9 +184,9 @@ export default function ListSection({
           onSelectTag={setActiveTag}
         />
       )}
-      {filteredPrompts.length > 0 ? (
+      {sortedAndFilteredPrompts.length > 0 ? (
         <ul className={css.listContainer}>
-          {filteredPrompts.map((prompt, index) => (
+          {sortedAndFilteredPrompts.map((prompt, index) => (
             <PromptCard
               key={prompt._id ?? `${prompt.title}-${index}`}
               name={prompt.title}

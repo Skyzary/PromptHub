@@ -139,11 +139,18 @@ export function setCollapsedInputCursor(
   position: number
 ): boolean {
   element.focus()
-  if (
-    element instanceof HTMLTextAreaElement ||
+  const isTextArea =
+    typeof HTMLTextAreaElement !== "undefined" &&
+    element instanceof HTMLTextAreaElement
+  const isInputElement =
+    typeof HTMLInputElement !== "undefined" &&
     element instanceof HTMLInputElement
-  ) {
-    element.setSelectionRange(position, position)
+
+  if (isTextArea || isInputElement) {
+    ;(element as HTMLInputElement | HTMLTextAreaElement).setSelectionRange(
+      position,
+      position
+    )
     return true
   }
   return setContentEditableSelection(element, position, position)

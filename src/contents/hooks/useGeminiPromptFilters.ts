@@ -1,13 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 
 import type { IPrompt } from "../../types"
+import {
+  getStoredSortOption,
+  setStoredSortOption,
+  sortPrompts,
+  type SortOption
+} from "../../utils/prompt-sort"
 
-export function useGeminiPromptFilters(prompts: IPrompt[], isOpen: boolean) {
+export function useGeminiPromptFilters(
+  prompts: IPrompt[],
+  isOpen: boolean,
+  initialSortOption?: SortOption
+) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [sortOption, setSortOption] = useState<SortOption>(
+    () => initialSortOption ?? getStoredSortOption()
+  )
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const selectedIndexRef = useRef<number>(selectedIndex)
   selectedIndexRef.current = selectedIndex
+
+  const handleSortChange = (newSort: SortOption) => {
+    setSortOption(newSort)
+    setStoredSortOption(newSort)
+  }
 
   const availableTags = useMemo(() => {
     const set = new Set<string>()
@@ -56,8 +74,12 @@ export function useGeminiPromptFilters(prompts: IPrompt[], isOpen: boolean) {
     })
   }, [prompts, searchQuery, selectedTag])
 
-  const filteredPromptsRef = useRef(filteredPrompts)
-  filteredPromptsRef.current = filteredPrompts
+  const sortedPrompts = useMemo(() => {
+    return sortPrompts(filteredPrompts, sortOption)
+  }, [filteredPrompts, sortOption])
+
+  const filteredPromptsRef = useRef(sortedPrompts)
+  filteredPromptsRef.current = sortedPrompts
 
   useEffect(() => {
     setSelectedIndex(0)
@@ -68,6 +90,11 @@ export function useGeminiPromptFilters(prompts: IPrompt[], isOpen: boolean) {
     setSelectedIndex(0)
     selectedIndexRef.current = 0
   }, [selectedTag])
+
+  useEffect(() => {
+    setSelectedIndex(0)
+    selectedIndexRef.current = 0
+  }, [sortOption])
 
   useEffect(() => {
     if (isOpen) {
@@ -82,11 +109,13 @@ export function useGeminiPromptFilters(prompts: IPrompt[], isOpen: boolean) {
     setSearchQuery,
     selectedTag,
     setSelectedTag,
+    sortOption,
+    setSortOption: handleSortChange,
     selectedIndex,
     setSelectedIndex,
     selectedIndexRef,
     availableTags,
-    filteredPrompts,
+    filteredPrompts: sortedPrompts,
     filteredPromptsRef
   }
 }

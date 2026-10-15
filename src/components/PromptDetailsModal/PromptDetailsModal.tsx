@@ -35,8 +35,19 @@ interface PromptDetailsModalProps {
 }
 
 function getPromptId(prompt: IPrompt): string {
-  const withFallbackId = prompt as IPrompt & { id?: string; promptId?: string }
-  return prompt._id ?? withFallbackId.id ?? withFallbackId.promptId ?? ""
+  const anyPrompt = prompt as unknown as Record<string, unknown>
+  const rawId = anyPrompt._id ?? anyPrompt.id ?? anyPrompt.promptId
+  if (rawId !== undefined && rawId !== null) {
+    if (
+      typeof rawId === "object" &&
+      rawId !== null &&
+      "$oid" in (rawId as Record<string, unknown>)
+    ) {
+      return String((rawId as { $oid: string }).$oid)
+    }
+    return String(rawId).trim()
+  }
+  return ""
 }
 
 export default function PromptDetailsModal({
@@ -270,10 +281,11 @@ export default function PromptDetailsModal({
     setIsSavingIcon(true)
     const id = getPromptId(currentPrompt)
     try {
-      if (id) {
-        await updatePromptIcon({ promptId: id, icon: newIcon })
-        await setPromptIcon(id, newIcon)
+      if (!id) {
+        throw new Error("Prompt ID is missing")
       }
+      await updatePromptIcon({ promptId: id, icon: newIcon })
+      await setPromptIcon(id, newIcon)
       if (currentPrompt.title) {
         await setPromptIcon(currentPrompt.title, newIcon)
       }
@@ -285,6 +297,7 @@ export default function PromptDetailsModal({
       setCurrentPrompt(updated)
       onUpdated?.(updated)
     } catch (err) {
+      console.error("Failed to update icon:", err)
       setError(formatError(err, "Failed to update icon"))
     } finally {
       setIsSavingIcon(false)

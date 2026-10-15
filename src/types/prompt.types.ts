@@ -39,6 +39,7 @@ export interface DeletePrompt {
 
 export interface IPrompt {
   _id?: string
+  id?: string
   title: string
   body: string
   createdAt?: Date

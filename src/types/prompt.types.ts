@@ -3,7 +3,7 @@ export interface CreatePromptBody {
   title: string
   body: string
   tags: Array<string>
-  icon?: string
+  icon: string
   updatedAt?: Date
   createdAt?: Date
 }
@@ -26,6 +26,12 @@ export interface UpdatePromptTags {
   tags: Array<string>
 }
 
+export interface UpdatePromptIcon {
+  email: string
+  promptId: string
+  icon: string
+}
+
 export interface DeletePrompt {
   email: string
   promptId: string
@@ -33,6 +39,7 @@ export interface DeletePrompt {
 
 export interface IPrompt {
   _id?: string
+  id?: string
   title: string
   body: string
   createdAt?: Date
@@ -48,4 +55,5 @@ export type CreatePromptRequest = Omit<
 export type UpdatePromptTitleRequest = Omit<UpdatePromptTitle, "email">
 export type UpdatePromptBodyRequest = Omit<UpdatePromptBody, "email">
 export type UpdatePromptTagsRequest = Omit<UpdatePromptTags, "email">
+export type UpdatePromptIconRequest = Omit<UpdatePromptIcon, "email">
 export type DeletePromptRequest = Omit<DeletePrompt, "email">

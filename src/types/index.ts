@@ -6,6 +6,8 @@ export type {
   IPrompt,
   UpdatePromptBody,
   UpdatePromptBodyRequest,
+  UpdatePromptIcon,
+  UpdatePromptIconRequest,
   UpdatePromptTags,
   UpdatePromptTagsRequest,
   UpdatePromptTitle,

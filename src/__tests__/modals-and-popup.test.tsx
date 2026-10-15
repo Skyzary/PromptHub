@@ -91,7 +91,8 @@ describe("CreatePromptModal", () => {
     expect(createPromptSpy).toHaveBeenLastCalledWith({
       title: "My Prompt",
       body: "Prompt template content",
-      tags: ["typescript", "frontend"]
+      tags: ["typescript", "frontend"],
+      icon: "sparkles"
     })
     expect(onCreated).toHaveBeenCalledTimes(1)
   })

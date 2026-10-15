@@ -18,6 +18,7 @@ export interface IconPickerProps {
   label?: string
   className?: string
   compact?: boolean
+  disabled?: boolean
 }
 
 export default function IconPicker({
@@ -25,7 +26,8 @@ export default function IconPicker({
   onChange,
   label = "Icon",
   className,
-  compact = false
+  compact = false,
+  disabled = false
 }: IconPickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState("")
@@ -68,7 +70,12 @@ export default function IconPicker({
       <button
         type="button"
         className={`${css.triggerBtn} ${compact ? css.compactTrigger : ""}`}
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          if (!disabled) {
+            setIsOpen(true)
+          }
+        }}
+        disabled={disabled}
         aria-label={`Select icon, currently ${currentDescriptor?.name ?? "Sparkles"}`}
         aria-haspopup="dialog"
         aria-expanded={isOpen}

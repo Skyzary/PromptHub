@@ -5,7 +5,7 @@ import IconPicker from "~src/components/IconPicker/IconPicker"
 import TemplateHighlight from "~src/components/TemplateHighlight/TemplateHighlight"
 import Btn from "~src/components/ui/Btn/Btn"
 import { createPrompt, invalidatePromptsCache } from "~src/prompts-api"
-import { setPromptIcon } from "~src/utils/prompt-icons"
+import { DEFAULT_PROMPT_ICON_ID, setPromptIcon } from "~src/utils/prompt-icons"
 import { hasTemplateVariables } from "~src/utils/template"
 
 import css from "./CreatePromptModal.module.scss"
@@ -24,7 +24,7 @@ export default function CreatePromptModal({
   const [title, setTitle] = useState("")
   const [body, setBody] = useState("")
   const [customTagsInput, setCustomTagsInput] = useState("")
-  const [selectedIcon, setSelectedIcon] = useState<string | null>(null)
+  const [selectedIcon, setSelectedIcon] = useState<string>(DEFAULT_PROMPT_ICON_ID)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -36,7 +36,7 @@ export default function CreatePromptModal({
     setTitle("")
     setBody("")
     setCustomTagsInput("")
-    setSelectedIcon(null)
+    setSelectedIcon(DEFAULT_PROMPT_ICON_ID)
     setError(null)
   }
 
@@ -62,16 +62,14 @@ export default function CreatePromptModal({
     )
 
     try {
+      const iconToSave = selectedIcon || DEFAULT_PROMPT_ICON_ID
       await createPrompt({
         title,
         body,
         tags,
-        ...(selectedIcon ? { icon: selectedIcon } : {})
+        icon: iconToSave
       })
-      if (selectedIcon) {
-        // Also map by title so local resolver finds it immediately
-        await setPromptIcon(title.trim(), selectedIcon)
-      }
+      await setPromptIcon(title.trim(), iconToSave)
       invalidatePromptsCache()
       resetForm()
       onCreated?.()
@@ -146,6 +144,7 @@ export default function CreatePromptModal({
               value={selectedIcon}
               onChange={setSelectedIcon}
               label="Icon"
+              disabled={isSubmitting}
             />
           </div>
 

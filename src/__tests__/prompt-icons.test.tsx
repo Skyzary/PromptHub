@@ -278,9 +278,12 @@ describe("Icon Selection in Modals", () => {
     const user = userEvent.setup()
     const onClose = vi.fn()
     const onUpdated = vi.fn()
+    const updateIconSpy = vi
+      .spyOn(promptsApiModule, "updatePromptIcon")
+      .mockResolvedValueOnce({ message: "Icon updated" })
 
     const samplePrompt: IPrompt = {
-      _id: "detail-prompt-id",
+      _id: "65f1a2b3c4d5e6f7a8b9c0d1",
       title: "Detail Prompt",
       body: "Some prompt body",
       tags: ["general"],
@@ -305,11 +308,17 @@ describe("Icon Selection in Modals", () => {
     // Select "zap"
     await user.click(screen.getByTestId("icon-tile-zap"))
 
-    expect(onUpdated).toHaveBeenCalledWith(
-      expect.objectContaining({
-        _id: "detail-prompt-id",
+    await waitFor(() => {
+      expect(updateIconSpy).toHaveBeenCalledWith({
+        promptId: "65f1a2b3c4d5e6f7a8b9c0d1",
         icon: "zap"
       })
-    )
+      expect(onUpdated).toHaveBeenCalledWith(
+        expect.objectContaining({
+          _id: "65f1a2b3c4d5e6f7a8b9c0d1",
+          icon: "zap"
+        })
+      )
+    })
   })
 })

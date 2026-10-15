@@ -16,6 +16,7 @@ import Btn from "~src/components/ui/Btn/Btn"
 import {
   deletePrompt,
   updatePromptBody,
+  updatePromptIcon,
   updatePromptTags,
   updatePromptTitle
 } from "~src/prompts-api"
@@ -34,8 +35,19 @@ interface PromptDetailsModalProps {
 }
 
 function getPromptId(prompt: IPrompt): string {
-  const withFallbackId = prompt as IPrompt & { id?: string; promptId?: string }
-  return prompt._id ?? withFallbackId.id ?? withFallbackId.promptId ?? ""
+  const anyPrompt = prompt as unknown as Record<string, unknown>
+  const rawId = anyPrompt._id ?? anyPrompt.id ?? anyPrompt.promptId
+  if (rawId !== undefined && rawId !== null) {
+    if (
+      typeof rawId === "object" &&
+      rawId !== null &&
+      "$oid" in (rawId as Record<string, unknown>)
+    ) {
+      return String((rawId as { $oid: string }).$oid)
+    }
+    return String(rawId).trim()
+  }
+  return ""
 }
 
 export default function PromptDetailsModal({
@@ -58,6 +70,7 @@ export default function PromptDetailsModal({
   const [isSavingTitle, setIsSavingTitle] = useState(false)
   const [isSavingBody, setIsSavingBody] = useState(false)
   const [isSavingTags, setIsSavingTags] = useState(false)
+  const [isSavingIcon, setIsSavingIcon] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const [error, setError] = useState<string | null>(null)
@@ -83,7 +96,8 @@ export default function PromptDetailsModal({
   }
 
   const promptId = getPromptId(currentPrompt)
-  const isBusy = isSavingTitle || isSavingBody || isSavingTags || isDeleting
+  const isBusy =
+    isSavingTitle || isSavingBody || isSavingTags || isSavingIcon || isDeleting
 
   const formatError = (err: unknown, fallback: string): string => {
     if (err instanceof z.ZodError) {
@@ -262,17 +276,32 @@ export default function PromptDetailsModal({
   }
 
   const handleIconChange = async (newIcon: string) => {
-    if (!currentPrompt) return
+    if (!currentPrompt || isBusy) return
+    setError(null)
+    setIsSavingIcon(true)
     const id = getPromptId(currentPrompt)
-    if (id) {
+    try {
+      if (!id) {
+        throw new Error("Prompt ID is missing")
+      }
+      await updatePromptIcon({ promptId: id, icon: newIcon })
       await setPromptIcon(id, newIcon)
+      if (currentPrompt.title) {
+        await setPromptIcon(currentPrompt.title, newIcon)
+      }
+      const updated = {
+        ...currentPrompt,
+        icon: newIcon,
+        updatedAt: new Date()
+      }
+      setCurrentPrompt(updated)
+      onUpdated?.(updated)
+    } catch (err) {
+      console.error("Failed to update icon:", err)
+      setError(formatError(err, "Failed to update icon"))
+    } finally {
+      setIsSavingIcon(false)
     }
-    if (currentPrompt.title) {
-      await setPromptIcon(currentPrompt.title, newIcon)
-    }
-    const updated = { ...currentPrompt, icon: newIcon }
-    setCurrentPrompt(updated)
-    onUpdated?.(updated)
   }
 
   const isAnyEditing = isEditingTitle || isEditingBody || isEditingTags
@@ -294,6 +323,7 @@ export default function PromptDetailsModal({
               compact
               value={currentPrompt.icon ?? resolvePromptIcon(currentPrompt)}
               onChange={handleIconChange}
+              disabled={isBusy}
             />
             <div className={css.titleDisplayRow}>
               <h2

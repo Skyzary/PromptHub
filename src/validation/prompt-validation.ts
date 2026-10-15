@@ -26,7 +26,11 @@ const tagsSchema = z
   )
   .max(10, "A prompt can have at most 10 tags")
 
-const iconSchema = z.string().trim().max(50).optional()
+const iconSchema = z
+  .string()
+  .trim()
+  .min(1, "Icon is required")
+  .max(50, "Icon must be at most 50 characters long")
 
 export const createPromptSchema = z.object({
   title: titleSchema,
@@ -48,6 +52,11 @@ export const updatePromptBodySchema = z.object({
 export const updatePromptTagsSchema = z.object({
   promptId: promptIdSchema,
   tags: tagsSchema
+})
+
+export const updatePromptIconSchema = z.object({
+  promptId: promptIdSchema,
+  icon: iconSchema
 })
 
 export const deletePromptSchema = z.object({

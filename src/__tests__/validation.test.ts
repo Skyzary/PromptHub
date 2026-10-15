@@ -4,6 +4,7 @@ import {
   createPromptSchema,
   deletePromptSchema,
   updatePromptBodySchema,
+  updatePromptIconSchema,
   updatePromptTagsSchema,
   updatePromptTitleSchema
 } from "~src/validation/prompt-validation"
@@ -20,13 +21,15 @@ describe("prompt-validation", () => {
     const parsed = createPromptSchema.parse({
       title: "  Code Review  ",
       body: "  Review this code carefully  ",
-      tags: [" development ", "ts"]
+      tags: [" development ", "ts"],
+      icon: "  sparkles  "
     })
 
     expect(parsed).toEqual({
       title: "Code Review",
       body: "Review this code carefully",
-      tags: ["development", "ts"]
+      tags: ["development", "ts"],
+      icon: "sparkles"
     })
   })
 
@@ -35,7 +38,8 @@ describe("prompt-validation", () => {
       createPromptSchema.parse({
         title: "   ",
         body: "Valid body",
-        tags: []
+        tags: [],
+        icon: "sparkles"
       })
     ).toThrow("Title is required")
 
@@ -43,7 +47,8 @@ describe("prompt-validation", () => {
       createPromptSchema.parse({
         title: "Valid title",
         body: "",
-        tags: []
+        tags: [],
+        icon: "sparkles"
       })
     ).toThrow("Body is required")
 
@@ -51,12 +56,30 @@ describe("prompt-validation", () => {
       createPromptSchema.parse({
         title: "Valid title",
         body: "Valid body",
-        tags: Array.from({ length: 11 }, (_, i) => `tag-${i}`)
+        tags: Array.from({ length: 11 }, (_, i) => `tag-${i}`),
+        icon: "sparkles"
       })
     ).toThrow("A prompt can have at most 10 tags")
+
+    expect(() =>
+      createPromptSchema.parse({
+        title: "Valid title",
+        body: "Valid body",
+        tags: [],
+        icon: "   "
+      })
+    ).toThrow("Icon is required")
+
+    expect(() =>
+      createPromptSchema.parse({
+        title: "Valid title",
+        body: "Valid body",
+        tags: []
+      } as unknown as { title: string; body: string; tags: string[]; icon: string })
+    ).toThrow()
   })
 
-  it("validates updatePromptTitleSchema, updatePromptBodySchema, updatePromptTagsSchema, and deletePromptSchema", () => {
+  it("validates updatePromptTitleSchema, updatePromptBodySchema, updatePromptTagsSchema, updatePromptIconSchema, and deletePromptSchema", () => {
     expect(
       updatePromptTitleSchema.parse({
         promptId: VALID_OBJECT_ID,
@@ -88,6 +111,16 @@ describe("prompt-validation", () => {
     })
 
     expect(
+      updatePromptIconSchema.parse({
+        promptId: VALID_OBJECT_ID,
+        icon: " rocket "
+      })
+    ).toEqual({
+      promptId: VALID_OBJECT_ID,
+      icon: "rocket"
+    })
+
+    expect(
       deletePromptSchema.parse({
         promptId: VALID_OBJECT_ID
       })
@@ -100,6 +133,13 @@ describe("prompt-validation", () => {
     expect(() =>
       deletePromptSchema.parse({
         promptId: "invalid-id"
+      })
+    ).toThrow("Prompt ID must be a valid MongoDB ObjectId")
+
+    expect(() =>
+      updatePromptIconSchema.parse({
+        promptId: "invalid-id",
+        icon: "sparkles"
       })
     ).toThrow("Prompt ID must be a valid MongoDB ObjectId")
   })

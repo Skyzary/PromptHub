@@ -4,6 +4,7 @@ import type {
   DeletePromptRequest,
   IPrompt,
   UpdatePromptBodyRequest,
+  UpdatePromptIconRequest,
   UpdatePromptTagsRequest,
   UpdatePromptTitleRequest
 } from "./types"
@@ -12,6 +13,7 @@ import {
   createPromptSchema,
   deletePromptSchema,
   updatePromptBodySchema,
+  updatePromptIconSchema,
   updatePromptTagsSchema,
   updatePromptTitleSchema
 } from "./validation/prompt-validation"
@@ -175,6 +177,23 @@ export class PromptsApi {
     return response
   }
 
+  async updatePromptIcon(
+    data: UpdatePromptIconRequest,
+    accessToken?: string
+  ): Promise<ApiMessageResponse> {
+    const validated = updatePromptIconSchema.parse(data)
+    const response = await apiRequest<ApiMessageResponse>(
+      `${this.baseUrl}/prompts/change/icon`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(validated)
+      },
+      accessToken
+    )
+    invalidatePromptsCache()
+    return response
+  }
+
   async deletePrompt(
     data: DeletePromptRequest,
     accessToken?: string
@@ -240,6 +259,13 @@ export async function updatePromptTags(
   accessToken?: string
 ): Promise<ApiMessageResponse> {
   return promptsApi.updatePromptTags(data, accessToken)
+}
+
+export async function updatePromptIcon(
+  data: UpdatePromptIconRequest,
+  accessToken?: string
+): Promise<ApiMessageResponse> {
+  return promptsApi.updatePromptIcon(data, accessToken)
 }
 
 export async function deletePrompt(

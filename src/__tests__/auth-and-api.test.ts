@@ -9,6 +9,7 @@ import {
   invalidatePromptsCache,
   subscribePromptsCache,
   updatePromptBody,
+  updatePromptIcon,
   updatePromptTags,
   updatePromptTitle
 } from "~src/prompts-api"
@@ -282,7 +283,8 @@ describe("PromptsApi & UserApi", () => {
       await createPrompt({
         title: "Title",
         body: "Body",
-        tags: ["development"]
+        tags: ["development"],
+        icon: "sparkles"
       })
     ).toEqual({ message: "Created" })
     expect(cacheListener).toHaveBeenCalled()
@@ -325,6 +327,29 @@ describe("PromptsApi & UserApi", () => {
         tags: ["daily"]
       })
     ).toEqual({ message: "Tags updated" })
+
+    // updatePromptIcon
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ message: "Icon updated" })
+    })
+    expect(
+      await updatePromptIcon({
+        promptId: VALID_OBJECT_ID,
+        icon: "bot"
+      })
+    ).toEqual({ message: "Icon updated" })
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      "http://localhost:4300/api/prompts/change/icon",
+      expect.objectContaining({
+        method: "PATCH",
+        body: JSON.stringify({
+          promptId: VALID_OBJECT_ID,
+          icon: "bot"
+        })
+      })
+    )
 
     // deletePrompt
     fetchMock.mockResolvedValueOnce({

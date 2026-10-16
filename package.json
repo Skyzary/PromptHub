@@ -15,6 +15,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:playwright": "playwright test",
+    "test:backend": "node scripts/check-backend.mjs",
     "prettier": "prettier --check \"src/**/*.{ts,tsx,scss,css}\""
   },
   "dependencies": {

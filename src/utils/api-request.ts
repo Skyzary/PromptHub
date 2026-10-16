@@ -7,7 +7,8 @@ import {
   refresh
 } from "./auth"
 
-export const DEFAULT_API_BASE_URL = "http://localhost:4300/api"
+export const DEFAULT_API_BASE_URL =
+  process.env.PLASMO_PUBLIC_API_URL || "http://localhost:4300/api"
 
 export async function apiRequest<T>(
   url: string,

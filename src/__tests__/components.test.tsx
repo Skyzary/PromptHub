@@ -214,12 +214,30 @@ describe("AuthForm Component", () => {
 
     // Fill valid credentials and test login error
     await user.type(screen.getByLabelText(/email/i), "user@example.com")
-    await user.type(screen.getByLabelText(/password/i), "Password1!")
+    await user.type(screen.getByLabelText(/^password$/i), "Password1!")
 
     loginSpy.mockRejectedValueOnce(new Error("Invalid credentials"))
     const submitButtons = screen.getAllByRole("button", { name: "Sign In" })
     await user.click(submitButtons[submitButtons.length - 1])
     expect(await screen.findByText("Invalid credentials")).toBeInTheDocument()
+
+    // Test show/hide password toggle button
+    const passwordInput = screen.getByLabelText(/^password$/i)
+    expect(passwordInput).toHaveAttribute("type", "password")
+
+    const togglePasswordBtn = screen.getByRole("button", {
+      name: /show password/i
+    })
+    expect(togglePasswordBtn).toBeInTheDocument()
+
+    await user.click(togglePasswordBtn)
+    expect(passwordInput).toHaveAttribute("type", "text")
+    expect(
+      screen.getByRole("button", { name: /hide password/i })
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole("button", { name: /hide password/i }))
+    expect(passwordInput).toHaveAttribute("type", "password")
 
     // Switch back to Sign Up and succeed
     await user.click(screen.getByRole("button", { name: "Sign Up" }))

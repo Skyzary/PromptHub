@@ -108,46 +108,53 @@
   color: $text-muted;
 }
 
-.switchBtn {
-  position: relative;
-  width: $switch-width;
-  height: $switch-height;
-  border-radius: $radius-pill;
+.themeSegmentControl {
+  display: inline-flex;
+  align-items: center;
   background-color: $bg-secondary;
   border: $border-width solid $border-color;
+  border-radius: $radius-pill;
   padding: 2px;
+  gap: 2px;
+}
+
+.themeSegmentBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: $text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
   cursor: pointer;
   transition:
-    background-color $transition-medium,
-    border-color $transition-medium;
-  flex-shrink: 0;
-  box-sizing: border-box;
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover:not(.themeSegmentBtnActive) {
+    color: $text-primary;
+    background-color: $bg-hover;
+  }
 }
 
-.switchBtnActive {
+.themeSegmentBtnActive {
   background-color: var(--accent-color);
-  border-color: var(--accent-color);
-}
-
-.switchThumb {
-  display: block;
-  width: $switch-thumb-size;
-  height: $switch-thumb-size;
-  border-radius: $radius-circle;
-  background-color: $text-muted;
-  box-shadow: $shadow-thumb;
-  transition:
-    transform $transition-medium,
-    background-color $transition-medium;
-}
-
-.switchBtnActive .switchThumb {
-  transform: translateX(18px);
-  background-color: #ffffff;
+  color: #ffffff;
 
   :global([data-theme="dark"]) & {
-    background-color: #042e6f;
+    color: #042e6f;
   }
+}
+
+.backendRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2xl;
+  flex-wrap: wrap;
 }
 
 .logoutBtn {

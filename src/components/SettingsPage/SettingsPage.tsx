@@ -17,11 +17,14 @@ import { deleteUser } from "~src/user-api"
 import { logout } from "~src/utils/auth"
 import {
   getTheme,
+  getThemePreference,
+  setThemePreference,
   subscribeThemeChange,
-  toggleTheme,
-  type ThemeMode
+  type ThemeMode,
+  type ThemePreference
 } from "~src/utils/theme"
 
+import BackendBadge from "../BackendBadge/BackendBadge"
 import css from "./SettingsPage.module.scss"
 
 interface SettingsPageProps {
@@ -34,6 +37,9 @@ export default function SettingsPage({
   isAuthenticated = false
 }: SettingsPageProps) {
   const [theme, setThemeState] = useState<ThemeMode>(() => getTheme())
+  const [themePreference, setThemePreferenceState] = useState<ThemePreference>(
+    () => getThemePreference()
+  )
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [isDeletingAll, setIsDeletingAll] = useState(false)
@@ -46,17 +52,20 @@ export default function SettingsPage({
   const [deleteUserError, setDeleteUserError] = useState<string | null>(null)
 
   useEffect(() => {
+    setThemePreferenceState(getThemePreference())
     return subscribeThemeChange((nextTheme) => {
       setThemeState(nextTheme)
+      setThemePreferenceState(getThemePreference())
     })
   }, [])
 
   const isDark = theme === "dark"
   const isBusy = isLoggingOut || isDeletingAll || isDeletingUser
 
-  const handleToggleTheme = () => {
-    const next = toggleTheme()
-    setThemeState(next)
+  const handleSelectPreference = (pref: ThemePreference) => {
+    setThemePreference(pref)
+    setThemePreferenceState(pref)
+    setThemeState(getTheme())
   }
 
   const handleLogout = async () => {
@@ -158,22 +167,56 @@ export default function SettingsPage({
               {isDark ? <MdDarkMode size={18} /> : <MdLightMode size={18} />}
             </div>
             <div className={css.settingTextGroup}>
-              <span className={css.settingTitle}>Dark theme</span>
+              <span className={css.settingTitle}>Theme</span>
               <span className={css.settingSubtitle}>
-                {isDark ? "Dark mode is enabled" : "Light mode is enabled"}
+                {themePreference === "system"
+                  ? `System (${isDark ? "Dark" : "Light"})`
+                  : isDark
+                    ? "Dark mode is enabled"
+                    : "Light mode is enabled"}
               </span>
             </div>
           </div>
 
-          <button
-            type="button"
-            role="switch"
-            aria-checked={isDark}
-            aria-label="Dark theme"
-            className={`${css.switchBtn} ${isDark ? css.switchBtnActive : ""}`}
-            onClick={handleToggleTheme}>
-            <span className={css.switchThumb} />
-          </button>
+          <div
+            className={css.themeSegmentControl}
+            role="group"
+            aria-label="Theme selection">
+            <button
+              type="button"
+              className={`${css.themeSegmentBtn} ${themePreference === "system" ? css.themeSegmentBtnActive : ""}`}
+              onClick={() => handleSelectPreference("system")}
+              aria-pressed={themePreference === "system"}>
+              Auto
+            </button>
+            <button
+              type="button"
+              className={`${css.themeSegmentBtn} ${themePreference === "light" ? css.themeSegmentBtnActive : ""}`}
+              onClick={() => handleSelectPreference("light")}
+              aria-pressed={themePreference === "light"}>
+              Light
+            </button>
+            <button
+              type="button"
+              className={`${css.themeSegmentBtn} ${themePreference === "dark" ? css.themeSegmentBtnActive : ""}`}
+              onClick={() => handleSelectPreference("dark")}
+              aria-pressed={themePreference === "dark"}>
+              Dark
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={css.card}>
+        <span className={css.sectionLabel}>Server Connection</span>
+        <div className={css.backendRow}>
+          <div className={css.settingTextGroup}>
+            <span className={css.settingTitle}>API Backend</span>
+            <span className={css.settingSubtitle}>
+              Connected server URL and health status
+            </span>
+          </div>
+          <BackendBadge />
         </div>
       </div>
 

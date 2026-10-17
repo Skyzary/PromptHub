@@ -199,4 +199,64 @@ test.describe("Popup Extension Interface (E2E)", () => {
 
     await page.close()
   })
+
+  test("switches theme automatically in Auto mode and supports manual Dark/Light selection in Settings", async ({
+    context,
+    extensionId
+  }) => {
+    // 1. Open popup page
+    const page = await openPopupPage(context, extensionId, {
+      authenticated: true
+    })
+    const popupRoot = page.locator(".popup")
+    await expect(popupRoot).toBeVisible()
+
+    // 2. Open SettingsPage
+    const settingsBtn = page.getByRole("button", { name: /settings/i })
+    await expect(settingsBtn).toBeVisible()
+    await settingsBtn.click()
+
+    await expect(
+      page.getByRole("heading", { name: "Settings" })
+    ).toBeVisible()
+
+    // Verify Backend connection info is displayed on SettingsPage
+    await expect(page.getByTestId("backend-badge")).toBeVisible()
+    await expect(page.getByText("Server Connection")).toBeVisible()
+
+    // 3. Verify Theme mode segment buttons are visible
+    const autoBtn = page.getByRole("button", { name: "Auto" })
+    const lightBtn = page.getByRole("button", { name: "Light" })
+    const darkBtn = page.getByRole("button", { name: "Dark" })
+
+    await expect(autoBtn).toBeVisible()
+    await expect(lightBtn).toBeVisible()
+    await expect(darkBtn).toBeVisible()
+
+    // Auto is initially selected
+    await expect(autoBtn).toHaveAttribute("aria-pressed", "true")
+
+    // 4. Switch manually to Light
+    await lightBtn.click()
+    await expect(lightBtn).toHaveAttribute("aria-pressed", "true")
+    await expect(popupRoot).toHaveAttribute("data-theme", "light")
+
+    // 5. Switch manually to Dark
+    await darkBtn.click()
+    await expect(darkBtn).toHaveAttribute("aria-pressed", "true")
+    await expect(popupRoot).toHaveAttribute("data-theme", "dark")
+
+    // 6. Return to Auto and emulate dark system theme
+    await autoBtn.click()
+    await expect(autoBtn).toHaveAttribute("aria-pressed", "true")
+
+    await page.emulateMedia({ colorScheme: "dark" })
+    await expect(popupRoot).toHaveAttribute("data-theme", "dark")
+
+    await page.emulateMedia({ colorScheme: "light" })
+    await expect(popupRoot).toHaveAttribute("data-theme", "light")
+
+    await page.close()
+  })
 })
+

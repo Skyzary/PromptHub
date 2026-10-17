@@ -4,7 +4,11 @@ import {
 } from "../background"
 import { fetchPrompts, PROMPTS_CACHE_STORAGE_KEY } from "../prompts-api"
 import type { IPrompt } from "../types"
-import { THEME_STORAGE_KEY, type ThemeMode } from "../utils/theme"
+import {
+  THEME_STORAGE_KEY,
+  type ThemeMode,
+  type ThemePreference
+} from "../utils/theme"
 
 export async function loadPromptsForContentScript(
   forceRefresh: boolean = false
@@ -32,8 +36,9 @@ export async function loadPromptsForContentScript(
     const cachedPrompts = stored[PROMPTS_CACHE_STORAGE_KEY]
     const storedTheme =
       stored[THEME_STORAGE_KEY] === "dark" ||
-      stored[THEME_STORAGE_KEY] === "light"
-        ? (stored[THEME_STORAGE_KEY] as ThemeMode)
+      stored[THEME_STORAGE_KEY] === "light" ||
+      stored[THEME_STORAGE_KEY] === "system"
+        ? (stored[THEME_STORAGE_KEY] as ThemeMode | ThemePreference)
         : undefined
     if (Array.isArray(cachedPrompts)) {
       return {

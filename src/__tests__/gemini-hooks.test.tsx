@@ -4,7 +4,9 @@ import { describe, expect, it, vi } from "vitest"
 import { useGeminiOverlayEvents } from "../contents/hooks/useGeminiOverlayEvents"
 import { useGeminiPopoverPosition } from "../contents/hooks/useGeminiPopoverPosition"
 import { useGeminiPromptFilters } from "../contents/hooks/useGeminiPromptFilters"
+import { useThemeStorage } from "../contents/hooks/useThemeStorage"
 import type { IPrompt } from "../types"
+import { THEME_STORAGE_KEY } from "../utils/theme"
 
 const testPrompts: IPrompt[] = [
   {
@@ -524,3 +526,92 @@ describe("useGeminiOverlayEvents", () => {
     document.body.removeChild(inputDiv)
   })
 })
+
+describe("useThemeStorage", () => {
+  it("initializes with initialTheme, reacts to storage changes and matchMedia changes", () => {
+    let mediaChangeHandler: (() => void) | null = null
+    let prefersDark = false
+
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      get matches() {
+        return prefersDark
+      },
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn((event: string, handler: () => void) => {
+        if (event === "change") {
+          mediaChangeHandler = handler
+        }
+      }),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn()
+    }))
+
+    let storageListener: ((changes: Record<string, chrome.storage.StorageChange>) => void) | null = null
+    const mockAddListener = vi.fn((listener) => {
+      storageListener = listener
+    })
+    const mockRemoveListener = vi.fn()
+
+    const globalWithChrome = globalThis as typeof globalThis & { chrome?: unknown }
+    globalWithChrome.chrome = {
+      storage: {
+        onChanged: {
+          addListener: mockAddListener,
+          removeListener: mockRemoveListener
+        }
+      }
+    } as unknown as typeof chrome
+
+    const { result, rerender, unmount } = renderHook(
+      ({ init }: { init?: string }) => useThemeStorage(init as "light" | "dark" | "system"),
+      { initialProps: { init: "system" } }
+    )
+
+    expect(result.current[0]).toBe("light")
+
+    // Update via initialTheme prop rerender
+    rerender({ init: "dark" })
+    expect(result.current[0]).toBe("dark")
+
+    // Storage change to light
+    act(() => {
+      if (storageListener) {
+        storageListener({
+          [THEME_STORAGE_KEY]: {
+            oldValue: "dark",
+            newValue: "light"
+          }
+        })
+      }
+    })
+    expect(result.current[0]).toBe("light")
+
+    // Storage change to system
+    act(() => {
+      if (storageListener) {
+        storageListener({
+          [THEME_STORAGE_KEY]: {
+            oldValue: "light",
+            newValue: "system"
+          }
+        })
+      }
+    })
+
+    // Simulate matchMedia change while system mode active
+    prefersDark = true
+    act(() => {
+      if (mediaChangeHandler) {
+        ;(mediaChangeHandler as () => void)()
+      }
+    })
+    expect(result.current[0]).toBe("dark")
+
+    unmount()
+    expect(mockRemoveListener).toHaveBeenCalled()
+  })
+})
+

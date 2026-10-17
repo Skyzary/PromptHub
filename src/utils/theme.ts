@@ -56,13 +56,7 @@ function ensureSystemThemeListener(): void {
       }
     }
 
-    if (typeof mediaQueryList.addEventListener === "function") {
-      mediaQueryList.addEventListener("change", handleSystemChange)
-    } else if (
-      typeof (mediaQueryList as unknown as { addListener?: (fn: () => void) => void }).addListener === "function"
-    ) {
-      ;(mediaQueryList as unknown as { addListener: (fn: () => void) => void }).addListener(handleSystemChange)
-    }
+    mediaQueryList.addEventListener?.("change", handleSystemChange)
   } catch {
     // Ignore matchMedia listener registration errors
   }

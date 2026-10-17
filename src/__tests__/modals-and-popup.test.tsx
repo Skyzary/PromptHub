@@ -527,6 +527,21 @@ describe("ListSection & Popup Integration", () => {
     expect(themeSwitch).toHaveAttribute("aria-checked", "false")
     expect(document.documentElement.getAttribute("data-theme")).toBe("light")
 
+    // Test Auto / Dark / Light segment buttons
+    const darkSegmentBtn = screen.getByRole("button", { name: "Dark" })
+    await user.click(darkSegmentBtn)
+    expect(darkSegmentBtn).toHaveAttribute("aria-pressed", "true")
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
+
+    const lightSegmentBtn = screen.getByRole("button", { name: "Light" })
+    await user.click(lightSegmentBtn)
+    expect(lightSegmentBtn).toHaveAttribute("aria-pressed", "true")
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light")
+
+    const autoSegmentBtn = screen.getByRole("button", { name: "Auto" })
+    await user.click(autoSegmentBtn)
+    expect(autoSegmentBtn).toHaveAttribute("aria-pressed", "true")
+
     // Open Delete all prompts confirmation modal, cancel, then re-open, handle error, and confirm
     await user.click(
       screen.getByRole("button", { name: /delete all prompts/i })

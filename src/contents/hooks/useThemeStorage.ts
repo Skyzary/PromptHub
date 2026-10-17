@@ -63,7 +63,7 @@ export function useThemeStorage(
       chrome.storage.onChanged.addListener(handleStorageChanged)
     }
 
-    // Also listen to system preference media query when preference is system
+    // Listen to browser color scheme changes
     let mediaQuery: MediaQueryList | null = null
     const handleMediaChange = () => {
       if (currentPref === "system") {
@@ -77,13 +77,7 @@ export function useThemeStorage(
     ) {
       try {
         mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-        if (typeof mediaQuery.addEventListener === "function") {
-          mediaQuery.addEventListener("change", handleMediaChange)
-        } else if (
-          typeof (mediaQuery as unknown as { addListener?: (fn: () => void) => void }).addListener === "function"
-        ) {
-          ;(mediaQuery as unknown as { addListener: (fn: () => void) => void }).addListener(handleMediaChange)
-        }
+        mediaQuery.addEventListener?.("change", handleMediaChange)
       } catch {
         // Ignore media query registration errors
       }
@@ -93,15 +87,7 @@ export function useThemeStorage(
       if (typeof chrome !== "undefined" && chrome.storage?.onChanged) {
         chrome.storage.onChanged.removeListener(handleStorageChanged)
       }
-      if (mediaQuery) {
-        if (typeof mediaQuery.removeEventListener === "function") {
-          mediaQuery.removeEventListener("change", handleMediaChange)
-        } else if (
-          typeof (mediaQuery as unknown as { removeListener?: (fn: () => void) => void }).removeListener === "function"
-        ) {
-          ;(mediaQuery as unknown as { removeListener: (fn: () => void) => void }).removeListener(handleMediaChange)
-        }
-      }
+      mediaQuery?.removeEventListener?.("change", handleMediaChange)
     }
   }, [initialTheme])
 

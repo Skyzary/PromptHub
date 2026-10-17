@@ -4,7 +4,6 @@ export type ThemePreference = "system" | "light" | "dark"
 export const THEME_STORAGE_KEY = "templagem_theme"
 
 let currentPreference: ThemePreference | null = null
-let currentResolvedTheme: ThemeMode | null = null
 const themeListeners = new Set<(theme: ThemeMode) => void>()
 let mediaQueryList: MediaQueryList | null = null
 
@@ -52,7 +51,6 @@ function ensureSystemThemeListener(): void {
     const handleSystemChange = () => {
       if (getThemePreference() === "system") {
         const nextTheme = getSystemTheme()
-        currentResolvedTheme = nextTheme
         applyThemeToDom(nextTheme)
         themeListeners.forEach((listener) => listener(nextTheme))
       }
@@ -89,7 +87,6 @@ export function getTheme(): ThemeMode {
   ensureSystemThemeListener()
   const preference = getThemePreference()
   const resolved = resolveTheme(preference)
-  currentResolvedTheme = resolved
   applyThemeToDom(resolved)
   syncThemeToChromeStorage(preference)
   return resolved
@@ -103,7 +100,6 @@ export function setThemePreference(preference: ThemePreference): void {
   }
   syncThemeToChromeStorage(preference)
   const resolved = resolveTheme(preference)
-  currentResolvedTheme = resolved
   applyThemeToDom(resolved)
   themeListeners.forEach((listener) => listener(resolved))
 }
@@ -131,7 +127,6 @@ export function subscribeThemeChange(
 
 export function resetThemeState(): void {
   currentPreference = null
-  currentResolvedTheme = null
   themeListeners.clear()
   mediaQueryList = null
 }

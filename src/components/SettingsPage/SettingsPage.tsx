@@ -17,9 +17,12 @@ import { deleteUser } from "~src/user-api"
 import { logout } from "~src/utils/auth"
 import {
   getTheme,
+  getThemePreference,
+  setThemePreference,
   subscribeThemeChange,
   toggleTheme,
-  type ThemeMode
+  type ThemeMode,
+  type ThemePreference
 } from "~src/utils/theme"
 
 import css from "./SettingsPage.module.scss"
@@ -34,6 +37,9 @@ export default function SettingsPage({
   isAuthenticated = false
 }: SettingsPageProps) {
   const [theme, setThemeState] = useState<ThemeMode>(() => getTheme())
+  const [themePreference, setThemePreferenceState] = useState<ThemePreference>(
+    () => getThemePreference()
+  )
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [isDeletingAll, setIsDeletingAll] = useState(false)
@@ -46,8 +52,10 @@ export default function SettingsPage({
   const [deleteUserError, setDeleteUserError] = useState<string | null>(null)
 
   useEffect(() => {
+    setThemePreferenceState(getThemePreference())
     return subscribeThemeChange((nextTheme) => {
       setThemeState(nextTheme)
+      setThemePreferenceState(getThemePreference())
     })
   }, [])
 
@@ -57,6 +65,13 @@ export default function SettingsPage({
   const handleToggleTheme = () => {
     const next = toggleTheme()
     setThemeState(next)
+    setThemePreferenceState(getThemePreference())
+  }
+
+  const handleSelectPreference = (pref: ThemePreference) => {
+    setThemePreference(pref)
+    setThemePreferenceState(pref)
+    setThemeState(getTheme())
   }
 
   const handleLogout = async () => {
@@ -174,6 +189,46 @@ export default function SettingsPage({
             onClick={handleToggleTheme}>
             <span className={css.switchThumb} />
           </button>
+        </div>
+
+        <div className={css.settingRow}>
+          <div className={css.settingInfo}>
+            <div className={css.settingTextGroup}>
+              <span className={css.settingTitle}>Theme Mode</span>
+              <span className={css.settingSubtitle}>
+                {themePreference === "system"
+                  ? "Follow browser theme automatically"
+                  : "Manual theme override"}
+              </span>
+            </div>
+          </div>
+
+          <div
+            className={css.themeSegmentControl}
+            role="group"
+            aria-label="Theme mode selection">
+            <button
+              type="button"
+              className={`${css.themeSegmentBtn} ${themePreference === "system" ? css.themeSegmentBtnActive : ""}`}
+              onClick={() => handleSelectPreference("system")}
+              aria-pressed={themePreference === "system"}>
+              Auto
+            </button>
+            <button
+              type="button"
+              className={`${css.themeSegmentBtn} ${themePreference === "light" ? css.themeSegmentBtnActive : ""}`}
+              onClick={() => handleSelectPreference("light")}
+              aria-pressed={themePreference === "light"}>
+              Light
+            </button>
+            <button
+              type="button"
+              className={`${css.themeSegmentBtn} ${themePreference === "dark" ? css.themeSegmentBtnActive : ""}`}
+              onClick={() => handleSelectPreference("dark")}
+              aria-pressed={themePreference === "dark"}>
+              Dark
+            </button>
+          </div>
         </div>
       </div>
 

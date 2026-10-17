@@ -6,7 +6,11 @@ import {
   setAccessToken,
   setRefreshToken
 } from "./utils/auth"
-import { THEME_STORAGE_KEY, type ThemeMode } from "./utils/theme"
+import {
+  THEME_STORAGE_KEY,
+  type ThemeMode,
+  type ThemePreference
+} from "./utils/theme"
 
 export const TEMPLAGEM_GET_PROMPTS_MESSAGE = "TEMPLAGEM_GET_PROMPTS"
 
@@ -19,7 +23,7 @@ export interface GetPromptsResponse {
   ok: boolean
   prompts: IPrompt[]
   isAuthenticated: boolean
-  theme?: ThemeMode
+  theme?: ThemeMode | ThemePreference
   error?: string
 }
 
@@ -29,7 +33,7 @@ export async function handleGetPromptsMessage(
   let storedAccessToken: string | null = null
   let storedRefreshToken: string | null = null
   let storedCache: IPrompt[] | null = null
-  let storedTheme: ThemeMode | undefined
+  let storedTheme: ThemeMode | ThemePreference | undefined
 
   if (typeof chrome !== "undefined" && chrome.storage?.local) {
     const data = await chrome.storage.local.get([
@@ -49,7 +53,8 @@ export async function handleGetPromptsMessage(
     }
     if (
       data[THEME_STORAGE_KEY] === "dark" ||
-      data[THEME_STORAGE_KEY] === "light"
+      data[THEME_STORAGE_KEY] === "light" ||
+      data[THEME_STORAGE_KEY] === "system"
     ) {
       storedTheme = data[THEME_STORAGE_KEY]
     }

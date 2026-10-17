@@ -1,13 +1,34 @@
 export type ThemeMode = "light" | "dark"
+export type ThemePreference = "system" | "light" | "dark"
 
 export const THEME_STORAGE_KEY = "templagem_theme"
 
-let currentTheme: ThemeMode | null = null
+let currentPreference: ThemePreference | null = null
+let currentResolvedTheme: ThemeMode | null = null
 const themeListeners = new Set<(theme: ThemeMode) => void>()
+let mediaQueryList: MediaQueryList | null = null
 
-function syncThemeToChromeStorage(theme: ThemeMode): void {
+function getSystemTheme(): ThemeMode {
+  if (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  ) {
+    return "dark"
+  }
+  return "light"
+}
+
+function resolveTheme(preference: ThemePreference): ThemeMode {
+  if (preference === "system") {
+    return getSystemTheme()
+  }
+  return preference
+}
+
+function syncThemeToChromeStorage(preference: ThemePreference): void {
   if (typeof chrome !== "undefined" && chrome.storage?.local) {
-    void chrome.storage.local.set({ [THEME_STORAGE_KEY]: theme })
+    void chrome.storage.local.set({ [THEME_STORAGE_KEY]: preference })
   }
 }
 
@@ -17,47 +38,102 @@ function applyThemeToDom(theme: ThemeMode): void {
   }
 }
 
-export function getTheme(): ThemeMode {
+function ensureSystemThemeListener(): void {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function" ||
+    mediaQueryList !== null
+  ) {
+    return
+  }
+
+  try {
+    mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)")
+    const handleSystemChange = () => {
+      if (getThemePreference() === "system") {
+        const nextTheme = getSystemTheme()
+        currentResolvedTheme = nextTheme
+        applyThemeToDom(nextTheme)
+        themeListeners.forEach((listener) => listener(nextTheme))
+      }
+    }
+
+    if (typeof mediaQueryList.addEventListener === "function") {
+      mediaQueryList.addEventListener("change", handleSystemChange)
+    } else if (
+      typeof (mediaQueryList as unknown as { addListener?: (fn: () => void) => void }).addListener === "function"
+    ) {
+      ;(mediaQueryList as unknown as { addListener: (fn: () => void) => void }).addListener(handleSystemChange)
+    }
+  } catch {
+    // Ignore matchMedia listener registration errors
+  }
+}
+
+export function getThemePreference(): ThemePreference {
   if (typeof window !== "undefined" && window.localStorage) {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
-    if (stored === "dark" || stored === "light") {
-      currentTheme = stored
-      applyThemeToDom(currentTheme)
-      syncThemeToChromeStorage(currentTheme)
-      return currentTheme
+    if (stored === "system" || stored === "dark" || stored === "light") {
+      currentPreference = stored
+      return currentPreference
     }
   }
-  if (currentTheme !== null) {
-    applyThemeToDom(currentTheme)
-    return currentTheme
+  if (currentPreference !== null) {
+    return currentPreference
   }
-  currentTheme = "light"
-  applyThemeToDom(currentTheme)
-  syncThemeToChromeStorage(currentTheme)
-  return currentTheme
+  currentPreference = "system"
+  return currentPreference
+}
+
+export function getTheme(): ThemeMode {
+  ensureSystemThemeListener()
+  const preference = getThemePreference()
+  const resolved = resolveTheme(preference)
+  currentResolvedTheme = resolved
+  applyThemeToDom(resolved)
+  syncThemeToChromeStorage(preference)
+  return resolved
+}
+
+export function setThemePreference(preference: ThemePreference): void {
+  ensureSystemThemeListener()
+  currentPreference = preference
+  if (typeof window !== "undefined" && window.localStorage) {
+    window.localStorage.setItem(THEME_STORAGE_KEY, preference)
+  }
+  syncThemeToChromeStorage(preference)
+  const resolved = resolveTheme(preference)
+  currentResolvedTheme = resolved
+  applyThemeToDom(resolved)
+  themeListeners.forEach((listener) => listener(resolved))
 }
 
 export function setTheme(theme: ThemeMode): void {
-  currentTheme = theme
-  if (typeof window !== "undefined" && window.localStorage) {
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-  }
-  syncThemeToChromeStorage(theme)
-  applyThemeToDom(theme)
-  themeListeners.forEach((listener) => listener(theme))
+  setThemePreference(theme)
 }
 
 export function toggleTheme(): ThemeMode {
-  const next: ThemeMode = getTheme() === "dark" ? "light" : "dark"
-  setTheme(next)
+  const current = getTheme()
+  const next: ThemeMode = current === "dark" ? "light" : "dark"
+  setThemePreference(next)
   return next
 }
 
 export function subscribeThemeChange(
   listener: (theme: ThemeMode) => void
 ): () => void {
+  ensureSystemThemeListener()
   themeListeners.add(listener)
   return () => {
     themeListeners.delete(listener)
   }
 }
+
+export function resetThemeState(): void {
+  currentPreference = null
+  currentResolvedTheme = null
+  themeListeners.clear()
+  mediaQueryList = null
+}
+
+

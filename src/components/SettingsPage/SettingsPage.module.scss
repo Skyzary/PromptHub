@@ -108,6 +108,47 @@
   color: $text-muted;
 }
 
+.themeSegmentControl {
+  display: inline-flex;
+  align-items: center;
+  background-color: $bg-secondary;
+  border: $border-width solid $border-color;
+  border-radius: $radius-pill;
+  padding: 2px;
+  gap: 2px;
+}
+
+.themeSegmentBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: $text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-pill;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover:not(.themeSegmentBtnActive) {
+    color: $text-primary;
+    background-color: $bg-hover;
+  }
+}
+
+.themeSegmentBtnActive {
+  background-color: var(--accent-color);
+  color: #ffffff;
+
+  :global([data-theme="dark"]) & {
+    color: #042e6f;
+  }
+}
+
 .switchBtn {
   position: relative;
   width: $switch-width;

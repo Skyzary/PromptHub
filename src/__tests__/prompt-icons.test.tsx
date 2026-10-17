@@ -43,7 +43,7 @@ describe("Prompt Icons Utility (prompt-icons.ts)", () => {
   })
 
   it("handles stored prompt icons and falls back gracefully on corrupted storage", () => {
-    localStorage.setItem("prompthub_prompt_icons", "{ invalid json")
+    localStorage.setItem("templagem_prompt_icons", "{ invalid json")
     const icons = getStoredPromptIcons()
     expect(icons).toEqual({})
   })

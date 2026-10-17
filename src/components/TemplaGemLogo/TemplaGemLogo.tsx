@@ -1,18 +1,18 @@
 import React from "react"
 
-import css from "./PromptHubLogo.module.scss"
+import css from "./TemplaGemLogo.module.scss"
 
-export interface PromptHubLogoProps {
+export interface TemplaGemLogoProps {
   size?: number | string
   className?: string
   ariaHidden?: boolean
 }
 
-export default function PromptHubLogo({
+export default function TemplaGemLogo({
   size,
   className,
   ariaHidden = true
-}: PromptHubLogoProps) {
+}: TemplaGemLogoProps) {
   const customStyle: React.CSSProperties = size
     ? {
         width: typeof size === "number" ? `${size}px` : size,
@@ -24,7 +24,7 @@ export default function PromptHubLogo({
     <div
       className={`${css.logoWrapper} ${className ?? ""}`}
       style={customStyle}
-      data-testid="prompthub-logo">
+      data-testid="templagem-logo">
       <svg
         width="34"
         height="34"

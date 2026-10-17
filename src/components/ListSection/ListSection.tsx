@@ -69,8 +69,10 @@ export default function ListSection({
       // 2. If empty (e.g. backend offline or extension reopened), fallback to chrome.storage.local
       if (typeof chrome !== "undefined" && chrome.storage?.local) {
         try {
-          const stored = await chrome.storage.local.get("prompthub_prompts_cache")
-          const storedCache = stored?.prompthub_prompts_cache
+          const stored = await chrome.storage.local.get(
+            PROMPTS_CACHE_STORAGE_KEY
+          )
+          const storedCache = stored?.[PROMPTS_CACHE_STORAGE_KEY]
           if (Array.isArray(storedCache) && storedCache.length > 0) {
             setPrompts(storedCache)
             return

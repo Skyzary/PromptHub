@@ -23,7 +23,7 @@ export const SORT_OPTIONS: SortOptionConfig[] = [
 ]
 
 export const DEFAULT_SORT_OPTION: SortOption = "created-desc"
-export const SORT_STORAGE_KEY = "prompthub_sort_order"
+export const SORT_STORAGE_KEY = "templagem_sort_order"
 
 function parseDateValue(value?: Date | string): number {
   if (!value) return 0

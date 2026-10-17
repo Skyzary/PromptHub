@@ -23,8 +23,8 @@ import {
   modifiedVariableIndices,
   POPOVER_ESTIMATED_HEIGHT_PX,
   POPOVER_OFFSET_PX,
-  PROMPTHUB_GEMINI_ROOT_ID,
-  PROMPTHUB_TEMPLATE_STYLE_ID,
+  TEMPLAGEM_GEMINI_ROOT_ID,
+  TEMPLAGEM_TEMPLATE_STYLE_ID,
   resetModifiedTemplateVariables,
   setCollapsedInputCursor,
   setContentEditableSelection,
@@ -39,8 +39,8 @@ describe("gemini-dom module", () => {
     it("creates container if missing and reuses existing one", () => {
       document.body.innerHTML = ""
       const created = getOrCreateGeminiRootContainer()
-      expect(created.id).toBe(PROMPTHUB_GEMINI_ROOT_ID)
-      expect(document.getElementById(PROMPTHUB_GEMINI_ROOT_ID)).toBe(created)
+      expect(created.id).toBe(TEMPLAGEM_GEMINI_ROOT_ID)
+      expect(document.getElementById(TEMPLAGEM_GEMINI_ROOT_ID)).toBe(created)
 
       const reused = getOrCreateGeminiRootContainer()
       expect(reused).toBe(created)
@@ -401,8 +401,8 @@ describe("gemini-dom module", () => {
       TemplateHighlighter.removeHighlightClasses(null)
 
       // Test injectTemplateVariableStyles helper and constants
-      expect(PROMPTHUB_TEMPLATE_STYLE_ID).toBe(
-        "prompthub-template-variable-styles"
+      expect(TEMPLAGEM_TEMPLATE_STYLE_ID).toBe(
+        "templagem-template-variable-styles"
       )
       injectTemplateVariableStyles(inputEl)
       expect(
@@ -960,14 +960,14 @@ describe("gemini-dom module", () => {
       expect(handleGeminiTemplateKeyDown(shiftTabEvt)).toBe(true)
     })
 
-    it("handles isGeminiSendButton edge cases including PromptHub containment and arrow icons", () => {
+    it("handles isGeminiSendButton edge cases including TemplaGem containment and arrow icons", () => {
       expect(isGeminiSendButton(null)).toBe(false)
       const nonBtn = document.createElement("div")
       expect(isGeminiSendButton(nonBtn)).toBe(false)
 
-      // Button inside PromptHub overlay
+      // Button inside TemplaGem overlay
       const root = document.createElement("div")
-      root.id = PROMPTHUB_GEMINI_ROOT_ID
+      root.id = TEMPLAGEM_GEMINI_ROOT_ID
       const hubBtn = document.createElement("button")
       hubBtn.setAttribute("aria-label", "Send prompt")
       root.appendChild(hubBtn)

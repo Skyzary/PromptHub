@@ -199,14 +199,14 @@ export async function seedStorage(
       async (payload) => {
         const toSet: Record<string, unknown> = {}
         if (payload.token !== undefined) {
-          toSet.prompthub_access_token = payload.token
-          toSet.prompthub_refresh_token = payload.refreshToken
+          toSet.templagem_access_token = payload.token
+          toSet.templagem_refresh_token = payload.refreshToken
         }
         if (payload.prompts !== undefined) {
-          toSet.prompthub_prompts_cache = payload.prompts
+          toSet.templagem_prompts_cache = payload.prompts
         }
         if (payload.icons !== undefined) {
-          toSet.prompthub_prompt_icons = payload.icons
+          toSet.templagem_prompt_icons = payload.icons
         }
         await chrome.storage.local.set(toSet)
       },
@@ -240,10 +240,10 @@ export async function openPopupPage(
   if (authenticated) {
     await page.addInitScript(
       ({ authToken, refreshTok, cachedPrompts }) => {
-        localStorage.setItem("prompthub_access_token", authToken)
-        localStorage.setItem("prompthub_refresh_token", refreshTok)
+        localStorage.setItem("templagem_access_token", authToken)
+        localStorage.setItem("templagem_refresh_token", refreshTok)
         localStorage.setItem(
-          "prompthub_prompts_cache",
+          "templagem_prompts_cache",
           JSON.stringify(cachedPrompts)
         )
       },

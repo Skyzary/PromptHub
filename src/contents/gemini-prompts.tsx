@@ -153,7 +153,7 @@ export const GeminiPromptsOverlayContent: React.FC = () => {
           : { top: `${position.top}px` })
       }}
       role="dialog"
-      aria-label="PromptHub Gemini Prompts">
+      aria-label="TemplaGem Gemini Prompts">
       <GeminiHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}

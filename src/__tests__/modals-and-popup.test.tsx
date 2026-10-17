@@ -520,7 +520,7 @@ describe("ListSection & Popup Integration", () => {
     expect(themeSwitch).toHaveAttribute("aria-checked", "true")
     expect(screen.getByText("Dark mode is enabled")).toBeInTheDocument()
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
-    expect(window.localStorage.getItem("prompthub_theme")).toBe("dark")
+    expect(window.localStorage.getItem("templagem_theme")).toBe("dark")
 
     // Toggle back to light mode
     await user.click(themeSwitch)

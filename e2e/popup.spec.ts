@@ -32,8 +32,8 @@ test.describe("Popup Extension Interface (E2E)", () => {
       authenticated: true
     })
 
-    // Verify PromptHub header
-    await expect(page.locator("header h1")).toHaveText("PromptHub")
+    // Verify TemplaGem header
+    await expect(page.locator("header h1")).toHaveText("TemplaGem")
 
     // Verify prompt cards rendered with title and tags
     await expect(page.getByText("Code Review Assistant")).toBeVisible()

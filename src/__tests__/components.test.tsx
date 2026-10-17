@@ -6,21 +6,32 @@ import AddNewBtn from "~src/components/AddNewBtn/AddNewBtn"
 import AuthForm from "~src/components/AuthForm/AuthForm"
 import Header from "~src/components/Header/Header"
 import PromptCard from "~src/components/PromptCard/PromptCard"
-import PromptHubLogo from "~src/components/PromptHubLogo/PromptHubLogo"
+import TemplaGemLogo from "~src/components/TemplaGemLogo/TemplaGemLogo"
 import PromptIcon, {
   resolvePromptIconType
 } from "~src/components/PromptIcon/PromptIcon"
 import SearchField from "~src/components/SearchField/SearchField"
 import Btn from "~src/components/ui/Btn/Btn"
+import BackendBadge from "~src/components/BackendBadge/BackendBadge"
 import * as authModule from "~src/utils/auth"
 
 describe("UI & Presentational Components", () => {
-  it("renders Header with PromptHub title and settings button", () => {
+  it("renders Header with TemplaGem title, backend badge, and settings button", () => {
     render(<Header />)
     expect(
-      screen.getByRole("heading", { name: "PromptHub" })
+      screen.getByRole("heading", { name: "TemplaGem" })
     ).toBeInTheDocument()
+    expect(screen.getByTestId("backend-badge")).toBeInTheDocument()
     expect(screen.getByRole("button")).toBeInTheDocument()
+  })
+
+  it("renders BackendBadge with custom and default apiUrl", () => {
+    const { rerender } = render(<BackendBadge />)
+    expect(screen.getByTestId("backend-badge")).toBeInTheDocument()
+    expect(screen.getByText("Backend:")).toBeInTheDocument()
+
+    rerender(<BackendBadge apiUrl="http://custom-api:9000/api" />)
+    expect(screen.getByText("http://custom-api:9000/api")).toBeInTheDocument()
   })
 
   it("renders Btn in primary and secondary variants and handles click", async () => {
@@ -117,14 +128,14 @@ describe("UI & Presentational Components", () => {
     expect(withTags.querySelector("svg")).toBeInTheDocument()
   })
 
-  it("renders PromptHubLogo with default, number and string sizes", () => {
-    const { rerender } = render(<PromptHubLogo />)
-    const logoEl = screen.getByTestId("prompthub-logo")
+  it("renders TemplaGemLogo with default, number and string sizes", () => {
+    const { rerender } = render(<TemplaGemLogo />)
+    const logoEl = screen.getByTestId("templagem-logo")
     expect(logoEl).toBeInTheDocument()
     expect(logoEl.querySelector("svg")).toBeInTheDocument()
 
     rerender(
-      <PromptHubLogo
+      <TemplaGemLogo
         size={32}
         className="test-logo"
       />
@@ -133,7 +144,7 @@ describe("UI & Presentational Components", () => {
     expect(logoEl).toHaveStyle({ width: "32px", height: "32px" })
 
     rerender(
-      <PromptHubLogo
+      <TemplaGemLogo
         size="24px"
         className="test-logo-str"
       />

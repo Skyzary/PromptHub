@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   handleGetPromptsMessage,
-  PROMPTHUB_GET_PROMPTS_MESSAGE,
-  registerBackgroundMessageListener
+  registerBackgroundMessageListener,
+  TEMPLAGEM_GET_PROMPTS_MESSAGE
 } from "../background"
 import { POPOVER_OFFSET_PX } from "../contents/gemini-dom"
 import GeminiPromptsOverlay, {
@@ -139,7 +139,7 @@ describe("Background script & Gemini content script", () => {
       expect(res.error).toBe("Backend unreachable")
     })
 
-    it("registers chrome.runtime.onMessage listener and responds to PROMPTHUB_GET_PROMPTS", async () => {
+    it("registers chrome.runtime.onMessage listener and responds to TEMPLAGEM_GET_PROMPTS", async () => {
       let registeredListener:
         | ((
             msg: unknown,
@@ -179,10 +179,10 @@ describe("Background script & Gemini content script", () => {
       )
       expect(ignored).toBe(false)
 
-      // Handle PROMPTHUB_GET_PROMPTS
+      // Handle TEMPLAGEM_GET_PROMPTS
       const sendResponse = vi.fn()
       const handled = registeredListener!(
-        { type: PROMPTHUB_GET_PROMPTS_MESSAGE, forceRefresh: false },
+        { type: TEMPLAGEM_GET_PROMPTS_MESSAGE, forceRefresh: false },
         {} as chrome.runtime.MessageSender,
         sendResponse
       )
@@ -198,11 +198,11 @@ describe("Background script & Gemini content script", () => {
   })
 
   describe("gemini-prompts helpers", () => {
-    it("creates and reuses #prompthub-gemini-root container", () => {
+    it("creates and reuses #templagem-gemini-root container", () => {
       const first = getRootContainer()
       const second = getRootContainer()
       expect(first).toBe(second)
-      expect(first.id).toBe("prompthub-gemini-root")
+      expect(first.id).toBe("templagem-gemini-root")
     })
 
     it("identifies Gemini input elements and ignores clicks inside popover", () => {
@@ -300,14 +300,14 @@ describe("Background script & Gemini content script", () => {
       render(<GeminiPromptsOverlay />)
 
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
 
       // Click on Gemini input
       fireEvent.click(paragraph)
 
       expect(
-        await screen.findByRole("dialog", { name: /prompthub gemini prompts/i })
+        await screen.findByRole("dialog", { name: /templagem gemini prompts/i })
       ).toBeInTheDocument()
 
       expect(
@@ -350,7 +350,7 @@ describe("Background script & Gemini content script", () => {
         "Please review the following TypeScript code for bugs."
       )
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
     })
 
@@ -378,18 +378,18 @@ describe("Background script & Gemini content script", () => {
       ).toBeInTheDocument()
 
       // Mousedown inside popover or inside active input does not close
-      fireEvent.mouseDown(screen.getByText("PromptHub"))
+      fireEvent.mouseDown(screen.getByText("TemplaGem"))
       fireEvent.mouseDown(textarea)
       fireEvent.keyDown(document, { key: "Enter" })
       expect(
-        screen.getByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.getByRole("dialog", { name: /templagem gemini prompts/i })
       ).toBeInTheDocument()
 
       // Click refresh button
       fireEvent.click(screen.getByRole("button", { name: /refresh prompts/i }))
       await waitFor(() => {
         expect(sendMessageMock).toHaveBeenCalledWith({
-          type: PROMPTHUB_GET_PROMPTS_MESSAGE,
+          type: TEMPLAGEM_GET_PROMPTS_MESSAGE,
           forceRefresh: true
         })
       })
@@ -397,30 +397,30 @@ describe("Background script & Gemini content script", () => {
       // Close with Escape
       fireEvent.keyDown(document, { key: "Escape" })
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
 
       // Reopen and close via outside mousedown
       fireEvent.click(textarea)
       expect(
-        await screen.findByRole("dialog", { name: /prompthub gemini prompts/i })
+        await screen.findByRole("dialog", { name: /templagem gemini prompts/i })
       ).toBeInTheDocument()
 
       fireEvent.mouseDown(document.body)
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
 
       // Reopen and close via close button
       fireEvent.click(textarea)
       expect(
-        await screen.findByRole("dialog", { name: /prompthub gemini prompts/i })
+        await screen.findByRole("dialog", { name: /templagem gemini prompts/i })
       ).toBeInTheDocument()
       fireEvent.click(
         screen.getByRole("button", { name: /close prompts popover/i })
       )
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
     })
 
@@ -454,7 +454,7 @@ describe("Background script & Gemini content script", () => {
       // Click on template prompt -> inserts directly into Gemini input and closes popover
       fireEvent.click(screen.getByText("Translate & Polish"))
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
 
       expect(textarea.value).toBe(
@@ -518,7 +518,7 @@ describe("Background script & Gemini content script", () => {
 
       fireEvent.click(screen.getByText("Code Generator"))
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
 
       // Contenteditable p contains spans with .ph-template-variable and blue styling
@@ -560,7 +560,7 @@ describe("Background script & Gemini content script", () => {
 
       expect(
         await screen.findByText(
-          /please sign in via the prompthub extension popup/i
+          /please sign in via the templagem extension popup/i
         )
       ).toBeInTheDocument()
       unmount()
@@ -651,7 +651,7 @@ describe("Background script & Gemini content script", () => {
       fireEvent.click(textarea)
 
       const dialog = await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       await waitFor(() => {
         expect(dialog).toHaveAttribute("data-theme", "dark")
@@ -698,7 +698,7 @@ describe("Background script & Gemini content script", () => {
 
       expect(textarea.value).toBe("Summarize this article in 5 bullet points.")
       expect(
-        screen.queryByRole("dialog", { name: /prompthub gemini prompts/i })
+        screen.queryByRole("dialog", { name: /templagem gemini prompts/i })
       ).not.toBeInTheDocument()
     })
 
@@ -763,7 +763,7 @@ describe("Background script & Gemini content script", () => {
       fireEvent.click(input)
 
       const dialog = await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       expect(dialog).toBeInTheDocument()
       expect(dialog.style.width).toBe("700px")
@@ -793,7 +793,7 @@ describe("Background script & Gemini content script", () => {
       fireEvent.focusIn(textarea)
 
       const dialog = await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       expect(dialog).toBeInTheDocument()
 
@@ -834,7 +834,7 @@ describe("Background script & Gemini content script", () => {
       fireEvent.click(textarea)
 
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
 
       await waitFor(() => {
@@ -849,7 +849,7 @@ describe("Background script & Gemini content script", () => {
       // Re-open and close with Escape
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       fireEvent.keyDown(textarea, { key: "Escape" })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
@@ -873,7 +873,7 @@ describe("Background script & Gemini content script", () => {
       fireEvent.click(textarea)
 
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
 
       // 1. Typing in search field inside popover does NOT close popover
@@ -892,7 +892,7 @@ describe("Background script & Gemini content script", () => {
       // 3. Re-open and test Backspace
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       fireEvent.keyDown(textarea, { key: "Backspace" })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
@@ -900,7 +900,7 @@ describe("Background script & Gemini content script", () => {
       // 4. Re-open and test Delete
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       fireEvent.keyDown(textarea, { key: "Delete" })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
@@ -908,7 +908,7 @@ describe("Background script & Gemini content script", () => {
       // 5. Re-open and test paste
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       fireEvent.paste(textarea, { clipboardData: { getData: () => "pasted" } })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
@@ -916,7 +916,7 @@ describe("Background script & Gemini content script", () => {
       // 6. Re-open and test input event
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       fireEvent.input(textarea, { target: { value: "typing" } })
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
@@ -924,7 +924,7 @@ describe("Background script & Gemini content script", () => {
       // 7. Re-open and test IME compositionstart event
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       fireEvent.compositionStart(textarea)
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
@@ -932,7 +932,7 @@ describe("Background script & Gemini content script", () => {
       // 8. Non-typing modifier keys like Shift do not close popover
       fireEvent.click(textarea)
       await screen.findByRole("dialog", {
-        name: /prompthub gemini prompts/i
+        name: /templagem gemini prompts/i
       })
       fireEvent.keyDown(textarea, { key: "Shift" })
       expect(screen.getByRole("dialog")).toBeInTheDocument()

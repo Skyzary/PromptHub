@@ -265,7 +265,7 @@ describe("PromptsApi & UserApi", () => {
 
     // Corrupt localStorage cache fallback
     invalidatePromptsCache()
-    window.localStorage.setItem("prompthub_prompts_cache", "{invalid-json")
+    window.localStorage.setItem("templagem_prompts_cache", "{invalid-json")
     expect(getCachedPrompts()).toBeNull()
 
     // Fallback to empty array when fetch fails

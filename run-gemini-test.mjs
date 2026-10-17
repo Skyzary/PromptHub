@@ -37,9 +37,9 @@ async function run() {
   if (background) {
     await background.evaluate(async (prompts) => {
       await chrome.storage.local.set({
-        prompthub_access_token: "mock-auth-jwt-token",
-        prompthub_refresh_token: "mock-refresh-token",
-        prompthub_prompts_cache: prompts,
+        templagem_access_token: "mock-auth-jwt-token",
+        templagem_refresh_token: "mock-refresh-token",
+        templagem_prompts_cache: prompts,
       });
       console.log("Storage seeded via background worker");
     }, mockPrompts);
@@ -84,13 +84,13 @@ async function run() {
   await editor.click();
   await page.waitForTimeout(1500);
 
-  // Frame 2: PromptHub popover should be open showing mock prompts from DB
-  await page.screenshot({ path: "step-2-prompthub-overlay-open.png" });
-  console.log("Screenshot step-2-prompthub-overlay-open.png taken");
+  // Frame 2: TemplaGem popover should be open showing mock prompts from DB
+  await page.screenshot({ path: "step-2-templagem-overlay-open.png" });
+  console.log("Screenshot step-2-templagem-overlay-open.png taken");
 
-  // Select the prompt: either press Enter or click the prompt in PromptHub
-  console.log("Selecting prompt 'Review Code' from PromptHub...");
-  // Try pressing Enter to select active item in PromptHub list
+  // Select the prompt: either press Enter or click the prompt in TemplaGem
+  console.log("Selecting prompt 'Review Code' from TemplaGem...");
+  // Try pressing Enter to select active item in TemplaGem list
   await page.keyboard.press("Enter");
   await page.waitForTimeout(1500);
 
@@ -106,7 +106,7 @@ async function run() {
       html: editor?.innerHTML,
       spanCount: spans.length,
       firstSpanActive: spans[0]?.classList.contains("ph-template-variable-active"),
-      popoverVisible: Boolean(document.querySelector("#prompthub-gemini-root [role='dialog']")),
+      popoverVisible: Boolean(document.querySelector("#templagem-gemini-root [role='dialog']")),
     };
   });
   console.log("State after prompt selection:", afterSelection);

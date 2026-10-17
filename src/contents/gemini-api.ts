@@ -1,5 +1,5 @@
 import {
-  PROMPTHUB_GET_PROMPTS_MESSAGE,
+  TEMPLAGEM_GET_PROMPTS_MESSAGE,
   type GetPromptsResponse
 } from "../background"
 import { fetchPrompts, PROMPTS_CACHE_STORAGE_KEY } from "../prompts-api"
@@ -12,7 +12,7 @@ export async function loadPromptsForContentScript(
   if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
     try {
       const response = (await chrome.runtime.sendMessage({
-        type: PROMPTHUB_GET_PROMPTS_MESSAGE,
+        type: TEMPLAGEM_GET_PROMPTS_MESSAGE,
         forceRefresh
       })) as GetPromptsResponse | undefined
 

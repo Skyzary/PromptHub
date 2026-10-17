@@ -1,0 +1,43 @@
+@use "../../vars.scss" as *;
+
+.badgeContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background-color: $bg-secondary;
+  border: 1px solid $border-color;
+  border-radius: $radius-pill;
+  font-size: $font-size-2xs;
+  line-height: $line-height-xs;
+  color: $text-secondary;
+  box-sizing: border-box;
+  max-width: 100%;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #34a853; // Google Green
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(52, 168, 83, 0.2);
+}
+
+.label {
+  font-weight: $font-weight-medium;
+  color: $text-muted;
+  flex-shrink: 0;
+}
+
+.url {
+  font-family: monospace;
+  color: $text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

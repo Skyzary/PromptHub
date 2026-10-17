@@ -16,12 +16,12 @@ import BackendBadge from "~src/components/BackendBadge/BackendBadge"
 import * as authModule from "~src/utils/auth"
 
 describe("UI & Presentational Components", () => {
-  it("renders Header with TemplaGem title, backend badge, and settings button", () => {
+  it("renders Header with TemplaGem title and settings button", () => {
     render(<Header />)
     expect(
       screen.getByRole("heading", { name: "TemplaGem" })
     ).toBeInTheDocument()
-    expect(screen.getByTestId("backend-badge")).toBeInTheDocument()
+    expect(screen.queryByTestId("backend-badge")).not.toBeInTheDocument()
     expect(screen.getByRole("button")).toBeInTheDocument()
   })
 

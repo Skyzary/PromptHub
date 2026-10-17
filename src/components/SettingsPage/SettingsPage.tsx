@@ -20,11 +20,11 @@ import {
   getThemePreference,
   setThemePreference,
   subscribeThemeChange,
-  toggleTheme,
   type ThemeMode,
   type ThemePreference
 } from "~src/utils/theme"
 
+import BackendBadge from "../BackendBadge/BackendBadge"
 import css from "./SettingsPage.module.scss"
 
 interface SettingsPageProps {
@@ -61,12 +61,6 @@ export default function SettingsPage({
 
   const isDark = theme === "dark"
   const isBusy = isLoggingOut || isDeletingAll || isDeletingUser
-
-  const handleToggleTheme = () => {
-    const next = toggleTheme()
-    setThemeState(next)
-    setThemePreferenceState(getThemePreference())
-  }
 
   const handleSelectPreference = (pref: ThemePreference) => {
     setThemePreference(pref)
@@ -173,32 +167,13 @@ export default function SettingsPage({
               {isDark ? <MdDarkMode size={18} /> : <MdLightMode size={18} />}
             </div>
             <div className={css.settingTextGroup}>
-              <span className={css.settingTitle}>Dark theme</span>
-              <span className={css.settingSubtitle}>
-                {isDark ? "Dark mode is enabled" : "Light mode is enabled"}
-              </span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            role="switch"
-            aria-checked={isDark}
-            aria-label="Dark theme"
-            className={`${css.switchBtn} ${isDark ? css.switchBtnActive : ""}`}
-            onClick={handleToggleTheme}>
-            <span className={css.switchThumb} />
-          </button>
-        </div>
-
-        <div className={css.settingRow}>
-          <div className={css.settingInfo}>
-            <div className={css.settingTextGroup}>
-              <span className={css.settingTitle}>Theme Mode</span>
+              <span className={css.settingTitle}>Theme</span>
               <span className={css.settingSubtitle}>
                 {themePreference === "system"
-                  ? "Follow browser theme automatically"
-                  : "Manual theme override"}
+                  ? `System (${isDark ? "Dark" : "Light"})`
+                  : isDark
+                    ? "Dark mode is enabled"
+                    : "Light mode is enabled"}
               </span>
             </div>
           </div>
@@ -206,7 +181,7 @@ export default function SettingsPage({
           <div
             className={css.themeSegmentControl}
             role="group"
-            aria-label="Theme mode selection">
+            aria-label="Theme selection">
             <button
               type="button"
               className={`${css.themeSegmentBtn} ${themePreference === "system" ? css.themeSegmentBtnActive : ""}`}
@@ -229,6 +204,19 @@ export default function SettingsPage({
               Dark
             </button>
           </div>
+        </div>
+      </div>
+
+      <div className={css.card}>
+        <span className={css.sectionLabel}>Server Connection</span>
+        <div className={css.backendRow}>
+          <div className={css.settingTextGroup}>
+            <span className={css.settingTitle}>API Backend</span>
+            <span className={css.settingSubtitle}>
+              Connected server URL and health status
+            </span>
+          </div>
+          <BackendBadge />
         </div>
       </div>
 

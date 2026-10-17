@@ -220,6 +220,10 @@ test.describe("Popup Extension Interface (E2E)", () => {
       page.getByRole("heading", { name: "Settings" })
     ).toBeVisible()
 
+    // Verify Backend connection info is displayed on SettingsPage
+    await expect(page.getByTestId("backend-badge")).toBeVisible()
+    await expect(page.getByText("Server Connection")).toBeVisible()
+
     // 3. Verify Theme mode segment buttons are visible
     const autoBtn = page.getByRole("button", { name: "Auto" })
     const lightBtn = page.getByRole("button", { name: "Light" })

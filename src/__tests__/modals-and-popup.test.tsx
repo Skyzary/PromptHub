@@ -506,41 +506,33 @@ describe("ListSection & Popup Integration", () => {
       screen.queryByRole("heading", { name: "New Prompt" })
     ).not.toBeInTheDocument()
 
-    // Open SettingsPage via Header settings button, toggle dark theme, and navigate back
+    // Open SettingsPage via Header settings button, test theme segment control and backend connection
     await user.click(screen.getByRole("button", { name: /settings/i }))
     expect(
       screen.getByRole("heading", { name: "Settings" })
     ).toBeInTheDocument()
-    expect(screen.getByText("Light mode is enabled")).toBeInTheDocument()
-
-    const themeSwitch = screen.getByRole("switch", { name: /dark theme/i })
-    expect(themeSwitch).toHaveAttribute("aria-checked", "false")
-
-    await user.click(themeSwitch)
-    expect(themeSwitch).toHaveAttribute("aria-checked", "true")
-    expect(screen.getByText("Dark mode is enabled")).toBeInTheDocument()
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
-    expect(window.localStorage.getItem("templagem_theme")).toBe("dark")
-
-    // Toggle back to light mode
-    await user.click(themeSwitch)
-    expect(themeSwitch).toHaveAttribute("aria-checked", "false")
-    expect(document.documentElement.getAttribute("data-theme")).toBe("light")
+    expect(screen.getByText("Server Connection")).toBeInTheDocument()
+    expect(screen.getByTestId("backend-badge")).toBeInTheDocument()
 
     // Test Auto / Dark / Light segment buttons
     const darkSegmentBtn = screen.getByRole("button", { name: "Dark" })
     await user.click(darkSegmentBtn)
     expect(darkSegmentBtn).toHaveAttribute("aria-pressed", "true")
+    expect(screen.getByText("Dark mode is enabled")).toBeInTheDocument()
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
+    expect(window.localStorage.getItem("templagem_theme")).toBe("dark")
 
     const lightSegmentBtn = screen.getByRole("button", { name: "Light" })
     await user.click(lightSegmentBtn)
     expect(lightSegmentBtn).toHaveAttribute("aria-pressed", "true")
+    expect(screen.getByText("Light mode is enabled")).toBeInTheDocument()
     expect(document.documentElement.getAttribute("data-theme")).toBe("light")
+    expect(window.localStorage.getItem("templagem_theme")).toBe("light")
 
     const autoSegmentBtn = screen.getByRole("button", { name: "Auto" })
     await user.click(autoSegmentBtn)
     expect(autoSegmentBtn).toHaveAttribute("aria-pressed", "true")
+    expect(screen.getByText(/System \(/)).toBeInTheDocument()
 
     // Open Delete all prompts confirmation modal, cancel, then re-open, handle error, and confirm
     await user.click(

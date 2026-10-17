@@ -1,4 +1,3 @@
-import BackendBadge from "../BackendBadge/BackendBadge"
 import TemplaGemLogo from "../TemplaGemLogo/TemplaGemLogo"
 import css from "./Header.module.scss"
 
@@ -16,7 +15,6 @@ export default function Header({
       <div className={css.logoContainer}>
         <TemplaGemLogo />
         <h1 className={css.logoText}>TemplaGem</h1>
-        <BackendBadge className={css.backendBadge} />
       </div>
       <button
         type="button"

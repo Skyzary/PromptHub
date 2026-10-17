@@ -1,6 +1,6 @@
 {
-  "name": "prompthub",
-  "displayName": "PromptHub",
+  "name": "templagem",
+  "displayName": "TemplaGem",
   "version": "0.0.1",
   "description": "an extension to manage gemini prompts templates",
   "author": "skyzary & iamredl",

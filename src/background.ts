@@ -8,10 +8,10 @@ import {
 } from "./utils/auth"
 import { THEME_STORAGE_KEY, type ThemeMode } from "./utils/theme"
 
-export const PROMPTHUB_GET_PROMPTS_MESSAGE = "PROMPTHUB_GET_PROMPTS"
+export const TEMPLAGEM_GET_PROMPTS_MESSAGE = "TEMPLAGEM_GET_PROMPTS"
 
 export interface GetPromptsMessage {
-  type: typeof PROMPTHUB_GET_PROMPTS_MESSAGE
+  type: typeof TEMPLAGEM_GET_PROMPTS_MESSAGE
   forceRefresh?: boolean
 }
 
@@ -112,7 +112,7 @@ export function registerBackgroundMessageListener(): void {
         typeof message === "object" &&
         message !== null &&
         (message as Partial<GetPromptsMessage>).type ===
-          PROMPTHUB_GET_PROMPTS_MESSAGE
+          TEMPLAGEM_GET_PROMPTS_MESSAGE
       ) {
         const forceRefresh = Boolean(
           (message as Partial<GetPromptsMessage>).forceRefresh

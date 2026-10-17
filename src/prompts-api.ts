@@ -18,7 +18,7 @@ import {
   updatePromptTitleSchema
 } from "./validation/prompt-validation"
 
-export const PROMPTS_CACHE_STORAGE_KEY = "prompthub_prompts_cache"
+export const PROMPTS_CACHE_STORAGE_KEY = "templagem_prompts_cache"
 
 let promptsCache: IPrompt[] | null = null
 const cacheInvalidationListeners = new Set<() => void>()

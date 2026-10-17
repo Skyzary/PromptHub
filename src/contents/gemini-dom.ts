@@ -43,7 +43,7 @@ export {
   GEMINI_INPUT_SELECTORS,
   GEMINI_CONTAINER_SELECTOR,
   GEMINI_CONTAINER_SELECTORS,
-  PROMPTHUB_GEMINI_ROOT_ID
+  TEMPLAGEM_GEMINI_ROOT_ID
 } from "./gemini-elements"
 
 export {
@@ -66,7 +66,7 @@ export {
   modifiedVariableIndices
 } from "./gemini-template-state"
 
-export const PROMPTHUB_TEMPLATE_STYLE_ID = "prompthub-template-variable-styles"
+export const TEMPLAGEM_TEMPLATE_STYLE_ID = "templagem-template-variable-styles"
 
 /**
  * Applies template variable highlight classes instead of injecting dynamic <style> tags.

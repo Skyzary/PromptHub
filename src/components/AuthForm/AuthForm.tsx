@@ -4,6 +4,7 @@ import * as z from "zod"
 
 import Btn from "~src/components/ui/Btn/Btn"
 import { login, register } from "~src/utils/auth"
+import BackendBadge from "../BackendBadge/BackendBadge"
 
 import css from "./AuthForm.module.scss"
 
@@ -147,6 +148,10 @@ export default function AuthForm({
               : "Sign In"}
         </Btn>
       </form>
+
+      <div className={css.backendFooter}>
+        <BackendBadge />
+      </div>
     </section>
   )
 }

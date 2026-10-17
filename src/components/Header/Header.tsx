@@ -1,4 +1,5 @@
-import PromptHubLogo from "../PromptHubLogo/PromptHubLogo"
+import BackendBadge from "../BackendBadge/BackendBadge"
+import TemplaGemLogo from "../TemplaGemLogo/TemplaGemLogo"
 import css from "./Header.module.scss"
 
 interface HeaderProps {
@@ -13,8 +14,9 @@ export default function Header({
   return (
     <header className={css.header}>
       <div className={css.logoContainer}>
-        <PromptHubLogo />
-        <h1 className={css.logoText}>PromptHub</h1>
+        <TemplaGemLogo />
+        <h1 className={css.logoText}>TemplaGem</h1>
+        <BackendBadge className={css.backendBadge} />
       </div>
       <button
         type="button"

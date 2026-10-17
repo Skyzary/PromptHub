@@ -14,7 +14,7 @@ import {
   isGeminiInputElement,
   isGeminiRootContainer,
   isGeminiSendButton,
-  PROMPTHUB_GEMINI_ROOT_ID
+  TEMPLAGEM_GEMINI_ROOT_ID
 } from "../contents/gemini-elements"
 
 describe("gemini-elements module", () => {
@@ -34,15 +34,15 @@ describe("gemini-elements module", () => {
       expect(Array.isArray(GEMINI_INPUT_SELECTORS)).toBe(true)
       expect(GEMINI_INPUT_SELECTOR).toContain(".ql-editor")
       expect(GEMINI_CONTAINER_SELECTOR).toContain(".chat-input-container")
-      expect(PROMPTHUB_GEMINI_ROOT_ID).toBe("prompthub-gemini-root")
+      expect(TEMPLAGEM_GEMINI_ROOT_ID).toBe("templagem-gemini-root")
     })
   })
 
   describe("getOrCreateGeminiRootContainer & isGeminiRootContainer", () => {
     it("creates container if missing and reuses existing one", () => {
       const created = getOrCreateGeminiRootContainer()
-      expect(created.id).toBe(PROMPTHUB_GEMINI_ROOT_ID)
-      expect(document.getElementById(PROMPTHUB_GEMINI_ROOT_ID)).toBe(created)
+      expect(created.id).toBe(TEMPLAGEM_GEMINI_ROOT_ID)
+      expect(document.getElementById(TEMPLAGEM_GEMINI_ROOT_ID)).toBe(created)
       expect(isGeminiRootContainer(created)).toBe(true)
 
       const reused = getOrCreateGeminiRootContainer()
@@ -205,7 +205,7 @@ describe("gemini-elements module", () => {
       expect(isGeminiSendButton(textNode as unknown as EventTarget)).toBe(false)
     })
 
-    it("ignores PromptHub own buttons", () => {
+    it("ignores TemplaGem own buttons", () => {
       const root = getOrCreateGeminiRootContainer()
       const hubBtn = document.createElement("button")
       hubBtn.setAttribute("aria-label", "Send Prompt")

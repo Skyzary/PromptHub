@@ -375,7 +375,7 @@ export function getPromptIconDescriptor(
 // ----------------------------------------------------
 // Storage & In-Memory Mapping for Prompt Icons
 // ----------------------------------------------------
-export const PROMPT_ICONS_STORAGE_KEY = "prompthub_prompt_icons"
+export const PROMPT_ICONS_STORAGE_KEY = "templagem_prompt_icons"
 
 let inMemoryIconMap: Record<string, string> | null = null
 const iconChangeListeners = new Set<() => void>()

@@ -10,7 +10,7 @@ import {
 import React from "react"
 import { describe, expect, it, vi } from "vitest"
 
-import PromptHubLogo from "../components/PromptHubLogo/PromptHubLogo"
+import TemplaGemLogo from "../components/TemplaGemLogo/TemplaGemLogo"
 import TagFilter from "../components/TagFilter/TagFilter"
 import { GeminiHeader } from "../contents/components/GeminiHeader"
 import {
@@ -99,14 +99,14 @@ describe("Gemini decomposed components & hooks", () => {
     })
   })
 
-  describe("PromptHubLogo", () => {
+  describe("TemplaGemLogo", () => {
     it("renders with default and custom size", () => {
-      const { rerender } = render(<PromptHubLogo />)
-      const logo = screen.getByTestId("prompthub-logo")
+      const { rerender } = render(<TemplaGemLogo />)
+      const logo = screen.getByTestId("templagem-logo")
       expect(logo).toBeInTheDocument()
 
       rerender(
-        <PromptHubLogo
+        <TemplaGemLogo
           size={24}
           className="custom-logo"
         />
@@ -313,7 +313,7 @@ describe("Gemini decomposed components & hooks", () => {
         />
       )
       expect(
-        screen.getByText(/please sign in via the prompthub extension popup/i)
+        screen.getByText(/please sign in via the templagem extension popup/i)
       ).toBeInTheDocument()
 
       rerender(

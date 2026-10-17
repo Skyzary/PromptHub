@@ -8,8 +8,8 @@ import type {
 import { userSchema } from "../validation/user-validation"
 import { apiRequest, DEFAULT_API_BASE_URL } from "./api-request"
 
-export const ACCESS_TOKEN_STORAGE_KEY = "prompthub_access_token"
-export const REFRESH_TOKEN_STORAGE_KEY = "prompthub_refresh_token"
+export const ACCESS_TOKEN_STORAGE_KEY = "templagem_access_token"
+export const REFRESH_TOKEN_STORAGE_KEY = "templagem_refresh_token"
 
 let inMemoryAccessToken: string | null = null
 let inMemoryRefreshToken: string | null = null

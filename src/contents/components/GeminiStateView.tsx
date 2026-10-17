@@ -22,7 +22,7 @@ export const GeminiStateView: React.FC<GeminiStateViewProps> = ({
   if (!isAuthenticated) {
     return (
       <div className={css.stateBox}>
-        Please sign in via the PromptHub extension popup to see your prompts.
+        Please sign in via the TemplaGem extension popup to see your prompts.
       </div>
     )
   }

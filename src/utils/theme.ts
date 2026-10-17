@@ -1,6 +1,6 @@
 export type ThemeMode = "light" | "dark"
 
-export const THEME_STORAGE_KEY = "prompthub_theme"
+export const THEME_STORAGE_KEY = "templagem_theme"
 
 let currentTheme: ThemeMode | null = null
 const themeListeners = new Set<(theme: ThemeMode) => void>()

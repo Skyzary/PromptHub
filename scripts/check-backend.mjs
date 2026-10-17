@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Diagnostic tool to check connectivity and health of the PromptHub backend
+ * Diagnostic tool to check connectivity and health of the TemplaGem backend
  * running in local Docker or on a remote server.
  */
 
@@ -11,7 +11,7 @@ const targetApiUrl =
   "http://localhost:4300/api"
 
 console.log("\n==========================================")
-console.log(" PromptHub Backend Connection Health Check")
+console.log(" TemplaGem Backend Connection Health Check")
 console.log("==========================================")
 console.log(`Target URL: ${targetApiUrl}`)
 

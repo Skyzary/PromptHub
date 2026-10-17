@@ -18,7 +18,7 @@ export class TemplateHighlighter {
   public static readonly CONTAINER_CLASS = "ph-template-container"
   public static readonly ROOT_CLASS = "ph-templates-enabled"
 
-  public static readonly STYLE_ELEMENT_ID = "prompthub-template-variable-styles"
+  public static readonly STYLE_ELEMENT_ID = "templagem-template-variable-styles"
 
   /**
    * Applies highlight container and root classes and injects global styles into document.head

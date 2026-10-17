@@ -1,6 +1,6 @@
 import React from "react"
 
-import PromptHubLogo from "../../components/PromptHubLogo/PromptHubLogo"
+import TemplaGemLogo from "../../components/TemplaGemLogo/TemplaGemLogo"
 import css from "../gemini-prompts.module.scss"
 import { CloseIcon, RefreshIcon, SearchIcon } from "./GeminiIcons"
 
@@ -21,8 +21,8 @@ export const GeminiHeader: React.FC<GeminiHeaderProps> = ({
 }) => (
   <div className={css.header}>
     <div className={css.brand}>
-      <PromptHubLogo size={24} />
-      <h3 className={css.title}>PromptHub</h3>
+      <TemplaGemLogo size={24} />
+      <h3 className={css.title}>TemplaGem</h3>
     </div>
     <div className={css.searchBar}>
       <SearchIcon className={css.searchIcon} />

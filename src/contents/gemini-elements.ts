@@ -9,7 +9,7 @@ export const GEMINI_INPUT_SELECTORS = [
 
 export const GEMINI_INPUT_SELECTOR = GEMINI_INPUT_SELECTORS.join(", ")
 
-export const PROMPTHUB_GEMINI_ROOT_ID = "prompthub-gemini-root"
+export const TEMPLAGEM_GEMINI_ROOT_ID = "templagem-gemini-root"
 
 export const GEMINI_CONTAINER_SELECTORS = [
   ".input-area-container",
@@ -29,27 +29,27 @@ export const GEMINI_CONTAINER_SELECTOR = GEMINI_CONTAINER_SELECTORS.join(", ")
  * Creates it if not already present on the page.
  */
 export function getOrCreateGeminiRootContainer(): HTMLElement {
-  const existing = document.getElementById(PROMPTHUB_GEMINI_ROOT_ID)
+  const existing = document.getElementById(TEMPLAGEM_GEMINI_ROOT_ID)
   if (existing) {
     return existing
   }
   const container = document.createElement("div")
-  container.id = PROMPTHUB_GEMINI_ROOT_ID
+  container.id = TEMPLAGEM_GEMINI_ROOT_ID
   document.body.appendChild(container)
   return container
 }
 
 /**
- * Validates whether an element is PromptHub's root container.
+ * Validates whether an element is TemplaGem's root container.
  */
 export function isGeminiRootContainer(element: EventTarget | null): boolean {
   if (!(element instanceof HTMLElement)) return false
-  return element.id === PROMPTHUB_GEMINI_ROOT_ID
+  return element.id === TEMPLAGEM_GEMINI_ROOT_ID
 }
 
 /**
  * Finds the editable Gemini input element from an event target or container.
- * Ignores clicks inside the PromptHub popover itself.
+ * Ignores clicks inside the TemplaGem popover itself.
  */
 export function findGeminiInput(
   target: EventTarget | null,
@@ -99,7 +99,7 @@ export function isGeminiInputElement(target: EventTarget | null): boolean {
 
 /**
  * Finds the parent container of the Gemini input (e.g. rich-textarea, .input-area)
- * so PromptHub can dock directly to the full width of the prompt bar.
+ * so TemplaGem can dock directly to the full width of the prompt bar.
  */
 export function findGeminiInputContainer(
   inputEl: HTMLElement | null
@@ -149,8 +149,8 @@ export function isGeminiSendButton(target: EventTarget | null): boolean {
   )
   if (!btn) return false
 
-  // Ignore PromptHub's own buttons
-  if (btn.closest(`#${PROMPTHUB_GEMINI_ROOT_ID}`)) return false
+  // Ignore TemplaGem's own buttons
+  if (btn.closest(`#${TEMPLAGEM_GEMINI_ROOT_ID}`)) return false
 
   const ariaLabel = (btn.getAttribute("aria-label") ?? "").toLowerCase()
   const matTooltip = (btn.getAttribute("mattooltip") ?? "").toLowerCase()

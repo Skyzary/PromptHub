@@ -23,16 +23,16 @@ test.describe("Gemini Page Content Script Integration (E2E)", () => {
       .first()
     await expect(editor).toBeVisible()
 
-    // Focus the input to trigger PromptHub overlay
+    // Focus the input to trigger TemplaGem overlay
     await editor.click()
 
-    // Locate PromptHub root inside the page
-    const rootContainer = geminiPage.locator("#prompthub-gemini-root")
+    // Locate TemplaGem root inside the page
+    const rootContainer = geminiPage.locator("#templagem-gemini-root")
     await expect(rootContainer).toBeAttached({ timeout: 10000 })
 
     // Verify shadow root contains overlay dialog (Playwright automatically pierces shadow roots)
     const overlayDialog = geminiPage.getByRole("dialog", {
-      name: "PromptHub Gemini Prompts"
+      name: "TemplaGem Gemini Prompts"
     })
     await expect(overlayDialog).toBeVisible({ timeout: 10000 })
 
@@ -55,7 +55,7 @@ test.describe("Gemini Page Content Script Integration (E2E)", () => {
 
     // Wait for overlay to appear
     const overlayDialog = geminiPage.getByRole("dialog", {
-      name: "PromptHub Gemini Prompts"
+      name: "TemplaGem Gemini Prompts"
     })
     await expect(overlayDialog).toBeVisible({ timeout: 10000 })
 

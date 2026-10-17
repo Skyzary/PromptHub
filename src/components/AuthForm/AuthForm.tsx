@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { LuEye, LuEyeOff } from "react-icons/lu"
 import * as z from "zod"
 
 import Btn from "~src/components/ui/Btn/Btn"
@@ -20,6 +21,7 @@ export default function AuthForm({
   const [mode, setMode] = useState<AuthMode>(initialMode)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -97,18 +99,32 @@ export default function AuthForm({
             className={css.label}>
             Password
           </label>
-          <input
-            id="auth-password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            className={css.input}
-            autoComplete={
-              mode === "register" ? "new-password" : "current-password"
-            }
-            required
-          />
+          <div className={css.passwordInputWrapper}>
+            <input
+              id="auth-password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className={`${css.input} ${css.passwordInput}`}
+              autoComplete={
+                mode === "register" ? "new-password" : "current-password"
+              }
+              required
+            />
+            <button
+              type="button"
+              className={css.togglePasswordBtn}
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              title={showPassword ? "Hide password" : "Show password"}>
+              {showPassword ? (
+                <LuEyeOff className={css.togglePasswordIcon} />
+              ) : (
+                <LuEye className={css.togglePasswordIcon} />
+              )}
+            </button>
+          </div>
           {mode === "register" && (
             <span className={css.hint}>
               8–32 chars, at least 1 uppercase letter and 1 special character

@@ -96,6 +96,57 @@
   }
 }
 
+.passwordInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.passwordInput {
+  padding-right: 42px;
+}
+
+.togglePasswordBtn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  border-radius: $radius-circle;
+  color: $text-muted;
+  cursor: pointer;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    color: $text-primary;
+    background-color: rgba(0, 0, 0, 0.05);
+
+    :global([data-theme="dark"]) & {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-color;
+    outline-offset: 1px;
+  }
+}
+
+.togglePasswordIcon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 .hint {
   font-size: $font-size-xs;
   line-height: $line-height-xs;

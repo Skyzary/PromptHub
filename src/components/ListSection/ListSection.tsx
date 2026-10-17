@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react"
 import {
   fetchPrompts,
   getCachedPrompts,
+  PROMPTS_CACHE_STORAGE_KEY,
   subscribePromptsCache
 } from "~src/prompts-api"
 import type { IPrompt } from "~src/types"
